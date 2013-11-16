@@ -1,16 +1,23 @@
+head
+  title AW Homeworks
+  script(src='lib/parsley.js')
+
+body
+  |{{> hello}}
+
+
+
+
 template(name='hello')
   h1 Hello
   |{{greeting}}
   input(type='button', value='click') 
 
-  //- form.demo-form(data-validat='parsley')
-  //-   label(for='fullname') Full Name * :
-  //-   input#fullname(name='fullname', data-required='true')
-  //-   label(for='email') Email * :
-  //-   input#email(name='email', data-trigger='change', data-required='true', data-type='email')
+  form.demo-form(data-validate='parsley')
+    label(for='fullname') Full Name * :
+    input#fullname(name='fullname', data-required='true')
+    label(for='email') Email * :
+    input#email(name='email', data-trigger='change', data-required='true', data-type='email', value='{{myTest}}')
 
 
-  div.form
-    div
-      input#field(type='text', value='{{myTest}}')
-      span.my-error-tip
+

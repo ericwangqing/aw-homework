@@ -11,12 +11,12 @@ if Meteor.is-client
 
   Meteor.startup ->
     Session.set 'my-test', 11
-    $ '.form' .my {
-      data: x: 435
-      ui:
-        '#field':
-          bind: 'x'
-          check: /^[1-9]\d{1,2}$/
-          error: "中文的提示哦"
-    }
+    # $ '.form' .my {
+    #   data: x: 435
+    #   ui:
+    #     '#field':
+    #       bind: 'x'
+    #       check: /^[1-9]\d{1,2}$/
+    #       error: "中文的提示哦"
+    # }
 
