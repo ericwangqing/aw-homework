@@ -78,6 +78,11 @@ module.exports = (grunt)->
         options:
           debug: false
           pretty: true
+    compass:
+      all:
+        options:
+          config: 'compass/config.rb'
+
     jshint:
       files: "bin/**/*.js"
     # env: #
@@ -101,9 +106,15 @@ module.exports = (grunt)->
         tasks: ["clean", "copy:main", "concat", "livescript", "jade", "simplemocha"]
         options:
           spawn: true
+      css:
+        files: ["compass/**/*.sass"]
+        tasks: ["compass"]
+        options:
+          spawn: true
 
   grunt.loadNpmTasks "grunt-livescript"
   grunt.loadNpmTasks "grunt-contrib-jade"
+  grunt.loadNpmTasks "grunt-contrib-compass"
   grunt.loadNpmTasks "grunt-simple-mocha"
   # grunt.loadNpmTasks "grunt-nodemon"
   # grunt.loadNpmTasks "grunt-env"
@@ -114,7 +125,7 @@ module.exports = (grunt)->
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-concat"
 
-  grunt.registerTask "default", ["clean", "copy", "concat", "livescript", "jade", "simplemocha", "watch"]
+  grunt.registerTask "default", ["clean", "copy", "concat", "livescript", "jade", "compass", "simplemocha", "watch"]
   # grunt.registerTask "server", ["clean", "copy", "concat", "livescript", "concurrent"]
   # grunt.registerTask "test", ["env:manual_test", "concat:prefix_test", "livescript:test", "livescript:test_helper", "simplemocha"]
 

@@ -1,6 +1,7 @@
 {
   "packages": {
     "sugar": {},
-    "jquery-ui": {}
+    "jquery-ui": {},
+    "jquery-ui-bootstrap": {}
   }
 }

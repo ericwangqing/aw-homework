@@ -1,0 +1,71 @@
+@import _base
+
+body
+  +susy-grid-background
+  background: #F7F3F8
+  a
+    text-decoration: none
+
+  .container
+    +container($total-columns, $tablet, $computer)
+
+    #header
+      font-weight: 700
+      font-size: 72px
+      span
+        font-weight: 300
+        font-size: 18px
+        display: block
+
+    #controls
+      #buttons
+        margin-bottom: 5px
+        #phonebook
+          +sassy-button("simple", 6px, 14px, #337EC4)
+        #newguest
+          margin-top: 5px
+          +sassy-button("simple", 6px, 14px, #D93131)
+
+    table
+      width: 100%
+      thead
+        color: #FEFEFE
+        background: #000
+        th
+          text-align: left
+          font-weight: 500
+          padding: 10px
+      tbody
+        border: 3px solid #000
+        tr
+          background: #E5E5E5
+        tr.alt
+          background: #EEE
+        .buttoncell
+          .confirm
+            +sassy-button("simple", 6px, 14px, #F39B06)
+          .unconfirm
+            +sassy-button("flat", 6px, 14px, #3BA06F)
+      .email, .cell
+        display: none
+
++at-breakpoint($tablet)
+  body .container
+    #header span, table .email
+      display: inline
+
++at-breakpoint($computer)
+  body .container
+    #controls
+      #menutitle
+        +span-columns(5)
+        margin-top: 5px
+      #buttons
+        text-align: right
+        +span-columns(5 omega)
+
+    table
+      // +prefix(1)
+      // +suffix(2)
+      .email, .cell 
+        display: table-cell

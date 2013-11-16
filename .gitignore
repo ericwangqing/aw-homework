@@ -3,4 +3,8 @@ test-bin/
 test-temp/
 src-temp/
 bin/app/
+bin/public/images
+bin/public/javascripts
+bin/stylesheets
+.sass-cache
 .DS_Store
