@@ -7,14 +7,14 @@
 module.exports = (grunt)->
   # process.env.DEBUG = 'aw'
   grunt.initConfig
-    clean: ["bin", 'src-temp', 'test-temp', 'test-bin']
+    clean: ["bin/app", 'src-temp', 'test-temp', 'test-bin']
     copy:
       main:
-        files: [{expand: true, cwd:'resource/', src: ['*'], dest: 'bin/'}]
+        files: [{expand: true, cwd:'resource/', src: ['*'], dest: 'bin/app'}]
     concat: # 将每个测试中都要用的部分抽出来
       prefix_src:
-        options:
-          banner: "debug = require('debug')('aw')\n"
+        # options:
+          # banner: "debug = require('debug')('aw')\n"
         files: [
           expand: true # 将来改为在dev下的配置
           # flatten: true
@@ -41,7 +41,7 @@ module.exports = (grunt)->
           # flatten: true # flatten是为了避免在引用时，path长而易错。meteor自动搜集源文件，因此可以自由组织文件，不用担心path。故而这里也就不用flatten。
           cwd: 'src-temp'
           src: ['**/*.ls']
-          dest: 'bin/'
+          dest: 'bin/app'
           ext: '.js'
         ]
       test:
@@ -64,6 +64,18 @@ module.exports = (grunt)->
           dest: 'test-bin/'
           ext: '.js'
         ]
+    jade:
+      all:
+        files: [
+          expand: true
+          cwd: 'src'
+          src: ['**/*.jade']
+          dest: 'bin/app'
+          ext: '.html'
+        ]
+        options:
+          debug: false
+          pretty: true
     jshint:
       files: "bin/**/*.js"
     # env: #
@@ -76,30 +88,20 @@ module.exports = (grunt)->
         slow: 100
         timeout: 3000
     watch:
-      auto:
+      script:
         files: ["src/**/*.ls", "test/**/*.ls"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
-        tasks: ["clean", "copy", "concat", "livescript", "simplemocha"]
+        tasks: ["clean", "copy", "concat", "livescript", "jade", "simplemocha"]
         options:
           spawn: true
-      manual:
-        files: ["src/**/*.ls"]
-        tasks: ["concat:prefix_src", "livescript:src",  "copy"]
+      html:
+        files: ["src/**/*.jade"]
+        tasks: ["clean", "copy", "concat", "livescript", "jade", "simplemocha"]
         options:
           spawn: true
-    # nodemon:
-    #   all:
-    #     options: 
-    #       file: 'bin/app.js'
-    #       watchedFolders: ['bin']
-    # concurrent:
-    #   target: 
-    #     tasks:
-    #       ['nodemon', 'watch:manual']
-    #     options:
-    #       logConcurrentOutput: true
 
   grunt.loadNpmTasks "grunt-livescript"
+  grunt.loadNpmTasks "grunt-contrib-jade"
   grunt.loadNpmTasks "grunt-simple-mocha"
   # grunt.loadNpmTasks "grunt-nodemon"
   # grunt.loadNpmTasks "grunt-env"
@@ -110,7 +112,7 @@ module.exports = (grunt)->
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-concat"
 
-  grunt.registerTask "default", ["clean", "copy", "concat", "livescript", "simplemocha", "watch:auto"]
+  grunt.registerTask "default", ["clean", "copy", "concat", "livescript", "jade", "simplemocha", "watch"]
   # grunt.registerTask "server", ["clean", "copy", "concat", "livescript", "concurrent"]
   # grunt.registerTask "test", ["env:manual_test", "concat:prefix_test", "livescript:test", "livescript:test_helper", "simplemocha"]
 
@@ -128,3 +130,4 @@ module.exports = (grunt)->
     console.log 'filepath: ', filepath
     grunt.config ['livescript', 'src'], filepath
     grunt.config ['livescript', 'test'], filepath
+    grunt.config ['jade', 'all'], filepath
