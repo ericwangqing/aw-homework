@@ -11,6 +11,8 @@ module.exports = (grunt)->
     copy:
       main:
         files: [{expand: true, cwd:'resource/', src: ['*'], dest: 'bin/app'}]
+      lib:
+        files: [{expand: true, cwd:'lib/', src: ['*'], dest: 'bin/public/lib'}]
     concat: # 将每个测试中都要用的部分抽出来
       prefix_src:
         # options:
@@ -91,12 +93,12 @@ module.exports = (grunt)->
       script:
         files: ["src/**/*.ls", "test/**/*.ls"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
-        tasks: ["clean", "copy", "concat", "livescript", "jade", "simplemocha"]
+        tasks: ["clean", "copy:main", "concat", "livescript", "jade", "simplemocha"]
         options:
           spawn: true
       html:
         files: ["src/**/*.jade"]
-        tasks: ["clean", "copy", "concat", "livescript", "jade", "simplemocha"]
+        tasks: ["clean", "copy:main", "concat", "livescript", "jade", "simplemocha"]
         options:
           spawn: true
 

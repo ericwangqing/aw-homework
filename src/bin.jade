@@ -1,10 +1,16 @@
-head
-  title AW Homeworks
-
-body
-  |{{> hello}}
-
 template(name='hello')
   h1 Hello
   |{{greeting}}
-  input(type='button', value='click')
+  input(type='button', value='click') 
+
+  //- form.demo-form(data-validat='parsley')
+  //-   label(for='fullname') Full Name * :
+  //-   input#fullname(name='fullname', data-required='true')
+  //-   label(for='email') Email * :
+  //-   input#email(name='email', data-trigger='change', data-required='true', data-type='email')
+
+
+  div.form
+    div
+      input#field(type='text', value='{{myTest}}')
+      span.my-error-tip
