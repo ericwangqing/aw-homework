@@ -2,9 +2,12 @@ node_modules/
 test-bin/
 test-temp/
 src-temp/
-bin/
-.sass-cache
-.DS_Store
+!bin/
+bin/*
+!bin/smart.json
+!bin/.meteor/
+bin/.meteor/*
 !bin/.meteor/packages
 !bin/.meteor/release
-!bin/smart.json
+.sass-cache
+.DS_Store
