@@ -2,27 +2,40 @@
 
 //- 这里需要接入BP的权限检查和validation
 
-mixin text(label, value)
-  .controls
-    label #{label}:
-      | {{#if bp-attribute-permit _id '#{value}' 'edit'}}     
-      input(type='text', name='#{value}', value='{{#{value}}}') 
-      | {{else}}
-      span {{#{value}}}
-      | {{/if}}
-
 //- 用于创建和修改的表单
 mixin form(collectionName, item)
-  //- set collection name 便于在渲染item的时候确定permission
+  //- set collection name 便于在渲染item的时候确定permission，这里如果能够在jade的block里passing就最好了，现在是无奈，只好从Meteor help走
   | {{bp-set-collection "#{collectionName}"}} 
   | {{#with #{item}}}
-  form 
-    block
+  - var collection = collectionName
+  form(parsley-validate)
+    block(colletion=collectionName)
     | {{#if bp-collection-permit 'edit'}}
     input(type='submit', value='提交') 
     | {{/if}}
   | {{/with}} 
-  
+
+
+mixin __input(label, value)
+  .controls
+    label #{label}:
+      | {{#if bp-attribute-permit _id '#{value}' 'edit'}}
+      block     
+      | {{else}}
+      span {{#{value}}}
+      | {{/if}}
+
+mixin text(label, value)
+  +__input(label, value)
+    input(type='text', name=value, value='{{#{value}}}') 
+
+mixin email(value, required)
+  +__input('电子邮件', value)
+    //- -var req = required? 'required': ''
+    input(type='email', name='email', value='{{#{value}}}',  required=required) 
+
+
+
 //- 用于展示的列表
 mixin table(items, columnNames, attributesNames)
   +create-button()
@@ -30,7 +43,7 @@ mixin table(items, columnNames, attributesNames)
     thead
       tr
         each col, index in columnNames
-          th(cols='#{index}') #{col}
+          th(cols=index) #{col}
     tbody
       +rows(items, columnNames, attributesNames)
 
@@ -45,7 +58,7 @@ mixin rows(items, columnNames, attributesNames)
   | {{#each #{items}}}
   tr
   each attr, index in attributesNames
-    td(cols='#{index}') {{#{attr}}}
+    td(cols=index) {{#{attr}}}
   | {{/each}}  
 
 
