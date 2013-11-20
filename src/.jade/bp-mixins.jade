@@ -1,0 +1,55 @@
+//- 此处定义所有的BP控件，在BP平台上的应用，需要用这些Mixin来定义界面
+
+//- 这里需要接入BP的权限检查和validation
+
+mixin text(label, value)
+  .controls
+    label #{label}:
+      | {{#if bp-attribute-permit _id '#{value}' 'edit'}}     
+      input(type='text', name='#{value}', value='{{#{value}}}') 
+      | {{else}}
+      span {{#{value}}}
+      | {{/if}}
+
+//- 用于创建和修改的表单
+mixin form(collectionName, item)
+  //- set collection name 便于在渲染item的时候确定permission
+  | {{bp-set-collection "#{collectionName}"}} 
+  | {{#with #{item}}}
+  form 
+    block
+    | {{#if bp-collection-permit 'edit'}}
+    input(type='submit', value='提交') 
+    | {{/if}}
+  | {{/with}} 
+  
+//- 用于展示的列表
+mixin table(items, columnNames, attributesNames)
+  +create-button()
+  table
+    thead
+      tr
+        each col, index in columnNames
+          th(cols='#{index}') #{col}
+    tbody
+      +rows(items, columnNames, attributesNames)
+
+mixin create-button()
+  | {{#if bp-collection-permit 'create'}}
+  form
+    input(type='submit', value='增加') 
+  | {{/if}}
+
+
+mixin rows(items, columnNames, attributesNames)
+  | {{#each #{items}}}
+  tr
+  each attr, index in attributesNames
+    td(cols='#{index}') {{#{attr}}}
+  | {{/each}}  
+
+
+
+//- mixin all-text(items)
+//-   each item in items
+//-     +text(item.label, item.value)

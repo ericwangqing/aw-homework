@@ -8,6 +8,8 @@ body
 
   .container
     +container($total-columns, $tablet, $computer)
+    [disabled]
+      background-color: lightgray
 
     #header
       font-weight: 700
@@ -36,7 +38,7 @@ body
           font-weight: 500
           padding: 10px
       tbody
-        border: 3px solid #000
+        border: 3px solid #000 
         tr
           background: #E5E5E5
         tr.alt

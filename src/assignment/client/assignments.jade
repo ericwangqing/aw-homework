@@ -1,0 +1,10 @@
+include ../../.jade/bp-mixins
+template(name='assignmentsList')
+  +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+
+template(name='assignment')
+  +form('assignments', 'assignment')
+    +text('题目', 'title')
+    +text('要求', 'requirement')
+    +text('截止时间', 'deadline')
+    +text('发布时间', 'createdAtTime')

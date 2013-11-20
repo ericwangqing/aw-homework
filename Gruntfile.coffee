@@ -7,10 +7,18 @@
 module.exports = (grunt)->
   # process.env.DEBUG = 'aw'
   grunt.initConfig
-    clean: ["bin/app", 'src-temp', 'test-temp', 'test-bin']
+    clean: 
+      src:
+        files: [
+          expand: true # 将来改为在dev下的配置
+          cwd: 'bin'
+          src: ['**/*.html', '**/*.js', '!.meteor/**/*', '!packages/**/*', '!public/**/*']
+        ]
+      temp: ['src-temp', 'test-temp']
+      test: ['test-bin']
     copy:
       main:
-        files: [{expand: true, cwd:'resource/', src: ['*'], dest: 'bin/app'}]
+        files: [{expand: true, cwd:'resource/', src: ['*'], dest: 'bin'}]
       lib:
         files: [{expand: true, cwd:'lib/', src: ['*'], dest: 'bin/public/lib'}]
     concat: # 将每个测试中都要用的部分抽出来
@@ -43,7 +51,7 @@ module.exports = (grunt)->
           # flatten: true # flatten是为了避免在引用时，path长而易错。meteor自动搜集源文件，因此可以自由组织文件，不用担心path。故而这里也就不用flatten。
           cwd: 'src-temp'
           src: ['**/*.ls']
-          dest: 'bin/app'
+          dest: 'bin'
           ext: '.js'
         ]
       test:
@@ -71,8 +79,8 @@ module.exports = (grunt)->
         files: [
           expand: true
           cwd: 'src'
-          src: ['**/*.jade']
-          dest: 'bin/app'
+          src: ['**/*.jade', '!.jade/**/*']
+          dest: 'bin'
           ext: '.html'
         ]
         options:
@@ -96,21 +104,23 @@ module.exports = (grunt)->
         timeout: 3000
     watch:
       script:
-        files: ["src/**/*.ls", "test/**/*.ls"]
+        files: ["src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "src/.jade/**/*.jade", "compass/**/*.sass"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
-        tasks: ["clean", "copy:main", "concat", "livescript", "jade", "simplemocha"]
+        tasks: ["clean", "copy:main", "concat", "livescript", "compass", "jade", "simplemocha"]
         options:
           spawn: true
-      html:
-        files: ["src/**/*.jade"]
-        tasks: ["clean", "copy:main", "concat", "livescript", "jade", "simplemocha"]
-        options:
-          spawn: true
-      css:
-        files: ["compass/**/*.sass"]
-        tasks: ["compass"]
-        options:
-          spawn: true
+          # livereload: false # 这里我们是meteor在reload！
+          # debounceDelay: 2000
+      # html:
+      #   files: ["src/**/*.jade"]
+      #   tasks: ["clean", "copy:main", "concat", "livescript", "jade", "simplemocha"]
+      #   options:
+      #     spawn: true
+      # css:
+      #   files: ["compass/**/*.sass"]
+      #   tasks: ["compass"]
+      #   options:
+      #     spawn: true
 
   grunt.loadNpmTasks "grunt-livescript"
   grunt.loadNpmTasks "grunt-contrib-jade"
@@ -125,22 +135,22 @@ module.exports = (grunt)->
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-concat"
 
-  grunt.registerTask "default", ["clean", "copy", "concat", "livescript", "jade", "compass", "simplemocha", "watch"]
+  grunt.registerTask "default", ["clean", "copy", "concat", "livescript", "compass", "jade", "simplemocha", "watch"]
   # grunt.registerTask "server", ["clean", "copy", "concat", "livescript", "concurrent"]
   # grunt.registerTask "test", ["env:manual_test", "concat:prefix_test", "livescript:test", "livescript:test_helper", "simplemocha"]
 
 
-  grunt.registerTask 'delayed-simplemocha', "run mocha later for nodemon picks up changes", ->
-    done = this.async()
-    DELAY = TIME_WAIT_SERVER_RESTART 
-    grunt.log.writeln 'run mocha after %dms', DELAY
-    setTimeout (->
-      grunt.task.run 'simplemocha'
-      done()
-    ), DELAY
+  # grunt.registerTask 'delayed-simplemocha', "run mocha later for nodemon picks up changes", ->
+  #   done = this.async()
+  #   DELAY = TIME_WAIT_SERVER_RESTART 
+  #   grunt.log.writeln 'run mocha after %dms', DELAY
+  #   setTimeout (->
+  #     grunt.task.run 'simplemocha'
+  #     done()
+  #   ), DELAY
 
-  grunt.event.on 'watch', (action, filepath)->
-    console.log 'filepath: ', filepath
-    grunt.config ['livescript', 'src'], filepath
-    grunt.config ['livescript', 'test'], filepath
-    grunt.config ['jade', 'all'], filepath
+  # grunt.event.on 'watch', (action, filepath)->
+  #   console.log 'filepath: ', filepath
+  #   grunt.config ['livescript', 'src'], filepath
+  #   grunt.config ['livescript', 'test'], filepath
+  #   grunt.config ['jade', 'all'], filepath

@@ -1,0 +1,1 @@
+@Assignments = new Meteor.Collection 'assignments'   

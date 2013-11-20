@@ -3,49 +3,5 @@ head
   //- link(href='stylesheets/screen.css', media='screen, projection', rel='stylesheet', type='text/css')
 body
   .container
-    h1#header {{greeting}}
-      span.tagline Event Guest Manager
-    #controls
-      h3#menutitle Guest List For - John's Wedding
-      #buttons
-        a#phonebook(href='#') Add From Contacts
-        a#newguest(href='#') Add New Guest
-    table(cellspacing='0')
-      thead
-        tr
-          th Name
-          th.email Email
-          th.phone Phone
-          th.cell Cell
-          th RSVP Status
-      tbody
-        tr
-          td
-            | Dave K. Samten
-            td.email
-              | dsamten@gman.com
-              script(type='text/javascript')
-            td.phone 708-6777
-            td.cell 360-234-1192
-            td.buttoncell
-              a.unconfirm(href='#', alt='Confirmed') Confirmed
-        tr.alt
-          td
-            | Bob Renper
-            td.email
-              | bobren@gman.com
-              script(type='text/javascript')
-            td.phone 537-4267
-            td.cell 621-124-4294
-            td.buttoncell
-              a.unconfirm(href='#', alt='Confirmed') Confirmed
-        tr
-          td
-            | Kevin D. Turner
-            td.email
-              | kturn@gman.com
-              script(type='text/javascript')
-            td.phone 942-2674
-            td.cell 930-654-4144
-            td.buttoncell
-              a.confirm(href='#', alt='RSVP') RSVP
+    h1#header {{greeting}} 
+    | {{> assignment}}

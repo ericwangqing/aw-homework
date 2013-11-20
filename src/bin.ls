@@ -10,5 +10,5 @@ if Meteor.is-client
     # alert "Great Work"
 
   Meteor.startup ->
-    Session.set 'my-test', 11
+    Session.set 'my-test', 11   
     
