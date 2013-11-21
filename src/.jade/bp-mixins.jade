@@ -22,17 +22,17 @@ mixin __input(label, value)
       | {{#if bp-attribute-permit _id '#{value}' 'edit'}}
       block     
       | {{else}}
-      span {{#{value}}}
+      span {{bs "#{value}"}}
       | {{/if}}
 
 mixin text(label, value)
   +__input(label, value)
-    input(type='text', name=value, value='{{#{value}}}') 
+    input(type='text', name=value, value!="{{bs '#{value}'}}") 
 
 mixin email(value, required)
   +__input('电子邮件', value)
     //- -var req = required? 'required': ''
-    input(type='email', name='email', value='{{#{value}}}',  required=required) 
+    input(type='email', name='email', value!="{{bs '#{value}'}}",  required=required) 
 
 
 
