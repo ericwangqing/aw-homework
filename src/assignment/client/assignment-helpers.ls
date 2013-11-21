@@ -5,3 +5,6 @@ Template.assignments-list.helpers do
 Template.assignment.helpers do
   assignment: ->
     Assignments.find!fetch![0] 
+
+Template.assignment.rendered = ->
+  $(@find 'form').parsley('validate')

@@ -32,7 +32,7 @@ mixin text(label, value)
 mixin email(value, required)
   +__input('电子邮件', value)
     //- -var req = required? 'required': ''
-    input(type='email', name='email', value!="{{bs '#{value}'}}",  required=required) 
+    input(type='email', name='email', value!="{{bs '#{value}'}}",  parsley-trigger="change", required=required) 
 
 
 
