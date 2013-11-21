@@ -7,6 +7,7 @@ bin/*
 !bin/smart.json
 !bin/.meteor/
 bin/.meteor/*
+!bin/.meteor/.gitignore
 !bin/.meteor/packages
 !bin/.meteor/release
 .sass-cache
