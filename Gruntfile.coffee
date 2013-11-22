@@ -106,7 +106,7 @@ module.exports = (grunt)->
       script:
         files: ["src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "src/.jade/**/*.jade", "compass/**/*.sass"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
-        tasks: ["clean", "copy:main", "concat", "livescript", "compass", "jade", "simplemocha"]
+        tasks: ["clean", "copy", "concat", "livescript", "compass", "jade", "simplemocha"]
         options:
           spawn: true
           # livereload: false # 这里我们是meteor在reload！

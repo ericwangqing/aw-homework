@@ -7,6 +7,6 @@ standard-app-packages
 autopublish
 insecure
 preserve-inputs
-sugar
 jquery-ui
 bootstrap
+sugar
