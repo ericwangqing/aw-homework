@@ -1,6 +1,7 @@
 //- 此处定义所有的BP控件，在BP平台上的应用，需要用这些Mixin来定义界面
   1、这些控件接入了BP的权限检查和validation
   2、用于创建和修改的表单
+  注意：这里的逻辑正确性、数据合法性控制很松，因为，这些逻辑是开发者在开发时使用的，不是用户使用的
 
 mixin form(collectionName, item)
   //- set collection name 便于在渲染item的时候确定permission，这里如果能够在jade的block里passing就最好了，现在是无奈，只好从Meteor help走
@@ -15,14 +16,14 @@ mixin form(collectionName, item)
   | {{/with}} 
 
 //- 重要！！此处实现B+的权限控制
-mixin __input(label, value)
+mixin __input(label, attr)
   .controls
     label #{label}:
       | {{#if bp-act-is _id 'edit'}}
-      |   {{#if bp-attribute-permit _id '#{value}' 'edit'}}
+      |   {{#if bp-attribute-permit _id '#{attr}' 'edit'}}
       block     
       |   {{else}}
-      span {{bs "#{value}"}}
+      span {{bs "#{attr}"}}
       |   {{/if}}
       | {{/if}}
       | {{#if bp-act-is _id 'create'}}
@@ -32,21 +33,25 @@ mixin __input(label, value)
 //- --------------- 各种文本域，都是 input type = 'text' --------------------
 
 //- 可以自由添加Parsely validation条件的text
-mixin text(label, value, validations)
-  +__input(label, value)
-    != "<input type='text' name=" + value + " value='{{bs \"" + value + "\"}}'" + (validations? validations : '') + "/>"
+mixin text(label, attr, validations)
+  +__input(label, attr)
+    - var valueStr = attr? ("name=" + attr + " value='{{bs \"" + attr + "\"}}'") : '' 
+    != "<input type='text' " + valueStr + (validations? validations : '') + "/>"
     //- input(type='text', name=value, value!="{{bs '#{value}'}}") 
 
-mixin no-blank-text(label, value)
-  +text(label, value, "parsley-notblank='true' parsley-trigger='change'")
+mixin no-blank-text(label, attr)
+  +text(label, attr, "parsley-notblank='true' parsley-trigger='change'")
 
-mixin min-text(label, value, min)
-  +text(label, value, "parsley-minlength='" + min + "' parsley-trigger='change'")
+mixin min-text(label, attr, min)
+  +text(label, attr, "parsley-minlength='" + min + "' parsley-trigger='change'")
 
-mixin max-text(label, value, max)
-  +text(label, value, "parsley-maxlength='" + max + "' parsley-trigger='change'")
+mixin max-text(label, attr, max)
+  +text(label, attr, "parsley-maxlength='" + max + "' parsley-trigger='change'")
 
-//- mixin ahead(label, value)
+mixin ahead(label, attr, candidates)
+  -console.log("candidates are: ", JSON.stringify(candidates));
+  +text(label, attr)
+  | {{bp-add-typeahead "#{attr}" "#{candidates}"}}
 
 //- ------ 待实现 ------
   range text
@@ -70,13 +75,13 @@ mixin max-text(label, value, max)
 
 //- --------------- 各种普通专用域，很多都有HMTL5的专用type --------------------
 
-mixin email(value, required)
-  +__input('电子邮件', value)
-    input(type='email', name='email', value!="{{bs '#{value}'}}",  parsley-trigger="change", required=required) 
+mixin email(attr, required)
+  +__input('电子邮件', attr)
+    input(type='email', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required) 
 
-mixin number(label, value, required)
-  +__input(label, value)
-    input(type='number', name='email', value!="{{bs '#{value}'}}",  parsley-trigger="change", required=required) 
+mixin number(label, attr, required)
+  +__input(label, attr)
+    input(type='number', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required) 
 
 //- ------ 待实现 ------
   password #用Parsley的Equal To

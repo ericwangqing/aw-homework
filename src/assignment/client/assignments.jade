@@ -4,6 +4,7 @@ template(name='assignmentsList')
 
 template(name='assignment')
   +form('assignments', 'assignment')
+    //- 这些表单控件都是 label，attr，options的参数结构
     +text('题目', 'title')
     //- +text('要求', 'requirement')
     +no-blank-text('要求', 'requirement')
@@ -13,3 +14,4 @@ template(name='assignment')
     +text('发布时间', 'createdAtTime')
     +number('截止时间', 'deadline', 'required')
     +email('email', false) 
+    +ahead('ahead', 'ahead', ['中国', '美国', '日本'])
