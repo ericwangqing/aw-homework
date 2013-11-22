@@ -14,15 +14,20 @@ mixin form(collectionName, item)
     | {{/if}}
   | {{/with}} 
 
+//- 重要！！此处实现B+的权限控制
 mixin __input(label, value)
   .controls
     label #{label}:
-      | {{#if bp-attribute-permit _id '#{value}' 'edit'}}
+      | {{#if bp-act-is _id 'edit'}}
+      |   {{#if bp-attribute-permit _id '#{value}' 'edit'}}
       block     
-      | {{else}}
+      |   {{else}}
       span {{bs "#{value}"}}
+      |   {{/if}}
       | {{/if}}
-
+      | {{#if bp-act-is _id 'create'}}
+      block     
+      | {{/if}}
 //- ==========  以下为表单控件，常用于详情（修改、添加）   ======================
 //- --------------- 各种文本域，都是 input type = 'text' --------------------
 
