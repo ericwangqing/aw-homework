@@ -1,6 +1,6 @@
 collection-name = 'assignments'
 add-typeahead = null
-Template.assignments-list.helpers do
+Template['assignments-list'].helpers do
   assignments: ->
     Assignments.find!
 
