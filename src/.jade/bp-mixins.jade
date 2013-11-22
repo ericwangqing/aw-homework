@@ -9,7 +9,7 @@ mixin form(collectionName, item)
   | {{bp-set-collection "#{collectionName}"}} 
   | {{#with #{item}}}
   - var collection = collectionName
-  form(parsley-validate) 
+  form(parsley-validate, novalidate) 
     block(colletion=collectionName)
     | {{#if bp-collection-permit 'edit'}}
     input(type='submit', value='提交') 
@@ -82,7 +82,7 @@ mixin email(attr, required)
 
 mixin number(label, attr, required)
   +__input(label, attr)
-    input(type='number', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required) 
+    input(type='text', name=label,  parsley-type='number', parsley-trigger="change", required=required) 
 
 //- ------ 待实现 ------
   password #用Parsley的Equal To

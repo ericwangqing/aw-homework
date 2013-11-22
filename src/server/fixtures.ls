@@ -1,4 +1,4 @@
-if Assignments.find!count! is 0
+if Assignments?.find!count! is 0
   Assignments.insert do
     # _id: '111111'
     teacher: '王青'
