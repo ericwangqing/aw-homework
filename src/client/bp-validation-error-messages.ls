@@ -1,6 +1,5 @@
 # 表单校验出错时，显示的信息。默认由lib/parsley.messages.zh_cn.js提供，可在这里改写和添加。
-@BP ||= {}
-BP.config-error-messages = ->
+config-error-messages = ->
   # BP.until-obj-available 'window.ParsleyConfig', ->
   if window.Parsley-config 
     # console.log "get Parsley-config", window.Parsley-config
@@ -9,7 +8,11 @@ BP.config-error-messages = ->
   else
     console.log "default error message not loaded yet!"
 
-# 以下为Parsley原设置 
+Meteor.startup ->
+    config-error-messages!
+
+
+# =================== 以下为Parsley原设置 ==============================
 # window.ParsleyConfig = window.ParsleyConfig || {};
 
 # (function ($) {

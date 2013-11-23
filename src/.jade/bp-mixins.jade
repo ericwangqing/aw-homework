@@ -6,7 +6,6 @@
 //- ==========  以下为表单控件，常用于详情（修改、添加）   ======================
 mixin form(collectionName, item)
   //- set collection name 便于在渲染item的时候确定permission，这里如果能够在jade的block里passing就最好了，现在是无奈，只好从Meteor help走
-  | {{bp-set-collection "#{collectionName}"}} 
   | {{#with #{item}}}
   - var collection = collectionName
   form(parsley-validate, novalidate) 
@@ -20,14 +19,14 @@ mixin form(collectionName, item)
 mixin __input(label, attr)
   .controls
     label #{label}:
-      | {{#if bp-action-is _id 'edit'}}
-      |   {{#if bp-attribute-permit _id '#{attr}' 'edit'}}
+      | {{#if bp-action-is 'edit'}}
+      |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
       block     
       |   {{else}}
-      span {{bs "#{attr}"}}
+      span {{bs "#{attr}"}} 
       |   {{/if}}
       | {{/if}}
-      | {{#if bp-action-is _id 'create'}}
+      | {{#if bp-action-is 'create'}}
       block     
       | {{/if}}
 

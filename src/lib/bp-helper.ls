@@ -1,5 +1,9 @@
-
 if Meteor.is-client
+  # 初始化bp
+      
+  Handlebars.register-helper 'bs', (attr)-> # 克服Meteor Handlebars不能使用中文key，形如{{中文}}会出错的问题。改用{{bs '中文'}}
+    @[attr]
+
   class Bp-Helper # abstract
     
     @get-instance = (doc-name, template-type, template-name)->
@@ -21,7 +25,7 @@ if Meteor.is-client
 
     init: !->
       @register-data-retriever!
-      # @register-permission-checker!
+      @register-permission-checker!
       # @register-post-render-methods!
       Template[@template-name].helpers @helpers
       Template[@template-name].rendered = !~>
@@ -52,7 +56,7 @@ if Meteor.is-client
       @helpers['bp-attribute-permit'] = @attribute-permission-checker
       @helpers['bp-collection-permit'] = @doc-permission-checker
       @helpers['bp-action-is'] = (action)~>
-        action is @get-current-action
+        action is @get-current-action!
 
   class Bp-List-Helper extends Bp-Helper
     # list型的template name默认为"doc-name的复数-list"，如：assignments-list
