@@ -20,14 +20,14 @@ mixin form(collectionName, item)
 mixin __input(label, attr)
   .controls
     label #{label}:
-      | {{#if bp-act-is _id 'edit'}}
+      | {{#if bp-action-is _id 'edit'}}
       |   {{#if bp-attribute-permit _id '#{attr}' 'edit'}}
       block     
       |   {{else}}
       span {{bs "#{attr}"}}
       |   {{/if}}
       | {{/if}}
-      | {{#if bp-act-is _id 'create'}}
+      | {{#if bp-action-is _id 'create'}}
       block     
       | {{/if}}
 

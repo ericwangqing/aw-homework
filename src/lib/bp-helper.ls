@@ -21,17 +21,38 @@ if Meteor.is-client
 
     init: !->
       @register-data-retriever!
-      # @register-bp-permission-checker!
+      # @register-permission-checker!
       # @register-post-render-methods!
       Template[@template-name].helpers @helpers
       Template[@template-name].rendered = !~>
         [method! for method in @post-render-methods]
 
+    attribute-permission-checker: (attr, action)~> # Template调用，检查当前用户是否有权限进行相应操作
+      #TODO：接入Bp-Permission模块，提供权限功能
+      # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, attr, action
+      # 下面是暂时的fake
+      auto-generated-fields = <[createdAtTime lastModifiedAt _id state]>
+      attr not in auto-generated-fields
+
+    doc-permission-checker: (action)~>
+      #TODO：接入Bp-Permission模块，提供权限功能
+      # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, action
+      # 下面是暂时的fake
+      true
+
+    get-current-action: ->
+      # current-action-obj = Session.get 'bp-current-actions'
+      # find-current-action-on @doc-name, @doc?_id
+      'edit' # 暂时开发时用
+
     register-data-retriever: !->
       @helpers[@data-helper-name] = @data-retriever
 
-
-
+    register-permission-checker: !->
+      @helpers['bp-attribute-permit'] = @attribute-permission-checker
+      @helpers['bp-collection-permit'] = @doc-permission-checker
+      @helpers['bp-action-is'] = (action)~>
+        action is @get-current-action
 
   class Bp-List-Helper extends Bp-Helper
     # list型的template name默认为"doc-name的复数-list"，如：assignments-list
@@ -59,7 +80,8 @@ if Meteor.is-client
       @post-render-methods.push @add-form-validation
 
     data-retriever: (query = {})~> # TODO：这里查询待完善
-      @collection.find-one!
+      @doc = @collection.find-one!
+
 
     add-typeahead-to-input-field: !(attr, candidates)~>
       let item = name: @template-name + attr, attr: attr # 这里要用闭包，多次的attr不一样
@@ -79,6 +101,9 @@ if Meteor.is-client
         form.parsley() # if form.context # Meteor会在这里执行两次，第一次时Parsley还没有完成form初始化
       catch error
         console.log error
+
+
+
 
   # 注意，这个方法会一直在每次event quene里尝试，直到找到obj，所以，慎用！
   until-obj-available-timer = null

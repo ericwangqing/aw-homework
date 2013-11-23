@@ -21,7 +21,7 @@ Handlebars.register-helper 'bp-attribute-permit', (itemid, attr, action)->
   attr not in autos
   # false
 
-Handlebars.register-helper 'bp-act-is', (doc-id, action-name)->
+Handlebars.register-helper 'bp-action-is', (doc-id, action-name)->
   true if action-name is 'edit'
 
 
