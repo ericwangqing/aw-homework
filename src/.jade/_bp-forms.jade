@@ -1,13 +1,20 @@
-//- =============  BP表单控件，常用于详情（修改、添加）   ======================
+//- ---------- 辅助常数与函数 -----------------------------------------------
 - FORM_SPAN = 12 // 默认表单分为12栏布局
 - Field_SPAN = FORM_SPAN / 4 // 域宽默认为每行4个
 
+- P = {} // Parsely 校验属性
+- P.type = function(t){ return "parsley-type='" + t + "' "; }
+- P.trigger = function(event){ return "parsley-trigger='" + event + "' "; }
+- P.notblank = function(){ return "parsley-notblank='true' "; }
+- P.minlength = function(min){ return "parsley-minlength='" + min + "' "; }
+- P.maxlength = function(max){ return "parsley-maxlength='" + max + "' "; } 
+
+//- =============  BP表单控件，常用于详情（修改、添加）   ======================
 mixin form(collectionName, item)
-  //- set collection name 便于在渲染item的时候确定permission，这里如果能够在jade的block里passing就最好了，现在是无奈，只好从Meteor help走
   | {{#with #{item}}}
   - var collection = collectionName
   form.bp-form(parsley-validate, novalidate) 
-    block(colletion=collectionName)
+    block
     | {{#if bp-collection-permit 'edit'}}
     a(href='#', class='bp-submit') 提交
     | {{/if}}
@@ -16,8 +23,7 @@ mixin form(collectionName, item)
 //- 重要！！此处实现B+的权限控制和布局
 mixin __input(label, attr, span)
   - span = span || Field_SPAN
-  - index = index || 0
-  - index++
+  - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航
 
   | {{#if bp-action-is 'edit'}}
   |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
@@ -32,7 +38,7 @@ mixin __input(label, attr, span)
     span.content {{bs "#{attr}"}} 
   |   {{/if}}
   | {{/if}}
-  
+
   | {{#if bp-action-is 'create'}}
   .controls(data-field-span=span, tabindex=index)
     label #{label}:
@@ -46,7 +52,7 @@ mixin row(span)
   div(data-row-span=span)
     block
 
-//- 这里要实现元素的可自动增加、减少的功能
+//- TODO: 这里要实现元素的可自动增加、减少的功能
 mixin fieldset(title)
   fieldset 
     legend #{title}
@@ -58,20 +64,20 @@ mixin fieldset(title)
 mixin text(label, attr, validations, span)
   +__input(label, attr, span)
     - var valueStr = attr? ("name=" + attr + " value='{{bs \"" + attr + "\"}}'") : '' 
-    != "<input type='text' " + valueStr + (validations? validations : '') + " tabindex='-1'/>"
+    != "<input type='text' " + valueStr + (validations? (P.trigger('change') + validations) : '') + " tabindex='-1'/>"
     //- input(type='text', name=value, value!="{{bs '#{value}'}}") 
 
 mixin no-blank-text(label, attr, span)
-  +text(label, attr, "parsley-notblank='true' parsley-trigger='change'", span)
+  +text(label, attr, P.notblank(), span)
 
 mixin min-text(label, attr, min, span)
-  +text(label, attr, "parsley-minlength='" + min + "' parsley-trigger='change'", span)
+  +text(label, attr, P.minlength(min), span)
 
 mixin max-text(label, attr, max, span)
-  +text(label, attr, "parsley-maxlength='" + max + "' parsley-trigger='change'", span)
+  +text(label, attr, P.maxlength(max), span)
 
 mixin ahead(label, attr, candidates, span)
-  -console.log("candidates are: ", JSON.stringify(candidates));
+  - // console.log("candidates are: ", JSON.stringify(candidates));
   +text(label, attr, span)
   | {{bp-add-typeahead "#{attr}" "#{candidates}"}}
 

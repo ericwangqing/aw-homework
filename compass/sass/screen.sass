@@ -16,11 +16,13 @@ body
 
     @import splash
 
-    header, footer
-      height: 15%
-      // background-color: pink
+    header, footer, .left-sidebar
+      // height: 15%
+      background-color: lighten(pink, 10%)
+      color: lighten(black, 85%)
       font-weight: 700
-      font-size: 72px
+      font-size: 24px
+      line-height: 72px
       span
         font-weight: 300
         font-size: 18px
@@ -28,7 +30,7 @@ body
 
     .left-sidebar
       +span-columns(2)
-      // background-color: green
+      background-color: lighten(green, 72%)
       height: 70%
     .main-content
       +span-columns(10 omega)

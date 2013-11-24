@@ -6,11 +6,14 @@ head
   //- link(href='stylesheets/screen.css', media='screen, projection', rel='stylesheet', type='text/css')
 body
   .container
-    //- h1#header {{greeting}} 
-    header 112
-    .left-sidebar 223
-    .main-content
+    header
+      | {{> bp-banner}}
+      | {{> bp-main-nav}}
+      //- h1#header {{greeting}} 
+    aside.left-sidebar
+      | {{> bp-second-nav}}
+    article.main-content
       //- | {{> splash}}
       | {{> assignment}}      
-    .right-sidebar
+    aside.right-sidebar
     footer
