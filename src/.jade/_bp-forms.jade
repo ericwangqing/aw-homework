@@ -1,9 +1,8 @@
 //- =============  BP表单控件，常用于详情（修改、添加）   ======================
-//- mixin global(i)
-//-   - closure = function(){ var a = 0; }
+- FORM_SPAN = 12 // 默认表单分为12栏布局
+- Field_SPAN = FORM_SPAN / 4 // 域宽默认为每行4个
 
 mixin form(collectionName, item)
-  div #{bp}
   //- set collection name 便于在渲染item的时候确定permission，这里如果能够在jade的block里passing就最好了，现在是无奈，只好从Meteor help走
   | {{#with #{item}}}
   - var collection = collectionName
@@ -13,28 +12,29 @@ mixin form(collectionName, item)
     a(href='#', class='bp-submit') 提交
     | {{/if}}
   | {{/with}} 
+
 //- 重要！！此处实现B+的权限控制和布局
 mixin __input(label, attr, span)
-  //- 默认一个输入域的宽度为整行的1/4
-  - span = span || 3
-  - bp.index = bp.index || 0
-  - bp.index++
-  //- != "<div class='controls' data-field-span='" + span + "' tabindex="
-  //- .controls(data-field-span=span, tabindex=bp.index)
-  //-   label #{label}:
+  - span = span || Field_SPAN
+  - index = index || 0
+  - index++
+
   | {{#if bp-action-is 'edit'}}
   |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
-  .controls(data-field-span=span, tabindex=bp.index)
+  .controls(data-field-span=span, tabindex=index)
     label #{label}:
     block     
+
   |   {{else}}
+  //- 不可编辑的域只显示值，并且不可tab导航
   .controls(data-field-span=span)
     label #{label}:
     span.content {{bs "#{attr}"}} 
   |   {{/if}}
   | {{/if}}
+  
   | {{#if bp-action-is 'create'}}
-  .controls(data-field-span=span, tabindex=bp.index)
+  .controls(data-field-span=span, tabindex=index)
     label #{label}:
     block     
   | {{/if}}
@@ -42,7 +42,7 @@ mixin __input(label, attr, span)
 //- --------------- 布局用控件 ---------------------------------------------
 mixin row(span)
   //- 默认为整行布局，划为12栏
-  - span = span || 12
+  - span = span || FORM_SPAN
   div(data-row-span=span)
     block
 

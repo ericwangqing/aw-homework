@@ -1,6 +1,4 @@
 if Meteor.is-client
-  # 初始化bp
-
   Handlebars.register-helper 'bs', (attr)-> # 克服Meteor Handlebars不能使用中文key，形如{{中文}}会出错的问题。改用{{bs '中文'}}
     @[attr]
 
@@ -21,7 +19,6 @@ if Meteor.is-client
     (@doc-name)->
       @collection = eval @doc-name.pluralize!capitalize!
       @helpers = {}
-      # @permission-checkers = {}
       @events-handlers = {}
       @post-render-methods = []
 
@@ -109,10 +106,6 @@ if Meteor.is-client
             local: [str.trim! for str in candidates.split ',']
 
     add-form-validation: !->
-      # Meteor.defer -> # 这里需要改进，因为parsley的加载问题，用ut
-        # Meteor.defer ->
-          # Meteor.defer ->
-      # _until-obj-available '$.fn.parsley', ~>
       try
         form = $ 'form' .first!
         # console.log "form.context is: ", form.context
@@ -124,25 +117,7 @@ if Meteor.is-client
       @events-handlers['focus div.controls'] = @tab-focuse-with-div-control-highlight-and-input-focused
       @events-handlers['blur div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight-and-input-focused
 
-
-
-
-  # 注意，这个方法会一直在每次event quene里尝试，直到找到obj，所以，慎用！
-  # until-obj-available-timer = null
-  # _until-obj-available = (obj-str, fn, args)->
-  #   clear-timeout until-obj-available-timer if until-obj-available-timer
-  #   console.log "****** obj-str ....", obj-str
-  #   obj = eval obj-str
-  #   # console.log "****** obj ....", obj
-  #   if obj
-  #         Meteor.defer -> fn.apply obj, args
-  #   else
-  #     console.log "****** wait ...."
-  #     until-obj-available-timer = set-timeout  ->
-  #       BP.until-obj-available obj-str, fn, args
-
-
-
+# 同时run在服务端和客户端
 create-bp-pages-for-doc = !(doc-name)->
   collection-name = doc-name.pluralize!
   @[collection-name.capitalize!] = new Meteor.Collection collection-name
@@ -158,8 +133,3 @@ create-bp-pages-for-doc = !(doc-name)->
 
 BP.create-bp-pages-for-doc = -> # 确保this指向顶层对象
   create-bp-pages-for-doc.apply null, arguments
-
-if Meteor.is-client
-  BP.create-tempalte-manager = Bp-Helper.get-helper # 这里用manager命名，因为controller被iron-router用了
-
-
