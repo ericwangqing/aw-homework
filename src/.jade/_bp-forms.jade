@@ -1,0 +1,113 @@
+//- =============  BP表单控件，常用于详情（修改、添加）   ======================
+
+mixin form(collectionName, item)
+  //- set collection name 便于在渲染item的时候确定permission，这里如果能够在jade的block里passing就最好了，现在是无奈，只好从Meteor help走
+  | {{#with #{item}}}
+  - var collection = collectionName
+  form(parsley-validate, novalidate) 
+    block(colletion=collectionName)
+    | {{#if bp-collection-permit 'edit'}}
+    input(type='submit', value='提交') 
+    | {{/if}}
+  | {{/with}} 
+
+//- 重要！！此处实现B+的权限控制
+mixin __input(label, attr)
+  .controls
+    label #{label}:
+      | {{#if bp-action-is 'edit'}}
+      |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
+      block     
+      |   {{else}}
+      span {{bs "#{attr}"}} 
+      |   {{/if}}
+      | {{/if}}
+      | {{#if bp-action-is 'create'}}
+      block     
+      | {{/if}}
+
+//- --------------- 各种文本域，都是 input type = 'text' --------------------
+
+//- 可以自由添加Parsely validation条件的text
+mixin text(label, attr, validations)
+  +__input(label, attr)
+    - var valueStr = attr? ("name=" + attr + " value='{{bs \"" + attr + "\"}}'") : '' 
+    != "<input type='text' " + valueStr + (validations? validations : '') + "/>"
+    //- input(type='text', name=value, value!="{{bs '#{value}'}}") 
+
+mixin no-blank-text(label, attr)
+  +text(label, attr, "parsley-notblank='true' parsley-trigger='change'")
+
+mixin min-text(label, attr, min)
+  +text(label, attr, "parsley-minlength='" + min + "' parsley-trigger='change'")
+
+mixin max-text(label, attr, max)
+  +text(label, attr, "parsley-maxlength='" + max + "' parsley-trigger='change'")
+
+mixin ahead(label, attr, candidates)
+  -console.log("candidates are: ", JSON.stringify(candidates));
+  +text(label, attr)
+  | {{bp-add-typeahead "#{attr}" "#{candidates}"}}
+
+//- ------ 待实现 ------
+  range text
+  text area
+  search
+  voice
+  ahead ！！注意：非常重要
+  regexp text
+
+
+//- --------------- 各种选择域 ------------------------------------------
+//- ------ 待实现 ------
+  radio
+  dropdown
+  checkbox
+  on|off button
+  grid button
+  file
+
+
+
+//- --------------- 各种普通专用域，很多都有HMTL5的专用type --------------------
+
+mixin email(attr, required)
+  +__input('电子邮件', attr)
+    input(type='email', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required) 
+
+mixin number(label, attr, required)
+  +__input(label, attr)
+    input(type='text', name=label,  parsley-type='number', parsley-trigger="change", required=required) 
+
+//- ------ 待实现 ------
+  password #用Parsley的Equal To
+  tel # Parsley的Phone
+  url
+  min-number
+  max-number
+  range
+  digit
+  color
+  date date-picker
+  datetime
+  datetime-local
+  month
+  time
+  week
+
+//- --------------- 各种企业计算专用域，B+平台专属提供 --------------------
+  cascade search # 类似http://documentcloud.github.io/visualsearch/#demo
+  object search # 类似http://combogrid.justmybit.com/default.php
+  talk box
+  comment box
+  inner search box
+  ...
+
+
+
+
+
+//- mixin all-text(items)
+//-   each item in items
+//-     +text(item.label, item.value)
+

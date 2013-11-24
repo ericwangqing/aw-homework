@@ -33,3 +33,23 @@ BPM = (origin-method)->
 '''
 usage: （待设计）正确将工作流中的数据导航到BP enable的模板上，并传递相应的pid
 '''
+
+bp-state = # 当前视图可见数据集、数据项及用户对其所能进行的操作
+  # BP视图的位面，data | process
+  view-type: 'data' # 表明当前位面，当前位面的数据用以供BPH定制页面，此外位面的数据仅仅视其存在性，给出链接
+  data:
+    * collection-name: 'homeworks'
+      id: null #当action列表数据（list）时，或者创建数据项（create）时，此处为null
+      action: 'create' # create | edit | list | look
+    * collection-name: 'assignments'
+      id: 'aid1'
+      action: 'look'
+  process: # 
+    task-name: 'submit-homework' # 此处待进行task设计之后再进一步明确
+
+    # * collection-name: 'homeworks'
+    #   id: null #当action列表数据（list）时，或者创建数据项（create）时，此处为null
+    #   action: 'create' # create | edit | list | look
+    # * collection-name: 'assignments'
+    #   id: 'aid1'
+      action: 'look'

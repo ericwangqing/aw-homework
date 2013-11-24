@@ -1,12 +1,13 @@
 if Meteor.is-client
   # 初始化bp
-      
+
   Handlebars.register-helper 'bs', (attr)-> # 克服Meteor Handlebars不能使用中文key，形如{{中文}}会出错的问题。改用{{bs '中文'}}
     @[attr]
 
-  class Bp-Helper # abstract
+  class Bp-Helper # abstract and Factory
     
-    @get-instance = (doc-name, template-type, template-name)->
+    # Factory method
+    @get-helper = (doc-name, template-type, template-name)->
       if template-type is 'list'
         new Bp-List-Helper doc-name, template-name
       else if template-type is 'detail'
@@ -70,8 +71,6 @@ if Meteor.is-client
       @collection.find query
 
 
-
-
   class Bp-Detail-Helper extends Bp-Helper
     # detail型的template name默认与doc-name一致
     (doc-name, template-name)->
@@ -110,18 +109,18 @@ if Meteor.is-client
 
 
   # 注意，这个方法会一直在每次event quene里尝试，直到找到obj，所以，慎用！
-  until-obj-available-timer = null
-  _until-obj-available = (obj-str, fn, args)->
-    clear-timeout until-obj-available-timer if until-obj-available-timer
-    console.log "****** obj-str ....", obj-str
-    obj = eval obj-str
-    # console.log "****** obj ....", obj
-    if obj
-          Meteor.defer -> fn.apply obj, args
-    else
-      console.log "****** wait ...."
-      until-obj-available-timer = set-timeout  ->
-        BP.until-obj-available obj-str, fn, args
+  # until-obj-available-timer = null
+  # _until-obj-available = (obj-str, fn, args)->
+  #   clear-timeout until-obj-available-timer if until-obj-available-timer
+  #   console.log "****** obj-str ....", obj-str
+  #   obj = eval obj-str
+  #   # console.log "****** obj ....", obj
+  #   if obj
+  #         Meteor.defer -> fn.apply obj, args
+  #   else
+  #     console.log "****** wait ...."
+  #     until-obj-available-timer = set-timeout  ->
+  #       BP.until-obj-available obj-str, fn, args
 
 
 
@@ -129,8 +128,8 @@ create-bp-pages-for-doc = !(doc-name)->
   collection-name = doc-name.pluralize!
   @[collection-name.capitalize!] = new Meteor.Collection collection-name
   if Meteor.is-client
-    list-page =  Bp-Helper.get-instance doc-name, 'list'
-    detail-page = Bp-Helper.get-instance doc-name, 'detail'
+    list-page =  Bp-Helper.get-helper doc-name, 'list'
+    detail-page = Bp-Helper.get-helper doc-name, 'detail'
     
     # 注意：不知道有无可能在router的controller里面，再初始化这些，这样会提高初次加载的速度
     list-page.init!
@@ -142,6 +141,6 @@ BP.create-bp-pages-for-doc = -> # 确保this指向顶层对象
   create-bp-pages-for-doc.apply null, arguments
 
 if Meteor.is-client
-  BP.create-tempalte-manager = Bp-Helper.get-instance # 这里用manager命名，因为controller被iron-router用了
+  BP.create-tempalte-manager = Bp-Helper.get-helper # 这里用manager命名，因为controller被iron-router用了
 
 

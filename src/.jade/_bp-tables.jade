@@ -1,0 +1,36 @@
+//- ==========  以下为表格，常用于列表（删除、（去）添加、（去）修改）   ==========
+
+//- 用于展示的列表
+mixin table(items, columnNames, attributesNames)
+  +create-button()
+  table
+    thead
+      tr
+        each col, index in columnNames
+          th(cols=index) #{col}
+        th(cols=index+1) 操作
+    tbody
+      +rows(items, columnNames, attributesNames)
+
+mixin rows(items, columnNames, attributesNames)
+  | {{#each #{items}}}
+  tr
+  each attr, index in attributesNames
+    td(cols=index) {{#{attr}}}
+  | {{/each}}  
+  //- 这里index访问不到，如何访问到？
+  td(cols=index+1) 
+  | {{#if bp-collection-permit 'edit'}}
+  //- 编辑的按钮
+  | {{/if}}
+
+  | {{#if bp-collection-permit 'delete'}}
+  //- 删除的按钮
+  | {{/if}}
+
+//- B+中的列表（表格），当用户有权限时，会显示"添加"。
+mixin create-button()
+  | {{#if bp-collection-permit 'create'}}
+  form
+    input(type='submit', value='增加') 
+  | {{/if}}

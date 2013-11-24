@@ -2,16 +2,41 @@
 
 body
   +susy-grid-background
-  background: #F7F3F8
+  background: #F8F9FA
   a
     text-decoration: none
 
+
   .container
+    +susy-grid-background
     +container($total-columns, $tablet, $computer)
+    height: 720px
     [disabled]
       background-color: lightgray
 
-    #header
+    #splash
+      height: auto
+      min-height: 10em
+      font-size: 72px
+      display: flex
+      align-items: center
+      justify-content: center
+      .logo
+        max-width: 60%
+        display: block
+      .slug
+        clear: both
+        font-size: 36px
+        margin-left: -290px
+        margin-top: 135px
+        display: block
+      &.fadeout
+        +animate(fadeOutUp)
+
+
+    header, footer
+      height: 15%
+      background-color: pink
       font-weight: 700
       font-size: 72px
       span
@@ -19,55 +44,62 @@ body
         font-size: 18px
         display: block
 
-    #controls
-      #buttons
-        margin-bottom: 5px
-        #phonebook
-          +sassy-button("simple", 6px, 14px, #337EC4)
-        #newguest
-          margin-top: 5px
-          +sassy-button("simple", 6px, 14px, #D93131)
+    .left-sidebar
+      +span-columns(3)
+      background-color: green
+      height: 70%
+    .main-content
+      +span-columns(9 omega)
 
-    table
-      width: 100%
-      thead
-        color: #FEFEFE
-        background: #000
-        th
-          text-align: left
-          font-weight: 500
-          padding: 10px
-      tbody
-        border: 3px solid #000 
-        tr
-          background: #E5E5E5
-        tr.alt
-          background: #EEE
-        .buttoncell
-          .confirm
-            +sassy-button("simple", 6px, 14px, #F39B06)
-          .unconfirm
-            +sassy-button("flat", 6px, 14px, #3BA06F)
-      .email, .cell
-        display: none
+//     #controls
+//       #buttons
+//         margin-bottom: 5px
+//         #phonebook
+//           +sassy-button("simple", 6px, 14px, #337EC4)
+//         #newguest
+//           margin-top: 5px
+//           +sassy-button("simple", 6px, 14px, #D93131)
 
-+at-breakpoint($tablet)
-  body .container
-    #header span, table .email
-      display: inline
+//     table
+//       width: 100%
+//       thead
+//         color: #FEFEFE
+//         background: #000
+//         th
+//           text-align: left
+//           font-weight: 500
+//           padding: 10px
+//       tbody
+//         border: 3px solid #000 
+//         tr
+//           background: #E5E5E5
+//         tr.alt
+//           background: #EEE
+//         .buttoncell
+//           .confirm
+//             +sassy-button("simple", 6px, 14px, #F39B06)
+//           .unconfirm
+//             +sassy-button("flat", 6px, 14px, #3BA06F)
+//       .email, .cell
+//         display: none
 
-+at-breakpoint($computer)
-  body .container
-    #controls
-      #menutitle
-        +span-columns(5)
-        margin-top: 5px
-      #buttons
-        text-align: right
-        +span-columns(5 omega)
+// +at-breakpoint($tablet)
+//   body .container
+//     #header span, table .email
+//       display: inline
 
-    table
-      // +prefix(1)
-      // +suffix(2)
-      .email, .cell 
-        display: table-cell
+// +at-breakpoint($computer)
+//   body .container
+//     #controls
+//       #menutitle
+//         +span-columns(5)
+//         margin-top: 5px
+//       #buttons
+//         text-align: right
+//         +span-columns(5 omega)
+
+//     table
+//       // +prefix(1)
+//       // +suffix(2)
+//       .email, .cell 
+//         display: table-cell
