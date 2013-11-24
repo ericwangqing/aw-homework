@@ -86,6 +86,8 @@ module.exports = (grunt)->
         options:
           debug: false
           pretty: true
+          data:
+            bp: {}
     compass:
       all:
         options:

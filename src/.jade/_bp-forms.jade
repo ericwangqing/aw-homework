@@ -1,52 +1,78 @@
 //- =============  BP表单控件，常用于详情（修改、添加）   ======================
+//- mixin global(i)
+//-   - closure = function(){ var a = 0; }
 
 mixin form(collectionName, item)
+  div #{bp}
   //- set collection name 便于在渲染item的时候确定permission，这里如果能够在jade的block里passing就最好了，现在是无奈，只好从Meteor help走
   | {{#with #{item}}}
   - var collection = collectionName
-  form(parsley-validate, novalidate) 
+  form.bp-form(parsley-validate, novalidate) 
     block(colletion=collectionName)
     | {{#if bp-collection-permit 'edit'}}
-    input(type='submit', value='提交') 
+    a(href='#', class='bp-submit') 提交
     | {{/if}}
   | {{/with}} 
-
-//- 重要！！此处实现B+的权限控制
-mixin __input(label, attr)
-  .controls
+//- 重要！！此处实现B+的权限控制和布局
+mixin __input(label, attr, span)
+  //- 默认一个输入域的宽度为整行的1/4
+  - span = span || 3
+  - bp.index = bp.index || 0
+  - bp.index++
+  //- != "<div class='controls' data-field-span='" + span + "' tabindex="
+  //- .controls(data-field-span=span, tabindex=bp.index)
+  //-   label #{label}:
+  | {{#if bp-action-is 'edit'}}
+  |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
+  .controls(data-field-span=span, tabindex=bp.index)
     label #{label}:
-      | {{#if bp-action-is 'edit'}}
-      |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
-      block     
-      |   {{else}}
-      span {{bs "#{attr}"}} 
-      |   {{/if}}
-      | {{/if}}
-      | {{#if bp-action-is 'create'}}
-      block     
-      | {{/if}}
+    block     
+  |   {{else}}
+  .controls(data-field-span=span)
+    label #{label}:
+    span.content {{bs "#{attr}"}} 
+  |   {{/if}}
+  | {{/if}}
+  | {{#if bp-action-is 'create'}}
+  .controls(data-field-span=span, tabindex=bp.index)
+    label #{label}:
+    block     
+  | {{/if}}
+
+//- --------------- 布局用控件 ---------------------------------------------
+mixin row(span)
+  //- 默认为整行布局，划为12栏
+  - span = span || 12
+  div(data-row-span=span)
+    block
+
+//- 这里要实现元素的可自动增加、减少的功能
+mixin fieldset(title)
+  fieldset 
+    legend #{title}
+    block
 
 //- --------------- 各种文本域，都是 input type = 'text' --------------------
 
 //- 可以自由添加Parsely validation条件的text
-mixin text(label, attr, validations)
-  +__input(label, attr)
+mixin text(label, attr, validations, span)
+  +__input(label, attr, span)
     - var valueStr = attr? ("name=" + attr + " value='{{bs \"" + attr + "\"}}'") : '' 
-    != "<input type='text' " + valueStr + (validations? validations : '') + "/>"
+    != "<input type='text' " + valueStr + (validations? validations : '') + " tabindex='-1'/>"
     //- input(type='text', name=value, value!="{{bs '#{value}'}}") 
 
-mixin no-blank-text(label, attr)
-  +text(label, attr, "parsley-notblank='true' parsley-trigger='change'")
+mixin no-blank-text(label, attr, span)
+  +text(label, attr, "parsley-notblank='true' parsley-trigger='change'", span)
 
-mixin min-text(label, attr, min)
-  +text(label, attr, "parsley-minlength='" + min + "' parsley-trigger='change'")
+mixin min-text(label, attr, min, span)
+  +text(label, attr, "parsley-minlength='" + min + "' parsley-trigger='change'", span)
 
-mixin max-text(label, attr, max)
-  +text(label, attr, "parsley-maxlength='" + max + "' parsley-trigger='change'")
+mixin max-text(label, attr, max, span)
+  +text(label, attr, "parsley-maxlength='" + max + "' parsley-trigger='change'", span)
 
-mixin ahead(label, attr, candidates)
+mixin ahead(label, attr, candidates, span)
   -console.log("candidates are: ", JSON.stringify(candidates));
-  +text(label, attr)
+  +text(label, attr, span)
   | {{bp-add-typeahead "#{attr}" "#{candidates}"}}
 
 //- ------ 待实现 ------
@@ -73,11 +99,11 @@ mixin ahead(label, attr, candidates)
 
 mixin email(attr, required)
   +__input('电子邮件', attr)
-    input(type='email', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required) 
+    input(type='email', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required, tabindex='-1') 
 
 mixin number(label, attr, required)
   +__input(label, attr)
-    input(type='text', name=label,  parsley-type='number', parsley-trigger="change", required=required) 
+    input(type='text', name=label,  parsley-type='number', parsley-trigger="change", required=required, tabindex='-1') 
 
 //- ------ 待实现 ------
   password #用Parsley的Equal To

@@ -1,4 +1,4 @@
-@import _base
+@import base
 
 body
   +susy-grid-background
@@ -8,35 +8,17 @@ body
 
 
   .container
-    +susy-grid-background
+    // +susy-grid-background
     +container($total-columns, $tablet, $computer)
     height: 720px
     [disabled]
       background-color: lightgray
 
-    #splash
-      height: auto
-      min-height: 10em
-      font-size: 72px
-      display: flex
-      align-items: center
-      justify-content: center
-      .logo
-        max-width: 60%
-        display: block
-      .slug
-        clear: both
-        font-size: 36px
-        margin-left: -290px
-        margin-top: 135px
-        display: block
-      &.fadeout
-        +animate(fadeOutUp)
-
+    @import splash
 
     header, footer
       height: 15%
-      background-color: pink
+      // background-color: pink
       font-weight: 700
       font-size: 72px
       span
@@ -46,10 +28,17 @@ body
 
     .left-sidebar
       +span-columns(3)
-      background-color: green
+      // background-color: green
       height: 70%
     .main-content
       +span-columns(9 omega)
+      .bp-form
+        +grid-form($field-focus-color: lighten(yellow, 30%), $font-size-large: 16px, $field-padding: 4px, $label-font-size: 12px, $grid-border-color: #C4C4C4, $legend-color: #9E9D9D)
+        a.bp-submit
+          +sassy-button-structure(2px, 14px, 2px 5px)
+          +sassy-button-gradient("matte", #4ba3cc)
+          // +sassy-button()
+          margin: 10px 0
 
 //     #controls
 //       #buttons

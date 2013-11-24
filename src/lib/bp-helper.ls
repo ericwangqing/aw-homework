@@ -22,13 +22,16 @@ if Meteor.is-client
       @collection = eval @doc-name.pluralize!capitalize!
       @helpers = {}
       # @permission-checkers = {}
+      @events-handlers = {}
       @post-render-methods = []
 
     init: !->
       @register-data-retriever!
       @register-permission-checker!
+      @register-event-handlers!
       # @register-post-render-methods!
       Template[@template-name].helpers @helpers
+      Template[@template-name].events @events-handlers
       Template[@template-name].rendered = !~>
         [method! for method in @post-render-methods]
 
@@ -59,6 +62,8 @@ if Meteor.is-client
       @helpers['bp-action-is'] = (action)~>
         action is @get-current-action!
 
+    register-event-handlers: !-> # empty place holder
+
   class Bp-List-Helper extends Bp-Helper
     # list型的template name默认为"doc-name的复数-list"，如：assignments-list
     (doc-name, template-name)->
@@ -85,6 +90,16 @@ if Meteor.is-client
     data-retriever: (query = {})~> # TODO：这里查询待完善
       @doc = @collection.find-one!
 
+    tab-focuse-with-div-control-highlight-and-input-focused: (e)->
+      control = $ e.current-target 
+      control.add-class 'focus'
+      control.find 'input, textarea' .focus! 
+
+    tab-blur-with-div-control-highlight-and-input-focused: (e)->
+      control = $ e.current-target 
+      control.parents!remove-class 'focus'
+      # control.find 'input, textarea' .focus! 
+
 
     add-typeahead-to-input-field: !(attr, candidates)~>
       let item = name: @template-name + attr, attr: attr # 这里要用闭包，多次的attr不一样
@@ -104,6 +119,10 @@ if Meteor.is-client
         form.parsley() # if form.context # Meteor会在这里执行两次，第一次时Parsley还没有完成form初始化
       catch error
         console.log error
+
+    register-event-handlers: !->
+      @events-handlers['focus div.controls'] = @tab-focuse-with-div-control-highlight-and-input-focused
+      @events-handlers['blur div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight-and-input-focused
 
 
 

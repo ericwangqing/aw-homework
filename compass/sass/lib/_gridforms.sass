@@ -60,13 +60,13 @@
 
     // Fields cannot be spaced away from the grid (clear out margins/padding)
     // Field font sizes need to be applied here
-    input[type="text"], input[type="email"], textarea, select
+    input[type="text"], input[type="email"], textarea, select, span.content
         font-size: $font-size-large
         padding: 0
         margin: 0
         width: 100%
     // Remove backgrounds and borders from fields
-    input[type="text"], input[type="email"], textarea
+    input[type="text"], input[type="email"], textarea, span.content
         border: 0
         background: transparent
         +_placeholder
@@ -74,6 +74,11 @@
             color: lighten($label-color, 15%)
         &:focus
             outline: none
+
+    span.content
+        display: inline-block
+        color: lighten($label-color, 15%)
+
     fieldset
         border: none
         padding: 0
