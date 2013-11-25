@@ -21,8 +21,8 @@ mixin form(item)
 
 //- 重要！！此处实现B+的权限控制和布局
 mixin __input(label, attr, span)
-  - span = span || Field_SPAN
-  - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航
+  - var span = span || Field_SPAN
+  - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航。为了在mixin和block之间传递，使用了全局变量。注意：此处不用在结束form的渲染时，将index清零，因为：1）tabindex在一个页面上应该可以在多个表单连续工作；2）jade在渲染两份jade文件时，使用全新的环境，因此不会造成下一个HTML的tabindex被连续排号的问题。
 
   | {{#if bp-action-is 'edit'}}
   |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
@@ -47,7 +47,7 @@ mixin __input(label, attr, span)
 //- --------------- 布局用控件 ---------------------------------------------
 mixin row(span)
   //- 默认为整行布局，划为12栏
-  - span = span || FORM_SPAN
+  - var span = span || FORM_SPAN
   div(data-row-span=span)
     block
 
@@ -60,24 +60,26 @@ mixin fieldset(title)
 //- --------------- 各种文本域，都是 input type = 'text' --------------------
 
 //- 可以自由添加Parsely validation条件的text
-mixin text(label, attr, validations, span)
+mixin text(label, attr, condition, required, span)
   +__input(label, attr, span)
-    - var valueStr = attr? ("name=" + attr + " value='{{bs \"" + attr + "\"}}'") : '' 
-    != "<input type='text' " + valueStr + (validations? (P.trigger('change') + validations) : '') + " tabindex='" + index +"'/>"
+    - var valueStr = attr? ("name='" + attr + "' value='{{bs \"" + attr + "\"}}' ") : '' 
+    - var validationStr = condition? (P.trigger('change') + condition) : ''
+    - var validationStr = required? (validationStr + " required=required") : validationStr
+    != "<input type='text' " + valueStr + validationStr + " tabindex='" + index +"'/>"
     //- input(type='text', name=value, value!="{{bs '#{value}'}}") 
 
-mixin no-blank-text(label, attr, span)
-  +text(label, attr, P.notblank(), span)
+mixin no-blank-text(label, attr, condition, required, span)
+  +text(label, attr, P.notblank(), required, span)
 
-mixin min-text(label, attr, min, span)
-  +text(label, attr, P.minlength(min), span)
+mixin min-text(label, attr, min, required, span)
+  +text(label, attr, P.minlength(min), required, span)
 
-mixin max-text(label, attr, max, span)
-  +text(label, attr, P.maxlength(max), span)
+mixin max-text(label, attr, max, required, span)
+  +text(label, attr, P.maxlength(max), required, span)
 
-mixin ahead(label, attr, candidates, span)
+mixin ahead(label, attr, candidates, required, span)
   - // console.log("candidates are: ", JSON.stringify(candidates));
-  +text(label, attr, span)
+  +text(label, attr, null, required, span)
   | {{bp-add-typeahead "#{attr}" "#{candidates}"}}
 
 //- ------ 待实现 ------
@@ -102,13 +104,19 @@ mixin ahead(label, attr, candidates, span)
 
 //- --------------- 各种普通专用域，很多都有HMTL5的专用type --------------------
 //- TODO: 重构，和text合并
-mixin email(attr, required)
-  +__input('电子邮件', attr)
-    input(type='email', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required, tabindex=index) 
+mixin __control(type, label, attr, condition, required)
+  //- +__input(label, attr)
+    //- input(type='text', name=attr,  parsley-type=type, value!="{{bs '#{attr}'}}", parsley-trigger="change", required=required, tabindex=index) 
+    //- 这里的type目前都用的是text，因为parsley中，有时候其它类型会触发不了校验。
+    //- 所以，现在这里直接用text
+  - var condition = P.type(type) + ' ' + (condition? condition : '')
+  +text(label, attr, condition, required)
 
-mixin number(label, attr, required)
-  +__input(label, attr)
-    input(type='text', name=label,  parsley-type='number', parsley-trigger="change", required=required, tabindex=index) 
+mixin email(label, attr, condition, required)
+  +__control('email', label, attr, condition, required)
+
+mixin number(label, attr, condition, required)
+  +__control('number', label, attr, condition, required)
 
 //- ------ 待实现 ------
   password #用Parsley的Equal To
