@@ -1,0 +1,32 @@
+head
+  meta(name='viewport', content='width=device-width, initial-scale=1')
+  script(src='/lib/parsley.messages.zh_cn.js')
+  script(src='/lib/parsley.js')
+  script(src='/lib/typeahead.js')
+
+template(name='layout')
+  .container
+    header
+      | {{> bp-banner}}
+      | {{> bp-main-nav}}
+      //- h1#header {{greeting}} 
+    aside.left-sidebar
+      | {{> bp-second-nav}}
+    article.main-content
+      //- | {{> splash}}
+      | {{yield}}      
+    aside.right-sidebar
+    footer
+
+template(name='bp-banner')
+  i.fa.fa-camera-retro fa-camera-retro
+  a(href='/') BP Banner
+
+template(name='bp-main-nav')
+  | {{#each route-paths}}
+  a(href="{{pathFor this}}") {{this}}
+  | {{/each}}
+
+
+template(name='bp-second-nav')
+  | 2nd Nav

@@ -79,7 +79,7 @@ module.exports = (grunt)->
         files: [
           expand: true
           cwd: 'src'
-          src: ['**/*.jade', '!.jade/**/*']
+          src: ['**/*.jade', '!lib/.jade/**/*']
           dest: 'bin'
           ext: '.html'
         ]
