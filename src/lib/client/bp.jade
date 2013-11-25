@@ -1,0 +1,11 @@
+template(name='bp-banner')
+  a(href='/') BP Banner
+
+template(name='bp-main-nav')
+  | {{#each subscribed}}
+  a(href="{{pathFor this}}") {{this}}
+  | {{/each}}
+
+
+template(name='bp-second-nav')
+  | 2nd Nav

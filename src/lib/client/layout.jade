@@ -1,0 +1,13 @@
+template(name='layout')
+  .container
+    header
+      | {{> bp-banner}}
+      | {{> bp-main-nav}}
+      //- h1#header {{greeting}} 
+    aside.left-sidebar
+      | {{> bp-second-nav}}
+    article.main-content
+      //- | {{> splash}}
+      | {{yield}}      
+    aside.right-sidebar
+    footer

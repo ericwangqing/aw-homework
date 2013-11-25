@@ -70,7 +70,7 @@ if Meteor.is-client
       @data-helper-name = @doc-name.pluralize!
     
     data-retriever: (query = {})~> 
-      @collection.find query
+      @doc = @collection.find!
 
 
   class Bp-Detail-Helper extends Bp-Helper
@@ -98,7 +98,7 @@ if Meteor.is-client
       # control.find 'input, textarea' .focus! 
 
 
-    add-typeahead-to-input-field: !(attr, candidates)~>
+    add-typeahead-to-input-field:  (attr, candidates)!~>
       let item = name: @template-name + attr, attr: attr # 这里要用闭包，多次的attr不一样
         @post-render-methods.push ->
           $ "input[name='#{item.attr}']" .typeahead do
@@ -117,10 +117,13 @@ if Meteor.is-client
       @events-handlers['focus div.controls'] = @tab-focuse-with-div-control-highlight-and-input-focused
       @events-handlers['blur div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight-and-input-focused
 
+
+
 # 同时run在服务端和客户端
-create-bp-pages-for-doc = !(doc-name)->
+create-bp-pages-for-doc =  (doc-name)!~>
   collection-name = doc-name.pluralize!
-  @[collection-name.capitalize!] = new Meteor.Collection collection-name
+  published-name = collection-name.capitalize!
+  @[published-name] = new Meteor.Collection collection-name
   if Meteor.is-client
     list-page =  Bp-Helper.get-helper doc-name, 'list'
     detail-page = Bp-Helper.get-helper doc-name, 'detail'
@@ -128,8 +131,23 @@ create-bp-pages-for-doc = !(doc-name)->
     # 注意：不知道有无可能在router的controller里面，再初始化这些，这样会提高初次加载的速度
     list-page.init!
     detail-page.init!
+    subscribe-data collection-name
+
+  if Meteor.is-server
+    publish-data published-name
+
+publish-data = (published-name)!->
+  # console.log "published-name: ", published-name
+  Meteor.publish published-name, ~> @[published-name].find!
+
+subscribe-data = (collection-name)!->
+  Meteor.subscribe collection-name.capitalize!
+  BP.subscribed ||= []
+  BP.subscribed.push collection-name
+  Template['bp-main-nav'].helpers 'subscribed': ->
+    BP.subscribed
+
 
 @BP ||= {}
 
-BP.create-bp-pages-for-doc = -> # 确保this指向顶层对象
-  create-bp-pages-for-doc.apply null, arguments
+BP.create-bp-pages-for-doc = create-bp-pages-for-doc
