@@ -138,10 +138,18 @@ create-bp-pages-for-doc =  (doc-name)!~>
 
 publish-data = (published-name)!->
   # console.log "published-name: ", published-name
-  Meteor.publish published-name, ~> @[published-name].find!
+  Future = Npm.require 'fibers/future'
 
+  Meteor.publish published-name, ~> 
+    future = new Future
+    Meteor.set-timeout ->
+      cursor = @[published-name].find!
+      future.return cursor
+    , 2000
+    future.wait!
+    
 subscribe-data = (collection-name)!->
-  Meteor.subscribe collection-name.capitalize!
+  # Meteor.subscribe collection-name.capitalize!
   BP.subscribed ||= []
   BP.subscribed.push collection-name
   Template['bp-main-nav'].helpers 'subscribed': ->

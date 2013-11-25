@@ -29,6 +29,9 @@ for published-name in BP.subscribed
     @route published-name, do
       path: '/'+ published-name
       template: published-name + '-list'
+      wait-on: -> [
+        Meteor.subscribe published-name.capitalize!
+      ]
 
 Router.map ->
   @route 'default', do
