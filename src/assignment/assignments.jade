@@ -1,6 +1,6 @@
 include ../.jade/bp-mixins
 template(name='assignments-list')
-  +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+  +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'], 'assignment')
 
 mixin my-fieldset(title)
   +fieldset(title)
@@ -19,7 +19,7 @@ mixin my-fieldset(title)
       +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
 
 template(name='assignment')
-  +form('assignments', 'assignment')
+  +form('assignment')
     //- 这些表单控件都是 label，attr，options的参数结构
     +my-fieldset('题目基本要求')
     +my-fieldset('下一个题目的要求')

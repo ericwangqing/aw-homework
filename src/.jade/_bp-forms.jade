@@ -10,9 +10,8 @@
 - P.maxlength = function(max){ return "parsley-maxlength='" + max + "' "; } 
 
 //- =============  BP表单控件，常用于详情（修改、添加）   ======================
-mixin form(collectionName, item)
+mixin form(item)
   | {{#with #{item}}}
-  - var collection = collectionName
   form.bp-form(parsley-validate, novalidate) 
     block
     | {{#if bp-collection-permit 'edit'}}

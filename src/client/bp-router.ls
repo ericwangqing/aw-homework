@@ -23,15 +23,25 @@ Router.after  filters.reset-scroll, except: []
     # only: []
 
 
-for published-name in BP.subscribed
-  console.log "published-name: ", published-name
+for collection-name in BP.subscribed
+  console.log "collection-name: ", collection-name
   Router.map ->
-    @route published-name, do
-      path: '/'+ published-name
-      template: published-name + '-list'
+    @route collection-name, do
+      path: '/'+ collection-name # TODO: refactor to a util function
+      template: collection-name + '-list'
       wait-on: -> [
-        Meteor.subscribe published-name.capitalize!
+        Meteor.subscribe collection-name.capitalize!
       ]
+
+    doc-name = collection-name.singularize!
+    @route doc-name, do
+      path: '/' + collection-name + '/:_id'
+      template: doc-name
+      wait-on: -> [
+        Meteor.subscribe collection-name.capitalize!
+      ]
+
+
 
 Router.map ->
   @route 'default', do
