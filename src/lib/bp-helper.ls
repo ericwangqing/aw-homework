@@ -87,12 +87,11 @@ if Meteor.is-client
     data-retriever: (query = {})~> # TODO：这里查询待完善
       @doc = @collection.find-one!
 
-    tab-focuse-with-div-control-highlight-and-input-focused: (e)->
+    tab-focuse-with-div-control-highlight: (e)->
       control = $ e.current-target 
-      control.add-class 'focus'
-      control.find 'input, textarea' .focus! 
+      control.parents!add-class 'focus'
 
-    tab-blur-with-div-control-highlight-and-input-focused: (e)->
+    tab-blur-with-div-control-highlight: (e)->
       control = $ e.current-target 
       control.parents!remove-class 'focus'
       # control.find 'input, textarea' .focus! 
@@ -114,8 +113,8 @@ if Meteor.is-client
         console.log error
 
     register-event-handlers: !->
-      @events-handlers['focus div.controls'] = @tab-focuse-with-div-control-highlight-and-input-focused
-      @events-handlers['blur div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight-and-input-focused
+      @events-handlers['focus div.controls input, div.controls textarea'] = @tab-focuse-with-div-control-highlight
+      @events-handlers['blur div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight
 
 
 
@@ -147,7 +146,7 @@ publish-data = (published-name)!->
       future.return cursor
     , 2000
     future.wait!
-    
+
 subscribe-data = (collection-name)!->
   # Meteor.subscribe collection-name.capitalize!
   BP.subscribed ||= []

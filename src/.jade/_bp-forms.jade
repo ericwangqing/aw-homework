@@ -26,7 +26,7 @@ mixin __input(label, attr, span)
 
   | {{#if bp-action-is 'edit'}}
   |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
-  .controls(data-field-span=span, tabindex=index)
+  .controls(data-field-span=span)
     label #{label}:
     block     
 
@@ -39,7 +39,7 @@ mixin __input(label, attr, span)
   | {{/if}}
 
   | {{#if bp-action-is 'create'}}
-  .controls(data-field-span=span, tabindex=index)
+  .controls(data-field-span=span)
     label #{label}:
     block     
   | {{/if}}
@@ -63,7 +63,7 @@ mixin fieldset(title)
 mixin text(label, attr, validations, span)
   +__input(label, attr, span)
     - var valueStr = attr? ("name=" + attr + " value='{{bs \"" + attr + "\"}}'") : '' 
-    != "<input type='text' " + valueStr + (validations? (P.trigger('change') + validations) : '') + " tabindex='-1'/>"
+    != "<input type='text' " + valueStr + (validations? (P.trigger('change') + validations) : '') + " tabindex='" + index +"'/>"
     //- input(type='text', name=value, value!="{{bs '#{value}'}}") 
 
 mixin no-blank-text(label, attr, span)
@@ -101,14 +101,14 @@ mixin ahead(label, attr, candidates, span)
 
 
 //- --------------- 各种普通专用域，很多都有HMTL5的专用type --------------------
-
+//- TODO: 重构，和text合并
 mixin email(attr, required)
   +__input('电子邮件', attr)
-    input(type='email', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required, tabindex='-1') 
+    input(type='email', name='email', value!="{{bs '#{attr}'}}",  parsley-trigger="change", required=required, tabindex=index) 
 
 mixin number(label, attr, required)
   +__input(label, attr)
-    input(type='text', name=label,  parsley-type='number', parsley-trigger="change", required=required, tabindex='-1') 
+    input(type='text', name=label,  parsley-type='number', parsley-trigger="change", required=required, tabindex=index) 
 
 //- ------ 待实现 ------
   password #用Parsley的Equal To
