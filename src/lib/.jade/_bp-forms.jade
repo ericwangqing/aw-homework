@@ -10,39 +10,36 @@
 - P.maxlength = function(max){ return "parsley-maxlength='" + max + "' "; } 
 
 //- =============  BP表单控件，常用于详情（修改、添加）   ======================
+include _bp-permit-action
+
 mixin form(item)
   | {{#with #{item}}}
   form.bp-form(parsley-validate, novalidate) 
     block
-    | {{#if bp-collection-permit 'edit'}}
-    a(href='#', class='bp-submit') 提交
-    | {{/if}}
-  | {{/with}} 
+    +_button('update', '提交')
+    +_button('create', '提交')
+  | {{/with}}  
+
 
 //- 重要！！此处实现B+的权限控制和布局
 mixin __input(label, attr, span)
   - var span = span || Field_SPAN
   - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航。为了在mixin和block之间传递，使用了全局变量。注意：此处不用在结束form的渲染时，将index清零，因为：1）tabindex在一个页面上应该可以在多个表单连续工作；2）jade在渲染两份jade文件时，使用全新的环境，因此不会造成下一个HTML的tabindex被连续排号的问题。
+  +_if-action('update')
+    +_if-else-attribute-permit(attr, 'update')
+      .controls(data-field-span=span)
+        label #{label}:
+        block     
+    +_else()
+      //- 不可编辑的域只显示值，并且不可tab导航
+      .controls(data-field-span=span)
+        label #{label}:
+        span.content {{bs "#{attr}"}} 
 
-  | {{#if bp-action-is 'edit'}}
-  |   {{#if bp-attribute-permit '#{attr}' 'edit'}}
-  .controls(data-field-span=span)
-    label #{label}:
-    block     
-
-  |   {{else}}
-  //- 不可编辑的域只显示值，并且不可tab导航
-  .controls(data-field-span=span)
-    label #{label}:
-    span.content {{bs "#{attr}"}} 
-  |   {{/if}}
-  | {{/if}}
-
-  | {{#if bp-action-is 'create'}}
-  .controls(data-field-span=span)
-    label #{label}:
-    block     
-  | {{/if}}
+  +_if-action('create')
+    .controls(data-field-span=span)
+      label #{label}:
+      block     
 
 //- --------------- 布局用控件 ---------------------------------------------
 mixin row(span)

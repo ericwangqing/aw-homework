@@ -37,7 +37,7 @@ class @BP.Component
         # console.log ""
         cursor = top[@names.meteor-collection-name].find!
         future.return cursor
-      , 2000
+      , 200
       future.wait!
 
   add-routes: ->
@@ -69,10 +69,10 @@ create-detail-helper = !->
   if Meteor.is-client
     @detail-helper = BP.Helper.get-helper @names, @collection, 'detail' 
 
-
+#----------------- TODO: 以下部分，显然需要重构 -------------------------
 add-list-route = (_)-> # 形如: /homeworks
   Router.map ->
-    @route _.collection-path-name, do
+    @route _.collection-path-name, list =
       path: '/' + _.route-path
       template: _.list-template-name
       wait-on: -> [
@@ -81,12 +81,26 @@ add-list-route = (_)-> # 形如: /homeworks
 
 add-detail-route = (_)-> # 形如: /homeworks/12345
   Router.map ->
-    @route _.doc-path-name, do
-      path: '/' + _.route-path + '/:_id'
+    @route _.doc-path-name + '-create', create =
+      path: '/' + _.route-path + '/create'
       template: _.detail-template-name
+
+      before: ->
+        Session.set 'bp', {action: 'create'}
       wait-on: -> [
         Meteor.subscribe _.meteor-collection-name
       ]
+      
+    @route _.doc-path-name + '-update', update =
+      path: '/' + _.route-path + '/:_id'
+      template: _.detail-template-name
+
+      before: ->
+        Session.set 'bp', {action: 'update'}
+      wait-on: -> [
+        Meteor.subscribe _.meteor-collection-name
+      ]
+    
 
 
 

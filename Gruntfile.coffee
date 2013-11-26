@@ -104,7 +104,7 @@ module.exports = (grunt)->
         timeout: 3000
     watch:
       script:
-        files: ["src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "src/.jade/**/*.jade", "compass/**/*.sass"]
+        files: ["src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "src/lib/.jade/**/*.jade", "compass/**/*.sass"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
         tasks: ["clean", "copy", "concat", "livescript", "compass", "jade", "simplemocha"]
         options:

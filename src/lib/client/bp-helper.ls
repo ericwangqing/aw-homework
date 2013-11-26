@@ -41,7 +41,8 @@ class @BP.Helper # abstract and Factory
   get-current-action: ->
     # current-action-obj = Session.get 'bp-current-actions'
     # find-current-action-on @doc-name, @doc?_id
-    'edit' # 暂时开发时用
+    # 'create' # 暂时开发时用
+    Session.get 'bp' .action
 
   register-data-retriever: !->
     @helpers[@data-helper-name] = @data-retriever
@@ -72,7 +73,10 @@ class Detail-Helper extends Helper
     @post-render-methods.push @add-form-validation
 
   data-retriever: (query = {})~> # TODO：这里查询待完善
-    @doc = @collection.find-one!
+    if (Session.get 'bp' .action) is 'update'
+      @doc = @collection.find-one!
+    else
+      {}
 
   tab-focuse-with-div-control-highlight: (e)->
     control = $ e.current-target 

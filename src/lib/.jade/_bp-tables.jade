@@ -2,7 +2,7 @@
 
 //- 用于展示的列表
 mixin table(items, columnNames, attributesNames, docName)
-  +create-button()
+  +create-button(docName)
   table
     thead
       tr
@@ -23,18 +23,17 @@ mixin rows(items, columnNames, attributesNames, docName)
       td(cols=index) {{#{attr}}}
     //- 这里index访问不到，如何访问到？
     td(cols=index+1) 
-      | {{#if bp-collection-permit 'edit'}}
-      a(href="{{pathFor '#{docName}' this}}") 查看
-      | {{/if}}
+      +_if-collection-permit('edit')
+        -var updateName = docName + '-update'
+        a(href="{{pathFor '#{updateName}' this}}") 编辑
+      
+      +_if-collection-permit('delete')
 
-      | {{#if bp-collection-permit 'delete'}}
       //- 删除的按钮
-      | {{/if}}
   | {{/each}}  
 
 //- B+中的列表（表格），当用户有权限时，会显示"添加"。
-mixin create-button()
-  | {{#if bp-collection-permit 'create'}}
-  form
-    input(type='submit', value='增加') 
-  | {{/if}}
+mixin create-button(docName)
+  +_if-collection-permit('create')
+    -var createName = docName + '-create'
+    a(href="{{pathFor '#{createName}' this}}") 添加
