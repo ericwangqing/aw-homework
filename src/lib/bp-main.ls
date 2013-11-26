@@ -3,4 +3,4 @@
 new BP.Component 'assignment' .init!
 
 # ------------ 加载路由 ------------------
-BP.BPR.route! if Meteor.is-client
+BP.Component.add-routes! if Meteor.is-client 

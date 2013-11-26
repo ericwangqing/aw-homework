@@ -3,8 +3,8 @@
 //- 用于展示的列表
 include _bp-conditions-buttons
 
-mixin table(items, columnNames, attributesNames, docName)
-  +_guarded-link-button(docName, 'create')
+mixin table(items, columnNames, attributesNames)
+  +_guarded-link('create')
   table
     thead
       tr
@@ -14,9 +14,9 @@ mixin table(items, columnNames, attributesNames, docName)
           th(cols=colIndex) #{col}
         th(cols=colIndex+1) 操作
     tbody
-      +rows(items, columnNames, attributesNames, docName)
+      +rows(items, columnNames, attributesNames)
 
-mixin rows(items, columnNames, attributesNames, docName)
+mixin rows(items, columnNames, attributesNames)
   | {{#each #{items}}}
   tr
     - var colIndex = 0
@@ -27,6 +27,6 @@ mixin rows(items, columnNames, attributesNames, docName)
       +_else()
         td.cant-look(cols=colIndex)
     td(cols=colIndex+1) 
-      +_guarded-link-button(docName, 'update')
-      +_guarded-link-button(docName, 'delete')
+      +_guarded-link('update')
+      +_guarded-link('delete')
   | {{/each}}  

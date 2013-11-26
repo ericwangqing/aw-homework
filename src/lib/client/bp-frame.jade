@@ -23,7 +23,7 @@ template(name='bp-banner')
   a(href='/') BP Banner
 
 template(name='bp-main-nav')
-  | {{#each route-paths}}
+  | {{#each collection-paths}}
   a(href="{{pathFor this}}") {{this}}
   | {{/each}}
 

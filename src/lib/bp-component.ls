@@ -6,20 +6,20 @@ top = @
 # list：列表该collection的doc，对应实现对doc的删除操作，并给出和去”添加“和去”修改“的链接（按钮）
 # detail：展示一个doc的详情，对应修改、添加和评论操作
 # 命名约定见：http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=243892266
-class @BP.Component
+class @BP.Component # Facade of BP
   @bpcs = []
-  @route-paths = []
-  @add-all-bp-routes = !-> # 提供给router用，以便调整和其它router的顺序。如果直接在这里加route，则Component的route顺序和其它route的顺序受代码加载顺序影响，并且出错也不易发现问题。
-    for bpc in @bpcs
-      bpc.add-routes!
+  # Facade of other BP module
+  # 这里meteor的加载顺序似乎有问题，所以用了函数封装下
+  @collection-paths = -> BP.Router.collections-lists-routes
+  @add-routes = -> BP.Router.route!
   
   (doc-name)->
     create-names.apply @, &
     create-collection.apply @
     create-list-helper.apply @
     create-detail-helper.apply @
+    create-router.apply @
     @@bpcs.push @
-    @@route-paths.push @names.route-path
 
   init: !->
     if Meteor.is-server
@@ -27,6 +27,7 @@ class @BP.Component
     if Meteor.is-client
       @list-helper.init!
       @detail-helper.init!
+      @router.add-routes!
 
   publish-data: !->
     # console.log "published-name: ", published-name
@@ -39,10 +40,6 @@ class @BP.Component
         future.return cursor
       , 200
       future.wait!
-
-  add-routes: ->
-    add-detail-route @names 
-    add-list-route @names
 
 /* ------------------------ Private Methods ------------------- */
 create-names = !(doc-name)->
@@ -69,38 +66,14 @@ create-detail-helper = !->
   if Meteor.is-client
     @detail-helper = BP.Helper.get-helper @names, @collection, 'detail' 
 
-#----------------- TODO: 以下部分，显然需要重构 -------------------------
-add-list-route = (_)-> # 形如: /homeworks
-  Router.map ->
-    @route _.collection-path-name, list =
-      path: '/' + _.route-path
-      template: _.list-template-name
-      wait-on: -> [
-        Meteor.subscribe _.meteor-collection-name
-      ]
+create-router = !->
+  if Meteor.is-client
+    @router = new BP.Router @names
+    @list-helper.router = @detail-helper.router = @router
 
-add-detail-route = (_)-> # 形如: /homeworks/12345
-  Router.map ->
-    @route _.doc-path-name + '-create', create =
-      path: '/' + _.route-path + '/create'
-      template: _.detail-template-name
 
-      before: ->
-        Session.set 'bp', {action: 'create'}
-      wait-on: -> [
-        Meteor.subscribe _.meteor-collection-name
-      ]
-      
-    @route _.doc-path-name + '-update', update =
-      path: '/' + _.route-path + '/:_id'
-      template: _.detail-template-name
 
-      before: ->
-        Session.set 'bp', {action: 'update'}
-      wait-on: -> [
-        Meteor.subscribe _.meteor-collection-name
-      ]
-    
 
+       
 
 

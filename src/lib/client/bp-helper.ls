@@ -20,6 +20,7 @@ class @BP.Helper # abstract and Factory
     @register-data-retriever!
     @register-permission-checker!
     @register-event-handlers!
+    @register-path-helper!
     Template[@template-name].helpers @helpers
     Template[@template-name].events @events-handlers
     Template[@template-name].rendered = !~>
@@ -62,6 +63,9 @@ class @BP.Helper # abstract and Factory
 
   register-event-handlers: !-> # empty place holder
 
+  register-path-helper: !->
+    @helpers['bp-path-for'] = @router.get-path
+
 class List-Helper extends Helper
   (names, collection)->
     super collection
@@ -85,11 +89,13 @@ class Detail-Helper extends Helper
     else
       {}
 
-  tab-focuse-with-div-control-highlight: (e)->
+  submit-handler: (e)!->
+
+  tab-focuse-with-div-control-highlight: (e)!->
     control = $ e.current-target 
     control.parents!add-class 'focus'
 
-  tab-blur-with-div-control-highlight: (e)->
+  tab-blur-with-div-control-highlight: (e)!->
     control = $ e.current-target 
     control.parents!remove-class 'focus'
     # control.find 'input, textarea' .focus! 
