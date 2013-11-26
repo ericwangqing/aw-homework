@@ -1,0 +1,47 @@
+mixin _if-action(action)
+  | {{#if bp-action-is '#{action}'}}
+  block
+  | {{/if}}
+
+mixin _if-collection-permit(action)
+  | {{#if bp-collection-permit '#{action}'}}
+  block
+  | {{/if}}
+
+mixin _if-doc-permit(action)
+  | {{#if bp-doc-permit this '#{action}'}}
+  block
+  | {{/if}}
+
+mixin _if-attribute-permit(attr, action)
+  | {{#if bp-attribute-permit this '#{attr}' #{action}}}
+  block
+  | {{/if}}
+
+mixin _if-else-attribute-permit(attr, action)
+  | {{#if bp-attribute-permit this '#{attr}' #{action}}}
+  block
+
+mixin _else()
+  | {{else}}
+  block
+  | {{/if}}
+
+mixin _guarded-button(action, label)
+  +_if-action(action)
+    +_if-collection-permit(action)
+      a(href='#', class='bp-#{action}') #{label}
+
+
+mixin _link-button(pathName, action)
+  a.bp-update(href="{{pathFor '#{pathName}' this}}")
+    case action
+      when 'create': i.fa.fa-plus.fa-fw 
+      when 'update': i.fa.fa-pencil.fa-fw 
+      when 'delete': i.fa.fa-trash-o.fa-fw 
+      defaule: i
+
+mixin _guarded-link-button(docName, action)
+  +_if-collection-permit(action)
+    -var routeName = docName + '-' + action
+    +_link-button(routeName, action)

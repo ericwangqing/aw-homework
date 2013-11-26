@@ -25,16 +25,22 @@ class @BP.Helper # abstract and Factory
     Template[@template-name].rendered = !~>
       [method! for method in @post-render-methods]
 
-  attribute-permission-checker: (attr, action)~> # Template调用，检查当前用户是否有权限进行相应操作
+  attribute-permission-checker: (doc, attr, action)~> # Template调用，检查当前用户是否有权限进行相应操作
     #TODO：接入Bp-Permission模块，提供权限功能
     # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, attr, action
     # 下面是暂时的fake
     auto-generated-fields = <[createdAtTime lastModifiedAt _id state]>
     attr not in auto-generated-fields
 
-  doc-permission-checker: (action)~>
+  doc-permission-checker: (doc, action)~>
     #TODO：接入Bp-Permission模块，提供权限功能
     # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, action
+    # 下面是暂时的fake
+    true
+
+  collection-permission-checker: (action)~>
+    #TODO：接入Bp-Permission模块，提供权限功能
+    # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, doc-id, action
     # 下面是暂时的fake
     true
 
@@ -49,7 +55,8 @@ class @BP.Helper # abstract and Factory
 
   register-permission-checker: !->
     @helpers['bp-attribute-permit'] = @attribute-permission-checker
-    @helpers['bp-collection-permit'] = @doc-permission-checker
+    @helpers['bp-doc-permit'] = @doc-permission-checker
+    @helpers['bp-collection-permit'] = @collection-permission-checker
     @helpers['bp-action-is'] = (action)~>
       action is @get-current-action!
 

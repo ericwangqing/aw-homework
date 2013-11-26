@@ -1,39 +1,32 @@
 //- ==========  以下为表格，常用于列表（删除、（去）添加、（去）修改）   ==========
 
 //- 用于展示的列表
+include _bp-conditions-buttons
+
 mixin table(items, columnNames, attributesNames, docName)
-  +create-button(docName)
+  +_guarded-link-button(docName, 'create')
   table
     thead
       tr
-        - var index = 0
+        - var colIndex = 0
         each col, i in columnNames
-          - index = i
-          th(cols=index) #{col}
-        th(cols=index+1) 操作
+          - colIndex = i
+          th(cols=colIndex) #{col}
+        th(cols=colIndex+1) 操作
     tbody
       +rows(items, columnNames, attributesNames, docName)
 
 mixin rows(items, columnNames, attributesNames, docName)
   | {{#each #{items}}}
   tr
-    - var index = 0
+    - var colIndex = 0
     each attr, i in attributesNames
-      - index = i
-      td(cols=index) {{#{attr}}}
-    //- 这里index访问不到，如何访问到？
-    td(cols=index+1) 
-      +_if-collection-permit('edit')
-        -var updateName = docName + '-update'
-        a(href="{{pathFor '#{updateName}' this}}") 编辑
-      
-      +_if-collection-permit('delete')
-
-      //- 删除的按钮
+      - colIndex = i
+      +_if-else-attribute-permit(attr, 'look')
+        td(cols=colIndex) {{#{attr}}}
+      +_else()
+        td.cant-look(cols=colIndex)
+    td(cols=colIndex+1) 
+      +_guarded-link-button(docName, 'update')
+      +_guarded-link-button(docName, 'delete')
   | {{/each}}  
-
-//- B+中的列表（表格），当用户有权限时，会显示"添加"。
-mixin create-button(docName)
-  +_if-collection-permit('create')
-    -var createName = docName + '-create'
-    a(href="{{pathFor '#{createName}' this}}") 添加

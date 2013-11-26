@@ -36,67 +36,10 @@ body
       +span-columns(10 omega)
       .bp-form
         +grid-form($field-focus-color: lighten(yellow, 30%), $font-size-large: 16px, $field-padding: 4px, $label-font-size: 12px, $grid-border-color: #C4C4C4, $legend-color: #9E9D9D)
-        a.bp-update, a.bp-create
-          +sassy-button-structure(2px, 14px, 2px 5px)
-          margin: 10px 0
-        a.bp-update
-          +sassy-button-gradient("matte", #4ba3cc)
-        a.bp-create
-          +sassy-button-gradient("matte", #e86a43)
-          
-
-
-          // +sassy-button()
-
-//     #controls
-//       #buttons
-//         margin-bottom: 5px
-//         #phonebook
-//           +sassy-button("simple", 6px, 14px, #337EC4)
-//         #newguest
-//           margin-top: 5px
-//           +sassy-button("simple", 6px, 14px, #D93131)
-
-//     table
-//       width: 100%
-//       thead
-//         color: #FEFEFE
-//         background: #000
-//         th
-//           text-align: left
-//           font-weight: 500
-//           padding: 10px
-//       tbody
-//         border: 3px solid #000 
-//         tr
-//           background: #E5E5E5
-//         tr.alt
-//           background: #EEE
-//         .buttoncell
-//           .confirm
-//             +sassy-button("simple", 6px, 14px, #F39B06)
-//           .unconfirm
-//             +sassy-button("flat", 6px, 14px, #3BA06F)
-//       .email, .cell
-//         display: none
-
-// +at-breakpoint($tablet)
-//   body .container
-//     #header span, table .email
-//       display: inline
-
-// +at-breakpoint($computer)
-//   body .container
-//     #controls
-//       #menutitle
-//         +span-columns(5)
-//         margin-top: 5px
-//       #buttons
-//         text-align: right
-//         +span-columns(5 omega)
-
-//     table
-//       // +prefix(1)
-//       // +suffix(2)
-//       .email, .cell 
-//         display: table-cell
+      a.bp-update, a.bp-create
+        +sassy-button-structure(2px, 14px, 2px 5px)
+        margin: 10px 0
+      a.bp-update
+        +sassy-button-gradient("matte", #4ba3cc)
+      a.bp-create
+        +sassy-button-gradient("matte", #e86a43)
