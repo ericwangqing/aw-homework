@@ -17,8 +17,10 @@ mixin form(item)
   +_if-doc-permit('update create')
     form.bp-form(parsley-validate, novalidate) 
       block
-      +_guarded-button('update', '提交')
-      +_guarded-button('create', '提交')
+      +_guarded-permission-and-action-button('update', '提交')
+      +_guarded-permission-and-action-button('create', '提交')
+      +_if-action('update')
+        +_guarded-permission-button('delete', '删除')
   | {{/with}}  
 
 mixin __wrap-filed-with-label-span(label, span)
@@ -61,6 +63,7 @@ mixin fieldset(title)
 
 //- 可以自由添加Parsely validation条件的text
 mixin text(label, attr, condition, required, span)
+  //- - required = true // for testing!!!!
   +__input(label, attr, span)
     - var valueStr = attr? ("name='" + attr + "' value='{{bs \"" + attr + "\"}}' ") : '' 
     - var validationStr = condition? (P.trigger('change') + condition) : ''

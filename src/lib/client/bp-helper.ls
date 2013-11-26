@@ -17,14 +17,15 @@ class @BP.Helper # abstract and Factory
     @post-render-methods = []
 
   init: !->
+    self = @
     @register-data-retriever!
     @register-permission-checker!
     @register-event-handlers!
     @register-path-helper!
     Template[@template-name].helpers @helpers
     Template[@template-name].events @events-handlers
-    Template[@template-name].rendered = !~>
-      [method! for method in @post-render-methods]
+    Template[@template-name].rendered = !->
+      [method.call @ for method in self.post-render-methods]
 
   attribute-permission-checker: (doc, attr, action)~> # Template调用，检查当前用户是否有权限进行相应操作
     #TODO：接入Bp-Permission模块，提供权限功能
@@ -61,10 +62,11 @@ class @BP.Helper # abstract and Factory
     @helpers['bp-action-is'] = (action)~>
       action is @get-current-action!
 
-  register-event-handlers: !-> # empty place holder
+  register-event-handlers: !-> # both list and detail page have delete
+    @events-handlers['click a.bp-delete'] = @form.delete-submit
 
   register-path-helper: !->
-    @helpers['bp-path-for'] = @router.get-path
+    @helpers['bp-path-for'] = @bpc.get-path
 
 class List-Helper extends Helper
   (names, collection)->
@@ -72,8 +74,10 @@ class List-Helper extends Helper
     @template-name = names.list-template-name
     @data-helper-name = names.list-data-retriever-name
   
-  data-retriever: (query = {})~> 
+  data-retriever: ~> 
     @doc = @collection.find!
+
+  register-event-handlers: !-> super!
 
 class Detail-Helper extends Helper
   (names, collection)->
@@ -83,13 +87,13 @@ class Detail-Helper extends Helper
     @helpers['bp-add-typeahead'] = @add-typeahead-to-input-field
     @post-render-methods.push @add-form-validation
 
-  data-retriever: (query = {})~> # TODO：这里查询待完善
+  data-retriever: ~> # TODO：这里查询待完善
     if (Session.get 'bp' .action) is 'update'
-      @doc = @collection.find-one!
+      @form.doc = @collection.find-one _id: (Session.get 'bp' .current-id)
+      return @form.doc
     else
-      {}
+      @form.doc ={}
 
-  submit-handler: (e)!->
 
   tab-focuse-with-div-control-highlight: (e)!->
     control = $ e.current-target 
@@ -116,9 +120,7 @@ class Detail-Helper extends Helper
       console.log error
 
   register-event-handlers: !->
+    super!
     @events-handlers['focus div.controls input, div.controls textarea'] = @tab-focuse-with-div-control-highlight
     @events-handlers['blur div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight
-
-
-
-
+    @events-handlers['click a.bp-create'] = @events-handlers['click a.bp-update'] = @form.create-and-update-submit

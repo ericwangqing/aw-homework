@@ -57,13 +57,13 @@ _route = !~>
           path: self._get-path action
           template: self._get-template action
           before: ->
-            Session.set 'bp', {action: action} 
+            Session.set 'bp', action: action, current-id: @params._id 
           wait-on: -> [
             Meteor.subscribe self.collection
           ]
 
   get-path: (action, doc)~> # 给Template用
-    @_get-path action, doc._id
+    @_get-path action, doc?._id
 
   _get-route-name: (action)->
     @base-path-name + if action is 'list' then '' else '-' + action
@@ -73,7 +73,6 @@ _route = !~>
     return @base-path                 if action is 'list'
     return @base-path + '/create'     if action is 'create' 
     return @base-path + "/#id"        if action is 'update'
-    return @base-path + "/#id/delete" if action is 'delete'
 
   _get-template: (action)->
     if action is 'list' then @list-template else @detail-template

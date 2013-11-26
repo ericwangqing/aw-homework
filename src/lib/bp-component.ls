@@ -41,6 +41,8 @@ class @BP.Component # Facade of BP
       , 200
       future.wait!
 
+  # Facade of other BP modules
+
 /* ------------------------ Private Methods ------------------- */
 create-names = !(doc-name)->
   @names = 
@@ -61,15 +63,23 @@ create-collection = !->
 create-list-helper = !->
   if Meteor.is-client
     @list-helper = BP.Helper.get-helper @names, @collection, 'list' 
+    @list-helper.form = new BP.Form @
+    @list-helper.bpc = @
 
 create-detail-helper = !->
   if Meteor.is-client
     @detail-helper = BP.Helper.get-helper @names, @collection, 'detail' 
+    @detail-helper.form = new BP.Form @
+    @detail-helper.bpc = @
 
 create-router = !->
   if Meteor.is-client
     @router = new BP.Router @names
-    @list-helper.router = @detail-helper.router = @router
+    @router.bpc = @
+    # @list-helper.router = @detail-helper.router = @router
+    # Facade of router
+    @get-path = @router.get-path
+
 
 
 

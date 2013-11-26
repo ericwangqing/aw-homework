@@ -1,0 +1,36 @@
+template(name='assignment')
+  +form('assignment')
+    +fieldset(title)
+      +row()
+        //- 所有text控件的接口都是<xxx-text>(label, attr, condition, required, span)，后面的值可缺省
+        +text('题目', 'title')
+        +no-blank-text('要求', 'requirement', condition=null, required=null, span=6)
+        +min-text('中文内容', '中文内容', min=6)
+      +row()
+        +text('截止时间', 'deadline')
+        +text('发布时间', 'createdAtTime')
+        //- 专用控件的接口都是<xxx-text>(label, attr, condition, required)，后面的值可缺省
+        +number('截止时间', null, null, false)
+        +email('电子邮件', 'email') 
+      +row()
+        +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+
+//
+  addable field: 
+    显示的时候，在现有空间显示，
+    修改的时候，弹出子窗口修改，
+  addable fieldset:
+    显示为多个fieldset，
+    修改的时候，弹出子窗口修改，
+
++multiple(2, 3)
+  +filedset('朋友', 'friends') //this.friends
+    +row()
+      +text('名字', 'name')//this.friends[i].name
+      +email('电子邮件', 'email')// this.friends[i].email
+
++row()
+  +multiple(2, 3)
+    +text('喜欢的城市', 'cities')//this.cities = ['北京' '广州']
+
+//- 用JSONPath来帮手实现

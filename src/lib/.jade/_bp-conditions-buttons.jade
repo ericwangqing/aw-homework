@@ -28,20 +28,27 @@ mixin _else()
   | {{/if}}
 
 //- button和link-button的本质区别在于，link本质是导航，不对数据进行任何操作，button是操作，操作后依据结果导航
-mixin _guarded-button(action, label)
+mixin _guarded-permission-and-action-button(action, label)
   +_if-action(action)
-    +_if-collection-permit(action)
-      a(href='#', class='bp-#{action}') #{label}
+    +_guarded-permission-button(action, label)
+
+mixin _guarded-permission-button(action, label)
+  +_if-collection-permit(action)
+    +_link-button(action) 
+      | #{label}
 
 
-mixin _link-button(action)
-  a(href="{{bp-path-for '#{action}' this}}", class='bp-#{action}')
+mixin _link-button(action, isLink)
+  - var href = isLink? ("{{bp-path-for '"+ action +"' this}}") : '#'
+  - var bpDocId = action == 'delete' ? "{{_id}}" : null // 列表中出现delete按钮时，需要分清是哪个doc
+  a(href=href, class='bp-#{action}', bp-doc-id=bpDocId)
     case action
       when 'create': i.fa.fa-plus.fa-fw 
       when 'update': i.fa.fa-pencil.fa-fw 
       when 'delete': i.fa.fa-trash-o.fa-fw 
       defaule: i
+    block
 
 mixin _guarded-link(action)
   +_if-collection-permit(action)
-    +_link-button(routeName, action)
+    +_link-button(action, true)

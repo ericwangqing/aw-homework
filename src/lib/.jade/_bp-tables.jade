@@ -28,5 +28,5 @@ mixin rows(items, columnNames, attributesNames)
         td.cant-look(cols=colIndex)
     td(cols=colIndex+1) 
       +_guarded-link('update')
-      +_guarded-link('delete')
+      +_guarded-permission-button('delete')
   | {{/each}}  

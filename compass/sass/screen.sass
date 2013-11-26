@@ -36,10 +36,12 @@ body
       +span-columns(10 omega)
       .bp-form
         +grid-form($field-focus-color: lighten(yellow, 30%), $font-size-large: 16px, $field-padding: 4px, $label-font-size: 12px, $grid-border-color: #C4C4C4, $legend-color: #9E9D9D)
-      a.bp-update, a.bp-create
+      a.bp-update, a.bp-create, a.bp-delete
         +sassy-button-structure(2px, 14px, 2px 5px)
-        margin: 10px 0
+        margin: 10px 2px
       a.bp-update
         +sassy-button-gradient("matte", #4ba3cc)
       a.bp-create
         +sassy-button-gradient("matte", #e86a43)
+      a.bp-delete
+        +sassy-button-gradient("matte", #cc3512)
