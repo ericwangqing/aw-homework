@@ -30,16 +30,18 @@ class @BP.Component # Facade of BP
       @router.add-routes!
 
   publish-data: !->
-    # console.log "published-name: ", published-name
-    Future = Npm.require 'fibers/future'
     Meteor.publish @names.meteor-collection-name, ~> 
-      future = new Future
-      Meteor.set-timeout !~>
-        # console.log ""
-        cursor = top[@names.meteor-collection-name].find!
-        future.return cursor
-      , 200
-      future.wait!
+      cursor = top[@names.meteor-collection-name].find!
+    # console.log "published-name: ", published-name
+    # Future = Npm.require 'fibers/future'
+    # Meteor.publish @names.meteor-collection-name, ~> 
+    #   future = new Future
+    #   Meteor.set-timeout !~>
+    #     # console.log ""
+    #     cursor = top[@names.meteor-collection-name].find!
+    #     future.return cursor
+    #   , 200
+    #   future.wait!
 
   # Facade of other BP modules
 

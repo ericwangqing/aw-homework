@@ -1,0 +1,51 @@
+//- ==========  以下为表格，常用于列表（删除、（去）添加、（去）修改）   ==========
+
+//- 用于展示的列表
+include _conditions-buttons
+
+mixin table(items, columnNames, attributesNames)
+  +_guarded-link('create')
+  table
+    thead
+      +_head-row(columnNames)
+    tbody
+      +_rows(items, columnNames, attributesNames)
+
+
+mixin _rows(items, columnNames, attributesNames)
+  | {{#each #{items}}}
+  +_row(attributesNames)
+  | {{/each}}  
+
+
+mixin _head-row(columnNames)
+  tr
+    +_each-cell(columnNames)
+      th(cols=colIndex) #{cellName}
+    th(cols=colIndex+1) 操作
+
+mixin _row(attributesNames)
+  tr
+    +_each-cell(attributesNames)
+      +_guarded-cell(cellName)
+    +_guarded-operation-cell
+
+mixin _each-cell(cellNames)
+  - colIndex = 0
+  - cellName = ''
+  each cn, i in cellNames
+    - colIndex = i
+    - cellName = cn
+    block
+
+mixin _guarded-cell(attr)
+  +_if-else-attribute-permit(attr, 'look')
+    td(cols=colIndex) {{#{attr}}}
+  +_else()
+    td.cant-look(cols=colIndex)
+
+mixin _guarded-operation-cell()
+  td(cols=colIndex+1) 
+    +_guarded-link('update')
+    +_guarded-permission-button('delete')
+

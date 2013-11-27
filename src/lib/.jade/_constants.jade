@@ -1,0 +1,10 @@
+//- ---------- 辅助常数与函数 -----------------------------------------------
+- FORM_SPAN = 12 // 默认表单分为12栏布局
+- Field_SPAN = FORM_SPAN / 4 // 域宽默认为每行4个
+
+- P = {} // Parsely 校验属性
+- P.type = function(t){ return "parsley-type='" + t + "' "; }
+- P.trigger = function(event){ return "parsley-trigger='" + event + "' "; }
+- P.notblank = function(){ return "parsley-notblank='true' "; }
+- P.minlength = function(min){ return "parsley-minlength='" + min + "' "; }
+- P.maxlength = function(max){ return "parsley-maxlength='" + max + "' "; } 

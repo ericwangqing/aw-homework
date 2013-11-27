@@ -21,7 +21,8 @@ class @BP.Form
 
 
   delete-submit: (e)!~>
-    doc-id = $ e.current-target .attr 'bp-doc-id'
-    @collection.remove {_id: doc-id}
-    alert 'remove successful!'
-    Router.go @bpc.get-path 'list'
+    if confirm "真的要删除吗？"
+      doc-id = $ e.current-target .attr 'bp-doc-id'
+      @collection.remove {_id: doc-id}
+      alert 'remove successful!'
+      Router.go @bpc.get-path 'list'

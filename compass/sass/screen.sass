@@ -27,6 +27,8 @@ body
         font-weight: 300
         font-size: 18px
         display: block
+      a
+        margin: 0 0 0 10px
 
     .left-sidebar
       +span-columns(2)
@@ -40,8 +42,8 @@ body
         +sassy-button-structure(2px, 14px, 2px 5px)
         margin: 10px 2px
       a.bp-update
-        +sassy-button-gradient("matte", #4ba3cc)
+        +sassy-button-gradient("matte", lighten(#4ba3cc, 10%))
       a.bp-create
-        +sassy-button-gradient("matte", #e86a43)
+        +sassy-button-gradient("matte", lighten(#e86a43, 10%))
       a.bp-delete
-        +sassy-button-gradient("matte", #cc3512)
+        +sassy-button-gradient("matte", lighten(#cc3512, 20%))

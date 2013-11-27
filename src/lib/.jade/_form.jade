@@ -1,0 +1,58 @@
+include _constants
+include _conditions-buttons
+
+//- =============  BP表单控件，常用于详情（修改、添加）   ======================
+
+mixin form(item)
+  +_if-doc-permit('update create')
+    | {{#with #{item}}}
+    form.bp-form(parsley-validate, novalidate) 
+      block
+      +_guarded-permission-and-action-button('update', '提交')
+      +_guarded-permission-and-action-button('create', '提交')
+      +_if-action('update')
+        +_guarded-permission-button('delete', '删除')
+    | {{/with}}  
+
+
+//- --------------- 私有基础性用控件 ---------------------------------------------
+
+//- 重要！！此处实现B+的权限控制和布局
+mixin __guarded-input-wrapper(label, attr, span)
+  - var span = span || Field_SPAN
+  - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航。为了在mixin和block之间传递，使用了全局变量。注意：此处不用在结束form的渲染时，将index清零，因为：1）tabindex在一个页面上应该可以在多个表单连续工作；2）jade在渲染两份jade文件时，使用全新的环境，因此不会造成下一个HTML的tabindex被连续排号的问题。
+  +_if-action('update')
+    +_if-else-attribute-permit(attr, 'update')
+      +__wrap-filed-with-label-span(label, span)
+        block 
+    +_else()
+      +__uneditable-content(label, attr, span)
+
+  +_if-action('create')
+    +__wrap-filed-with-label-span(label, span)
+      block     
+
+mixin __wrap-filed-with-label-span(label, span)
+  .controls(data-field-span=span)
+    label #{label}:
+    block
+
+mixin __uneditable-content(label, attr, span)
+  //- 不可编辑的域只显示值，并且不可tab导航
+  +__wrap-filed-with-label-span(label, span)
+    span.content {{bs "#{attr}"}} 
+
+
+//- --------------- 布局用控件 ---------------------------------------------
+mixin row(span)
+  //- 默认为整行布局，划为12栏
+  - var span = span || FORM_SPAN
+  div(data-row-span=span)
+    block
+
+//- TODO: 这里要实现元素的可自动增加、减少的功能
+mixin fieldset(title)
+  fieldset 
+    legend #{title}
+    block
+

@@ -1,70 +1,11 @@
-//- ---------- 辅助常数与函数 -----------------------------------------------
-- FORM_SPAN = 12 // 默认表单分为12栏布局
-- Field_SPAN = FORM_SPAN / 4 // 域宽默认为每行4个
-
-- P = {} // Parsely 校验属性
-- P.type = function(t){ return "parsley-type='" + t + "' "; }
-- P.trigger = function(event){ return "parsley-trigger='" + event + "' "; }
-- P.notblank = function(){ return "parsley-notblank='true' "; }
-- P.minlength = function(min){ return "parsley-minlength='" + min + "' "; }
-- P.maxlength = function(max){ return "parsley-maxlength='" + max + "' "; } 
-
-//- =============  BP表单控件，常用于详情（修改、添加）   ======================
-include _bp-conditions-buttons
-
-mixin form(item)
-  | {{#with #{item}}}
-  +_if-doc-permit('update create')
-    form.bp-form(parsley-validate, novalidate) 
-      block
-      +_guarded-permission-and-action-button('update', '提交')
-      +_guarded-permission-and-action-button('create', '提交')
-      +_if-action('update')
-        +_guarded-permission-button('delete', '删除')
-  | {{/with}}  
-
-mixin __wrap-filed-with-label-span(label, span)
-  .controls(data-field-span=span)
-    label #{label}:
-    block
-
-
-//- 重要！！此处实现B+的权限控制和布局
-mixin __input(label, attr, span)
-  - var span = span || Field_SPAN
-  - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航。为了在mixin和block之间传递，使用了全局变量。注意：此处不用在结束form的渲染时，将index清零，因为：1）tabindex在一个页面上应该可以在多个表单连续工作；2）jade在渲染两份jade文件时，使用全新的环境，因此不会造成下一个HTML的tabindex被连续排号的问题。
-  +_if-action('update')
-    +_if-else-attribute-permit(attr, 'update')
-      +__wrap-filed-with-label-span(label, span)
-        block     
-    +_else()
-      //- 不可编辑的域只显示值，并且不可tab导航
-      +__wrap-filed-with-label-span(label, span)
-        span.content {{bs "#{attr}"}} 
-
-  +_if-action('create')
-    +__wrap-filed-with-label-span(label, span)
-      block     
-
-//- --------------- 布局用控件 ---------------------------------------------
-mixin row(span)
-  //- 默认为整行布局，划为12栏
-  - var span = span || FORM_SPAN
-  div(data-row-span=span)
-    block
-
-//- TODO: 这里要实现元素的可自动增加、减少的功能
-mixin fieldset(title)
-  fieldset 
-    legend #{title}
-    block
+include _form
 
 //- --------------- 各种文本域，都是 input type = 'text' --------------------
 
 //- 可以自由添加Parsely validation条件的text
 mixin text(label, attr, condition, required, span)
   //- - required = true // for testing!!!!
-  +__input(label, attr, span)
+  +__guarded-input-wrapper(label, attr, span)
     - var valueStr = attr? ("name='" + attr + "' value='{{bs \"" + attr + "\"}}' ") : '' 
     - var validationStr = condition? (P.trigger('change') + condition) : ''
     - var validationStr = required? (validationStr + " required=required") : validationStr
@@ -81,7 +22,7 @@ mixin max-text(label, attr, max, required, span)
   +text(label, attr, P.maxlength(max), required, span)
 
 mixin ahead(label, attr, candidates, required, span)
-  - // console.log("candidates are: ", JSON.stringify(candidates));
+  //- // console.log("candidates are: ", JSON.stringify(candidates));
   +text(label, attr, null, required, span)
   | {{bp-add-typeahead "#{attr}" "#{candidates}"}}
 
@@ -90,7 +31,6 @@ mixin ahead(label, attr, candidates, required, span)
   text area
   search
   voice
-  ahead ！！注意：非常重要
   regexp text
 
 
@@ -108,7 +48,7 @@ mixin ahead(label, attr, candidates, required, span)
 //- --------------- 各种普通专用域，很多都有HMTL5的专用type --------------------
 //- TODO: 重构，和text合并
 mixin __control(type, label, attr, condition, required)
-  //- +__input(label, attr)
+  //- +__guarded-input-wrapper(label, attr)
     //- input(type='text', name=attr,  parsley-type=type, value!="{{bs '#{attr}'}}", parsley-trigger="change", required=required, tabindex=index) 
     //- 这里的type目前都用的是text，因为parsley中，有时候其它类型会触发不了校验。
     //- 所以，现在这里直接用text
