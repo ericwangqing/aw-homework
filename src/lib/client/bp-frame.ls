@@ -7,3 +7,7 @@ do make-splash-click-fadeout = !->
     'click':  (e)!->
       $ '#splash' .add-class 'fadeout'
       # $ '.bp-form' .add-class 'fadein'
+
+do make-loading-spinner = !->
+  Template.loading.rendered = !->
+    @spinner = new Spinner!spin @find "#loading"
