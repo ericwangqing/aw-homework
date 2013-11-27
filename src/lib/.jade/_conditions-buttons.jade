@@ -41,14 +41,17 @@ mixin _link-button(action, href, isLink)
   - var href = href || (isLink? ("{{bp-path-for '"+ action +"' this}}") : '#')
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
   a(href=href, class='bp-#{action}', bp-doc-id=bpDocId)
-    case action
-      when 'create'   : i.fa.fa-plus.fa-fw 
-      when 'update'   : i.fa.fa-pencil.fa-fw 
-      when 'delete'   : i.fa.fa-trash-o.fa-fw 
-      when 'next'     : i.fa.fa-arrow-right.fa-fw
-      when 'previous' : i.fa.fa-arrow-left.fa-fw
-      defaule: i
-    block
+    - if(action == 'next') // next的文字出现在前面，图标在后面，和其它相反
+      block
+      i.fa.fa-arrow-right.fa-fw
+    - else
+      case action
+        when 'create'   : i.fa.fa-plus.fa-fw 
+        when 'update'   : i.fa.fa-pencil.fa-fw 
+        when 'delete'   : i.fa.fa-trash-o.fa-fw 
+        when 'previous' : i.fa.fa-arrow-left.fa-fw
+        defaule: i
+      block
 
 mixin _guarded-link(action)
   +_if-collection-permit(action)

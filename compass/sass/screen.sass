@@ -38,6 +38,15 @@ body
       +span-columns(10 omega)
       .bp-form
         +grid-form($field-focus-color: lighten(yellow, 30%), $font-size-large: 16px, $field-padding: 4px, $label-font-size: 12px, $grid-border-color: #C4C4C4, $legend-color: #9E9D9D)
+        .buttons
+          +span-columns(6)
+        .pre-next
+          +span-columns(5 omega)
+          margin: 10px 2px
+          text-align: right
+          a
+            margin-left: 5px
+
       a.bp-update, a.bp-create, a.bp-delete
         +sassy-button-structure(2px, 14px, 2px 5px)
         margin: 10px 2px

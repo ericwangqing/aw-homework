@@ -8,12 +8,14 @@ mixin form(item)
     | {{#with #{item}}}
     form.bp-form(parsley-validate, novalidate) 
       block
-      +_guarded-permission-and-action-button('update', '提交')
-      +_guarded-permission-and-action-button('create', '提交')
-      +_if-action('update')
-        +_guarded-permission-button('delete', '删除')
-        +_previous-link()
-        +_next-link()
+      .buttons
+        +_guarded-permission-and-action-button('update', '提交')
+        +_guarded-permission-and-action-button('create', '提交')
+        +_if-action('update')
+            +_guarded-permission-button('delete', '删除')
+      .pre-next
+            +_previous-link()
+            +_next-link()
     | {{/with}}  
 
 
