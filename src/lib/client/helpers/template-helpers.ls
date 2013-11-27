@@ -34,7 +34,7 @@ class @BP.Template-Helper # abstract and Factory
     # current-action-obj = Session.get 'bp-current-actions'
     # find-current-action-on @doc-name, @doc?_id
     # 'create' # 暂时开发时用
-    Session.get 'bp' .action
+    BP.State.get 'action'
 
   register-data-retriever: !-> 
     @helpers[@data-helper-name] = @data-retriever
@@ -61,7 +61,9 @@ class List-Template-Helper extends BP.Template-Helper
     @form = new BP.Table bpc
   
   data-retriever: ~> 
-    @doc = @collection.find!
+    @docs = @collection.find! .fetch!
+    BP.State.set 'doc-ids', [doc._id for doc in @docs]
+    @docs
 
 class Detail-Template-Helper extends BP.Template-Helper
   (bpc)->
@@ -72,15 +74,24 @@ class Detail-Template-Helper extends BP.Template-Helper
     @add-ui-functionalities!
 
   data-retriever: ~> # TODO：这里查询待完善
-    if (Session.get 'bp' .action) is 'update'
-      @form.doc = @collection.find-one _id: (Session.get 'bp' .current-id)
+    if (BP.State.get 'action') is 'update'
+      @form.doc = @collection.find-one _id: (BP.State.get 'current-id')
       return @form.doc
     else
       @form.doc ={}
 
   add-ui-functionalities: !->
+    @enable-pre-next-links!
     @enable-typeahead-fields!
     @enable-form-validation!
+
+  enable-pre-next-links: !-> 
+    @helpers['bp-pre-link'] = ~> 
+      if pid = BP.State.get 'previous-id'
+        @bpc.get-path 'update', pid # 只有update时有，create时没有 “上一条”、“下一条”
+    @helpers['bp-next-link'] = ~> 
+      if nid = BP.State.get 'next-id'
+        @bpc.get-path 'update', nid
 
   enable-typeahead-fields: !->
     @helpers['bp-add-typeahead'] = @add-typeahead-to-input-field

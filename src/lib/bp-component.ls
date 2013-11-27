@@ -26,8 +26,9 @@ class @BP.Component
       @detail-helper.init!
       @router.add-routes!
 
-  get-path: (action, doc)~> # 给Template用（通过BPC Facade暴露出去）
-    @names[action + 'RoutePath'] doc?._id
+  get-path: (action, doc-or-doc-id)~> # 给Template用（通过BPC Facade暴露出去）
+    id  = if typeof doc-or-doc-id is 'object' then doc-or-doc-id?._id else doc-or-doc-id
+    @names[action + 'RoutePath'] id
 
   publish-data: !->
     # _defered-publish-data! # 延时pub，模拟网络缓慢、测试nProgress
@@ -74,7 +75,7 @@ create-names = !(doc-name)->
     delete-route-path           :   -> _base-route-path + '/delete'
     update-path-name            :   _base-route-name    + '-update'
     update-route-path           :   (id) ->
-                                      id ||= ':_id'
+                                      id ||= ':_id' # 前者用于生成链接（Template），后者用于匹配链接（Router）
                                       _base-route-path + "/#id"
 
 create-collection = !->

@@ -27,7 +27,7 @@ mixin _else()
   block
   | {{/if}}
 
-//- button和link-button的本质区别在于，link本质是导航，不对数据进行任何操作，button是操作，操作后依据结果导航
+//- button和link-button的本质区别在于，link本质是导航，不对数据进行任何操作，button是操作，操作后依据结果导航。
 mixin _guarded-permission-and-action-button(action, label)
   +_if-action(action)
     +_guarded-permission-button(action, label)
@@ -37,18 +37,32 @@ mixin _guarded-permission-button(action, label)
     +_link-button(action) 
       | #{label}
 
-
-mixin _link-button(action, isLink)
-  - var href = isLink? ("{{bp-path-for '"+ action +"' this}}") : '#'
-  - var bpDocId = action == 'delete' ? "{{_id}}" : null // 列表中出现delete按钮时，需要分清是哪个doc
+mixin _link-button(action, href, isLink)
+  - var href = href || (isLink? ("{{bp-path-for '"+ action +"' this}}") : '#')
+  - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
   a(href=href, class='bp-#{action}', bp-doc-id=bpDocId)
     case action
-      when 'create': i.fa.fa-plus.fa-fw 
-      when 'update': i.fa.fa-pencil.fa-fw 
-      when 'delete': i.fa.fa-trash-o.fa-fw 
+      when 'create'   : i.fa.fa-plus.fa-fw 
+      when 'update'   : i.fa.fa-pencil.fa-fw 
+      when 'delete'   : i.fa.fa-trash-o.fa-fw 
+      when 'next'     : i.fa.fa-arrow-right.fa-fw
+      when 'previous' : i.fa.fa-arrow-left.fa-fw
       defaule: i
     block
 
 mixin _guarded-link(action)
   +_if-collection-permit(action)
-    +_link-button(action, true)
+    +_link-button(action, null, true)
+
+mixin _previous-link()
+  | {{#if bp-pre-link}}
+  +_link-button('previous', '{{bp-pre-link}}')
+    | 上一条
+  | {{/if}}
+
+mixin _next-link()
+  | {{#if bp-next-link}}
+  +_link-button('next', '{{bp-next-link}}')
+    | 下一条
+  | {{/if}}
+

@@ -16,7 +16,9 @@
         path: self._get-path action
         template: self._get-template action
         before: ->
-          Session.set 'bp', action: action, current-id: @params._id 
+          if id = @params._id
+            BP.State.set action: action, current-id: id
+            BP.State.update-pre-next id
         wait-on: -> [
           Meteor.subscribe self.names.meteor-collection-name
         ]

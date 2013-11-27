@@ -64,3 +64,13 @@ class @BP.Form extends Abstract-Form
 
 class @BP.Table extends Abstract-Form
   -> super ...
+  # ------------- 下面改用Router的Before 来实现了 ----------------------
+  # register-event-handlers: (events-handlers)!->
+  #   super ...
+  #   events-handlers['click a.bp-update'] = @record-previous-and-next-link-in-session # 去到detail时，需要渲染“上一条”、“下一条”
+
+  # record-previous-and-next-link-in-session: (e)!->
+  #   current-tr = $ e.current-target .closest 'tr'
+  #   pre = current-tr.prev().find('a.bp-update').attr 'href'
+  #   next = current-tr.next().find('a.bp-update').attr 'href'
+  #   BP.State.set {pre-href: pre, next-href: next}
