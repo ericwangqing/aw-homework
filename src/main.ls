@@ -1,5 +1,4 @@
 # 这里是约定的整个应用的入口
-# BP应用的入口
 # ------------ 初始化BP组件 ---------------------------------
 new BP.Component 'assignment' .init!
 new BP.Component 'test' .init!

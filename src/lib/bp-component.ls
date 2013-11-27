@@ -75,22 +75,18 @@ create-names = !(doc-name)->
     update-path-name            :   _base-route-name    + '-update'
     update-route-path           :   (id) ->
                                       id ||= ':_id'
-                                      @_base-route-path + '/#id'
+                                      _base-route-path + "/#id"
 
 create-collection = !->
   @collection = top[@names.meteor-collection-name] = new Meteor.Collection @names.mongo-collection-name
 
 create-list-helper = !->
   if Meteor.is-client
-    @list-helper = BP.Helper.get-helper @names, @collection, 'list' 
-    @list-helper.form = new BP.Form @
-    @list-helper.bpc = @
+    @list-helper = BP.Template-Helper.get-helper @, 'list' 
 
 create-detail-helper = !->
   if Meteor.is-client
-    @detail-helper = BP.Helper.get-helper @names, @collection, 'detail' 
-    @detail-helper.form = new BP.Form @
-    @detail-helper.bpc = @
+    @detail-helper = BP.Template-Helper.get-helper @, 'detail' 
 
 create-router = !->
   if Meteor.is-client
