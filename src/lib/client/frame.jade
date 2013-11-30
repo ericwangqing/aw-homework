@@ -14,6 +14,8 @@ template(name='layout')
       | {{> bp-second-nav}}
     article.main-content
       //- | {{> splash}}
+      //- | {{{BP-Composite 'tests-list' 'assignments-list' }}}
+      //- | {{> assignments-list}}
       | {{yield}}      
     aside.right-sidebar
     footer
@@ -23,7 +25,7 @@ template(name='bp-banner')
   a(href='/') BP Banner
 
 template(name='bp-main-nav')
-  | {{#each collection-paths}}
+  | {{#each main-nav-paths}}
   a(href="{{pathFor this}}") {{this}}
   | {{/each}}
 

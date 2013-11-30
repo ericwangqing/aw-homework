@@ -5,7 +5,7 @@ include _form
 //- 可以自由添加Parsely validation条件的text
 mixin text(label, attr, condition, required, span)
   //- - required = true // for testing!!!!
-  +__guarded-input-wrapper(label, attr, span)
+  +__guarded-input-wrapper(label, attr, span)(attributes)
     - var valueStr = attr? ("name='" + attr + "' value='{{bs \"" + attr + "\"}}' ") : '' 
     - var validationStr = condition? (P.trigger('change') + condition) : ''
     - var validationStr = required? (validationStr + " required=required") : validationStr
@@ -13,17 +13,17 @@ mixin text(label, attr, condition, required, span)
     //- input(type='text', name=value, value!="{{bs '#{value}'}}") 
 
 mixin no-blank-text(label, attr, condition, required, span)
-  +text(label, attr, P.notblank(), required, span)
+  +text(label, attr, P.notblank(), required, span)(attributes)
 
 mixin min-text(label, attr, min, required, span)
-  +text(label, attr, P.minlength(min), required, span)
+  +text(label, attr, P.minlength(min), required, span)(attributes)
 
 mixin max-text(label, attr, max, required, span)
-  +text(label, attr, P.maxlength(max), required, span)
+  +text(label, attr, P.maxlength(max), required, span)(attributes)
 
 mixin ahead(label, attr, candidates, required, span)
   //- // console.log("candidates are: ", JSON.stringify(candidates));
-  +text(label, attr, null, required, span)
+  +text(label, attr, null, required, span)(attributes)
   | {{bp-add-typeahead "#{attr}" "#{candidates}"}}
 
 //- ------ 待实现 ------
@@ -53,13 +53,13 @@ mixin __control(type, label, attr, condition, required)
     //- 这里的type目前都用的是text，因为parsley中，有时候其它类型会触发不了校验。
     //- 所以，现在这里直接用text
   - var condition = P.type(type) + ' ' + (condition? condition : '')
-  +text(label, attr, condition, required)
+  +text(label, attr, condition, required)(attributes)
 
 mixin email(label, attr, condition, required)
-  +__control('email', label, attr, condition, required)
+  +__control('email', label, attr, condition, required)(attributes)
 
 mixin number(label, attr, condition, required)
-  +__control('number', label, attr, condition, required)
+  +__control('number', label, attr, condition, required)(attributes)
 
 //- ------ 待实现 ------
   password #用Parsley的Equal To

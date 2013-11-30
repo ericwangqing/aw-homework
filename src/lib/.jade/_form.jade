@@ -1,12 +1,12 @@
-include _constants
-include _conditions-buttons
+include _constants-and-utils
+include _conditions-and-buttons
 
 //- =============  BP表单控件，常用于详情（修改、添加）   ======================
 
 mixin form(item)
   +_if-doc-permit('update create')
     | {{#with #{item}}}
-    form.bp-form(parsley-validate, novalidate) 
+    form.bp-form(parsley-validate, novalidate, bp-action='{{bp-current-action}}') 
       block
       .buttons
         +_guarded-permission-and-action-button('update', '提交')
@@ -27,18 +27,27 @@ mixin __guarded-input-wrapper(label, attr, span)
   - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航。为了在mixin和block之间传递，使用了全局变量。注意：此处不用在结束form的渲染时，将index清零，因为：1）tabindex在一个页面上应该可以在多个表单连续工作；2）jade在渲染两份jade文件时，使用全新的环境，因此不会造成下一个HTML的tabindex被连续排号的问题。
   +_if-action('update')
     +_if-else-attribute-permit(attr, 'update')
-      +__wrap-filed-with-label-span(label, span)
+      +__wrap-filed-with-label-span(label, span)(attributes)
         block 
     +_else()
+      //- 不显示ref
       +__uneditable-content(label, attr, span)
 
   +_if-action('create')
-    +__wrap-filed-with-label-span(label, span)
-      block     
+    +__wrap-filed-with-label-span(label, span)(attributes)
+      block 
+
+  +_if-action('view')   
+    +_if-attribute-permit('view')
+      //- 不显示ref
+      +__uneditable-content(label, attr, span)
+
 
 mixin __wrap-filed-with-label-span(label, span)
   .controls(data-field-span=span)
     label #{label}:
+      if attributes.ref
+        +_show-reference(attributes.ref)
     block
 
 mixin __uneditable-content(label, attr, span)

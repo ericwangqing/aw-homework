@@ -6,6 +6,8 @@
 '''
 module.exports = (grunt)->
   # process.env.DEBUG = 'aw'
+  require 'sugar'
+  bp = require './bp-jade'
   grunt.initConfig
     clean: 
       src:
@@ -16,6 +18,7 @@ module.exports = (grunt)->
         ]
       temp: ['src-temp', 'test-temp']
       test: ['test-bin']
+      bp: ['src/main.ls'] # 这个是bp-jade生成的
     copy:
       main:
         files: [{expand: true, cwd:'resource/', flatten:true, src: ['**/*'], dest: 'bin/public/resource'}]
@@ -86,6 +89,9 @@ module.exports = (grunt)->
         options:
           debug: false
           pretty: true
+          data:
+            bp: bp
+          #   grunt: ()-> grunt
     compass:
       all:
         options:
@@ -106,7 +112,7 @@ module.exports = (grunt)->
       script:
         files: ["src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "src/lib/.jade/**/*.jade", "compass/**/*.sass"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
-        tasks: ["clean", "copy", "concat", "livescript", "compass", "jade", "simplemocha"]
+        tasks: ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha"]
         options:
           spawn: true
           # livereload: false # 这里我们是meteor在reload！
@@ -135,7 +141,7 @@ module.exports = (grunt)->
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-concat"
 
-  grunt.registerTask "default", ["clean", "copy", "concat", "livescript", "compass", "jade", "simplemocha", "watch"]
+  grunt.registerTask "default", ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha", "watch"]
   # grunt.registerTask "server", ["clean", "copy", "concat", "livescript", "concurrent"]
   # grunt.registerTask "test", ["env:manual_test", "concat:prefix_test", "livescript:test", "livescript:test_helper", "simplemocha"]
 

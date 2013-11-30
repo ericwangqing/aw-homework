@@ -1,13 +1,16 @@
 @BP ||= {}
 @BP.Router = class _Router 
   @collections-lists-routes = [] #用以main nav显示
+  @custom-main-nav-paths = [] # 扩展点，应用程序在这里添加自己的一级导航
+  @add-main-nav = (path) !-> @custom-main-nav-paths.push path
+
 
   (@bpc)->
     @names = @bpc.names
 
   add-routes: !->
     @@collections-lists-routes.push @names.list-path-name
-    ['list', 'create', 'update', 'delete'].map @_add-route, @
+    ['list', 'create', 'update', 'delete', 'view'].map @_add-route, @
 
   _add-route: (action)!->
     self = @
@@ -16,9 +19,9 @@
         path: self._get-path action
         template: self._get-template action
         before: ->
-          if id = @params._id
-            BP.State.set action: action, current-id: id
-            BP.State.update-pre-next id
+          if id = @params._id or action is 'create'
+            self.bpc.set-state action: action, current-id: id
+            self.bpc.update-pre-next id
         wait-on: -> [
           Meteor.subscribe self.names.meteor-collection-name
         ]

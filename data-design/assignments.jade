@@ -34,3 +34,19 @@ template(name='assignment')
     +text('喜欢的城市', 'cities')//this.cities = ['北京' '广州']
 
 //- 用JSONPath来帮手实现
+
+//
+  引用域、引用fileset，形如：
+//- 注意此处不再直接用Meteor的template了，改为Mixin，插入逻辑
++template(name='do-homework', main='homework', references='ass?') //待设计。。。。
+new BP.Component 'assignment' .init!
+new BP.Component 'do-homework', main: homework
+
++text('题目', 'collection: Assignment, attribute: deadline.day, query: {aid: _id}')
++text('题目', 'c: Assignment, a: deadline.day, q: {aid: _id}')
+
+//- collection, query为必须给出的项，attribute省略时，为整个doc
++fieldset('作业安排与要求', 'collection: Assignment, attribute: requirement, query: {aid: _id}')
+  //- Assigment#requirement.format
+  +text('格式', 'format')
+

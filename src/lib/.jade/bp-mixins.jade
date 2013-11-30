@@ -3,6 +3,9 @@
   2、用于创建和修改的表单
   注意：这里的逻辑正确性、数据合法性控制很松，因为，这些代码是开发者在开发时使用的，不是用户使用的
 
+//- bp的template, 包装了Meteor的template，可以添加reference
+include _template
+
 //- bp的表单，常用于详情（修改、添加）
 include _form
 
@@ -11,6 +14,9 @@ include _fields
 
 //- bp的表格，常用于列表（删除、（去）添加、（去）修改）
 include _table
+
+//- bp的template系统
+//- include _template 
 
 
 

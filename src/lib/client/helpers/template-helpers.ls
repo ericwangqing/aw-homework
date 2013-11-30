@@ -22,6 +22,7 @@ class @BP.Template-Helper # abstract and Factory
   init: !-> 
     self = @
     @register-data-retriever!
+    @register-current-action-getter!
     @register-permission-checker!
     @register-event-handlers!
     @register-path-helper!
@@ -30,21 +31,30 @@ class @BP.Template-Helper # abstract and Factory
     Template[@template-name].rendered = !->
       [method.call @ for method in self.post-render-methods]
 
-  get-current-action: ->
+  get-current-action: ~>
     # current-action-obj = Session.get 'bp-current-actions'
     # find-current-action-on @doc-name, @doc?_id
     # 'create' # 暂时开发时用
-    BP.State.get 'action'
+    @bpc.get-state 'action'
+
+  current-action-checker: (action-str)~>
+    current-action = @get-current-action!
+    permited-actions = action-str.split ','
+    for permited-action in permited-actions
+      return true if current-action is permited-action
+    false
 
   register-data-retriever: !-> 
     @helpers[@data-helper-name] = @data-retriever
+
+  register-current-action-getter: !-> # both list and detail page have delete
+    @helpers['bp-current-action'] = @get-current-action
 
   register-permission-checker: !->
     @helpers['bp-attribute-permit'] = @permission.attribute-permission-checker
     @helpers['bp-doc-permit'] = @permission.doc-permission-checker
     @helpers['bp-collection-permit'] = @permission.collection-permission-checker
-    @helpers['bp-action-is'] = (action)~>
-      action is @get-current-action!
+    @helpers['bp-action-is'] = @current-action-checker
 
   register-event-handlers: !-> # both list and detail page have delete
     @form.register-event-handlers @events-handlers
@@ -62,7 +72,7 @@ class List-Template-Helper extends BP.Template-Helper
   
   data-retriever: ~> 
     @docs = @collection.find! .fetch!
-    BP.State.set 'doc-ids', [doc._id for doc in @docs]
+    @bpc.set-state 'doc-ids', [doc._id for doc in @docs]
     @docs
 
 class Detail-Template-Helper extends BP.Template-Helper
@@ -74,8 +84,8 @@ class Detail-Template-Helper extends BP.Template-Helper
     @add-ui-functionalities!
 
   data-retriever: ~> # TODO：这里查询待完善
-    if (BP.State.get 'action') is 'update'
-      @form.doc = @collection.find-one _id: (BP.State.get 'current-id')
+    if (@bpc.get-state 'action') in ['update', 'view']
+      @form.doc = @collection.find-one _id: (@bpc.get-state 'current-id')
       return @form.doc
     else
       @form.doc ={}
@@ -87,11 +97,15 @@ class Detail-Template-Helper extends BP.Template-Helper
 
   enable-pre-next-links: !-> 
     @helpers['bp-pre-link'] = ~> 
-      if pid = BP.State.get 'previous-id'
-        @bpc.get-path 'update', pid # 只有update时有，create时没有 “上一条”、“下一条”
+      @_enable-nav-link('previous-id')
     @helpers['bp-next-link'] = ~> 
-      if nid = BP.State.get 'next-id'
-        @bpc.get-path 'update', nid
+      @_enable-nav-link('next-id')
+
+  _enable-nav-link: (nav-id-name)->
+    if doc-id = @bpc.get-state nav-id-name
+      action = @get-current-action!
+      @bpc.get-path action, doc-id 
+
 
   enable-typeahead-fields: !->
     @helpers['bp-add-typeahead'] = @add-typeahead-to-input-field

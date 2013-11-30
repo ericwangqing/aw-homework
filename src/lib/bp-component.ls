@@ -8,23 +8,54 @@ top = @
 class @BP.Component 
   # Facade of other BP module
   # 这里meteor的加载顺序似乎有问题，所以用了函数封装下。按道理现在BPC在BPR的外层目录，应该在BPR之后加载，但是事实上却不是。故而hack。
+  @bpcs = {} # hold all bpc for using
   @collection-paths = -> BP.Router.collections-lists-routes # 给布局模板自动生成主导航（main-nav）用。
+  @custom-main-nav-paths = -> BP.Router.custom-main-nav-paths # 扩展点，应用程序在这里添加自己的一级导航
   @add-routes = -> BP.Router.route! # 给应用程序启动应用时初始化BP Router用
-  
+  @add-main-nav = (path)-> BP.Router.add-main-nav path
+
+  if Meteor.is-client
+    Handlebars.register-helper 'bp-register-view', @add-view-to-bpc = (doc-name, template-name, view-id)!~>
+      bpc = @find-bpc-by-template-name doc-name
+      bpc.initial-view template-name, view-id
+
+    @find-bpc-by-template-name = (doc-name)!->
+      for bpc in Object.values @bpcs
+        return bpc if bpc.names.doc-name is doc-name  
+
   (doc-name)->
+    @templates = {}
     create-names.apply @, & # names中有此BP Component用的各种名字，如collection、template、helper等等名称。这里贯彻BP的命名规范。
     create-collection.apply @
+    # create-state.apply @
     create-list-helper.apply @
     create-detail-helper.apply @
     create-router.apply @
-
-  init: !->
+  # init: !->
     if Meteor.is-server
       @publish-data!
     if Meteor.is-client
       @list-helper.init!
       @detail-helper.init!
       @router.add-routes!
+    @@bpcs[doc-name] = @
+
+  add-template-view: (template-name, view-id)!->
+    @templates[template-name] ||= {}
+    @templates[template-name][view-id] ||= @current-view = new BP.View template-name, view-id
+
+  initial-view: (template-name, view-id)!->
+    @add-template-view template-name, view-id
+
+  get-state: (attr)-> @current-view.state.get attr
+  set-state: (attr, value)!-> @current-view.state.set attr, value
+  update-pre-next: (doc-id)!-> @current-view.state.update-pre-next doc-id
+  # get-template-views: (template-name)->
+  #   for name, views of @templates
+  #     return v
+  #   Object.keys @templates, (template-name)->
+  #       @templates if name is template-name
+
 
   get-path: (action, doc-or-doc-id)~> # 给Template用（通过BPC Facade暴露出去）
     id  = if typeof doc-or-doc-id is 'object' then doc-or-doc-id?._id else doc-or-doc-id
@@ -76,18 +107,29 @@ create-names = !(doc-name)->
     update-path-name            :   _base-route-name    + '-update'
     update-route-path           :   (id) ->
                                       id ||= ':_id' # 前者用于生成链接（Template），后者用于匹配链接（Router）
-                                      _base-route-path + "/#id"
+                                      _base-route-path + "/#id/update"
+    view-path-name            :   _base-route-name    + '-view'
+    view-route-path           :   (id) ->
+                                      id ||= ':_id' # 前者用于生成链接（Template），后者用于匹配链接（Router）
+                                      _base-route-path + "/#id/view"
 
 create-collection = !->
   @collection = top[@names.meteor-collection-name] = new Meteor.Collection @names.mongo-collection-name
 
+# create-state = !->
+#   if Meteor.is-client
+#     @state = new BP.State @names.doc-name
+
 create-list-helper = !->
   if Meteor.is-client
     @list-helper = BP.Template-Helper.get-helper @, 'list' 
+    # @initial-view @names.list-template-name
 
 create-detail-helper = !->
   if Meteor.is-client
     @detail-helper = BP.Template-Helper.get-helper @, 'detail' 
+    # @initial-view @names.detail-template-name
+
 
 create-router = !->
   if Meteor.is-client

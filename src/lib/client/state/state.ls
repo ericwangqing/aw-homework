@@ -1,24 +1,21 @@
 @BP ||= {}
-@BP.State = do
+
+class @BP.State
+  (@namespace)->
+
   get: (attr)->
     attr = attr.camelize false
-    (Session.get 'bp')[attr]
+    (Session.get 'bp')[@namespace]?[attr]
 
   set: (obj-attr, value)!->
-    bp = (Session.get 'bp') || {}
+    bp = (Session.get 'bp') || {} 
+    bp[@namespace] ||= {}
     if typeof obj-attr is 'string'
       attr = obj-attr.camelize false
-      bp[attr] = value
+      bp[@namespace][attr] = value
     else
-      bp <<< obj-attr
+      bp[@namespace] <<< obj-attr
     Session.set 'bp', bp
-
-  get-previous-doc-id: (current-id)->
-    previous-id = null
-    for id in  BP.State.get 'doc-ids'
-      break if id is current-id
-      previous-id = id
-    previous-id
 
   update-pre-next: (current-id)!->
     pre = next = null
@@ -29,6 +26,6 @@
       next = doc-ids[index + 1] 
     @set 'previous-id', pre
     @set 'next-id', next
-
+ 
 
 
