@@ -1,8 +1,7 @@
 include lib/.jade/bp-mixins
-+template('assignment', 'list')
++template('assignment','assignments-list', 'list')
   +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
 
-- var ref = 'assignments-list'
 
 mixin my-fieldset(title)
   +fieldset(title)
@@ -21,8 +20,11 @@ mixin my-fieldset(title)
       +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
 
 //- 注意：这里用的是mixin，不是原始template！
-+template('assignment', 'detail', ref) 
+//- 用mixin，会形成相应的导航路径，如果不需要导航路径，仅仅将template用作模块划分，以便复用，那么，直接用不带加号的template
++template('assignment', 'assignment', 'detail') 
   +form('assignment')
     //- 这些表单控件都是 label，attr，options的参数结构
     +my-fieldset('题目基本要求')
     //- +my-fieldset('下一个题目的要求')
+
++main-nav(['assignments-list'])

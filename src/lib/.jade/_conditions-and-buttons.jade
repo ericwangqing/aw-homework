@@ -69,6 +69,9 @@ mixin _next-link()
     | 下一条
   | {{/if}}
 
-mixin _show-reference(ref)
-  i.fa.fa-info.reference(bp-ref=ref)
+mixin _show-reference(templateName, viewName)
+  //- - var viewName = viewName? viewNane : templateName
+  //- - console.log("_show-reference: references: ", references)
+  - references.push({templateName: templateName, viewName: viewName})
+  i.fa.fa-info.reference(bp-ref=viewName)
 

@@ -1,1 +1,2 @@
-new BP.Component 'assignment'
+BP.Router.add-route-for-views do
+  

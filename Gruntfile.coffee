@@ -7,7 +7,7 @@
 module.exports = (grunt)->
   # process.env.DEBUG = 'aw'
   require 'sugar'
-  bp = require './bp-jade'
+  bp = require './bp/bp-jade'
   grunt.initConfig
     clean: 
       src:

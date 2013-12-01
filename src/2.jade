@@ -1,6 +1,7 @@
 //- include lib/.jade/bp-mixins
-//- +template('test', 'list')
-//-   +table('tests', ['题目', '要求', '截止时间-tests'], ['title', 'requirement', 'deadline'])
+//- +template('work','works-list', 'list')
+//-   +table('works', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+
 
 //- mixin my-fieldset(title)
 //-   +fieldset(title)
@@ -10,7 +11,7 @@
 //-       +no-blank-text('要求', 'requirement', condition=null, required=null, span=6)
 //-       +min-text('中文内容', '中文内容', min=6)
 //-     +row()
-//-       +text('截止时间', 'deadline')
+//-       +text('截止时间', 'deadline')(ref='works-list')
 //-       +text('发布时间', 'createdAtTime')
 //-       //- 专用控件的接口都是<xxx-text>(label, attr, condition, required)，后面的值可缺省
 //-       +number('截止时间', null, null, false)
@@ -18,9 +19,12 @@
 //-     +row()
 //-       +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
 
-//- +template('test', 'detail')
-//-   +form('test')
+//- //- 注意：这里用的是mixin，不是原始template！
+//- //- 用mixin，会形成相应的导航路径，如果不需要导航路径，仅仅将template用作模块划分，以便复用，那么，直接用不带加号的template
+//- +template('work', 'work', 'detail') 
+//-   +form('work')
 //-     //- 这些表单控件都是 label，attr，options的参数结构
 //-     +my-fieldset('题目基本要求')
-//-     +my-fieldset('下一个题目的要求')
-//-     
+//-     //- +my-fieldset('下一个题目的要求')
+
+//- +main-nav(['works-list'])

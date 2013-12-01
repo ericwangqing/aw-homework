@@ -1,13 +1,40 @@
-mixin template(docName, templateType, references)
-  - var templateName = (templateType == 'detail') ? docName : (docName.pluralize() + '-list')
-  - var viewId = Date.now() + Math.random() // template每次被插入，得到一个新view
-  - bp.makeBpc(docName) // 产生初始化BPC的代码
+//- mixin template(docName, templateType, references)
+//-   - var templateName = (templateType == 'detail') ? docName : (docName.pluralize() + '-list')
+//-   - var viewId = Date.now() + Math.random() // template每次被插入，得到一个新view
+//-   - bp.makeBpc(docName) // 产生初始化BPC的代码
+//-   template(name=templateName)
+//-     //- 这里向BPC注册当前的view
+//-     | {{bp-register-view '#{docName}' '#{templateName}' '#{viewId}'}}
+//-     block
+//-     if references 
+//-       - if(typeof references == 'string') {references = [references];}
+//-       each ref in references
+//-         .reference(bp-ref=ref)
+//-           | {{> #{ref}}}
+
+
+mixin template(docName, templateName, templateType)
+  - console.log("************* 1 ***********")
+  - var bpView = bp.getView(docName, templateName, templateType)
+  - console.log("************* 2 ***********: ")
+  - references = [] //
   template(name=templateName)
-    //- 这里向BPC注册当前的view
-    | {{bp-register-view '#{docName}' '#{templateName}' '#{viewId}'}}
     block
-    if references 
-      - if(typeof references == 'string') {references = [references];}
-      each ref in references
-        .reference(bp-ref=ref)
-          | {{> #{ref}}}
+  each ref in references
+    +_reference(bpView, ref)
+  - console.log("************* 3 ***********")
+  //- - bp.saveView(bpView)
+
+
+
+
+mixin _reference(view, ref)
+  - console.log("call reference, view: " + view + ", ref: " + ref )
+  - var viewName = ref.viewName? ref.viewName : 'ref-' + ref.templateName
+  - view.addComposedView(viewName, ref.templateName)
+  .reference(bp-ref=viewName)
+    | {{> #{ref}}}
+
+mixin main-nav(templateNames)
+  -bp.setMainNav(templateNames)
+  -bp.saveView()
