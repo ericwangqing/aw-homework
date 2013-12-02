@@ -2,7 +2,7 @@
 (function(){
   var fs, View, code;
   fs = require('fs');
-  View = require('./navigation').View;
+  View = require('./client/view').View;
   module.exports = {
     getView: function(docName, templateName, templateType){
       return View.getView.apply(View, arguments);
@@ -19,5 +19,5 @@
       fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry));
     }
   };
-  code = ' \nif module\n  require! [fs, sugar, \'./Router\']\n\nBP ||= {}\nBP.Router ||= Router\n\ndebugger\nBP.Router.add-route-for-views views = ';
+  code = ' \nif module\n  require! [fs, sugar, \'./Component\'] \n\nBP ||= {}\nBP.Component ||= Component\n\ndebugger\nBP.Component.create-bpc-for-views views = ';
 }).call(this);

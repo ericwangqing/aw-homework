@@ -1,7 +1,8 @@
-# 给Jade用，根据template中的定义，动态编译出Views，以便BP Router加载
+# !!! 注意，此文件不是运行时代码，是开发时代码。
+# 给Jade用，根据template中的定义，动态编译出Views，以便BP Router加载。
 
 
-require! [fs, './navigation'.View]
+require! [fs, './client/view'.View]
 
 module.exports =
   get-view: (doc-name, template-name, template-type)->
@@ -17,13 +18,13 @@ module.exports =
 
 code = ''' 
 if module
-  require! [fs, sugar, './Router']
+  require! [fs, sugar, './Component'] 
 
 BP ||= {}
-BP.Router ||= Router
+BP.Component ||= Component
 
 debugger
-BP.Router.add-route-for-views views = 
+BP.Component.create-bpc-for-views views = 
 '''
 
 
