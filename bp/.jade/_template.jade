@@ -9,31 +9,34 @@
 //-     if references 
 //-       - if(typeof references == 'string') {references = [references];}
 //-       each ref in references
-//-         .reference(bp-ref=ref)
+//-         .reference(bp-view-name=ref)
 //-           | {{> #{ref}}}
 
 
 mixin template(docName, templateName, templateType)
   - console.log("************* 1 ***********")
-  - var bpView = bp.getView(docName, templateName, templateType)
+  - currentViewName = templateName // 用于在生成_link-button时，标明所在view
+  - var topView = bp.getView(docName, currentViewName, templateName, templateType); 
+  - references = [];
   - console.log("************* 2 ***********: ")
-  - references = [] //
+  //- 切换bpc的helper，保障同一个template，多个view的情况下渲染正确
+  //- | {{bp-load-bpc '#{currentViewName}'}} !!!! 注意 ！！！ 顶层template在Router的before里面load-bpc，写在这里无用，在<template>标签外了，Meteor是不会执行的。
   template(name=templateName)
     block
-  each ref in references
-    +_reference(bpView, ref)
-  - console.log("************* 3 ***********")
-  //- - bp.saveView(bpView)
+    each ref in references
+      +_reference(topView, ref)
+    - console.log("************* 3 ***********")
 
 
 
 
-mixin _reference(view, ref)
-  - console.log("call reference, view: " + view + ", ref: " + ref )
-  - var viewName = ref.viewName? ref.viewName : 'ref-' + ref.templateName
-  - view.addComposedView(viewName, ref.templateName)
-  .reference(bp-ref=viewName)
-    | {{> #{ref}}}
+mixin _reference(topView, templateName)
+  - console.log("call reference, ref: ", ref)
+  - var currentViewName = 'ref-' + templateName
+  - topView.addComposedView(currentViewName, templateName)
+  | {{bp-load-bpc '#{currentViewName}'}}
+  .reference(bp-view-name=currentViewName)
+    | {{> #{templateName}}}
 
 mixin main-nav(templateNames)
   -bp.setMainNav(templateNames)

@@ -1,6 +1,6 @@
 do show-main-nav-with-all-bp-components-and-custom-nav-paths = !->
   Template['bp-main-nav'].helpers 'main-nav-paths': ->
-    BP.Component.collection-paths! ++  BP.Component.custom-main-nav-paths!
+    BP.Component.main-nav-paths
 
 do make-splash-click-fadeout = !->
   Template.splash.events do

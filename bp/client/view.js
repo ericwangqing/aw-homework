@@ -9,6 +9,7 @@
       this.type = type;
       this.composedPaths = [];
       this.patterns = {};
+      this.last = null;
     }
     prototype.createPattern = function(){
       var name, ref$, pattern, path;
@@ -42,9 +43,10 @@
     prototype.getPath = function(action, id){
       var path;
       if (id) {
-        return path = this.patterns.replace(this.idPlaceHolder, id);
+        path = this.patterns.replace(this.idPlaceHolder, id);
+        return this.last = path;
       } else {
-        return path = this.patterns;
+        return this.last;
       }
     };
     return Path;
@@ -53,9 +55,9 @@
     View.displayName = 'View';
     var isAllResolved, wireViewsGoto, prototype = View.prototype, constructor = View;
     View.registry = {};
-    View.getView = function(docName, viewName, type){
+    View.getView = function(docName, viewName, templateName, type){
       if (!this.registry[viewName]) {
-        this.registry[viewName] = new View(docName, viewName, type);
+        this.registry[viewName] = new View(docName, viewName, templateName, type);
       }
       return this.registry[viewName];
     };
@@ -65,11 +67,14 @@
         view = views[viewName];
         View.registry[viewName] = this.resumeView(view);
       }
+      this.createAllViewsPathPattern();
     };
     View.resumeView = function(view){
       var resumedView;
       view.path = import$(new Path(), view.path);
-      return resumedView = import$(new View(), view);
+      resumedView = import$(new View(), view);
+      this.BP || (this.BP = {});
+      return this.state = new BP.State(this.name);
     };
     View.createAllViewsPathPattern = function(){
       var views, total, resolvedViews, i$, len$, view, j$, ref$, len1$, composedView;
@@ -112,14 +117,16 @@
         view.wireGoto();
       }
     };
-    function View(docName, name, type){
+    function View(docName, name, templateName, type){
       this.docName = docName;
       this.name = name;
+      this.templateName = templateName;
       this.type = type;
       this.path = new Path(this.name, this.type);
       this.isMainNav = false;
       this.composedViews = {};
       this.gotos = {};
+      this.state = null;
     }
     prototype.addComposedView = function(viewName, composedViewName){
       this.composedViews[viewName] = composedViewName;
@@ -132,13 +139,27 @@
       newView.path.createPattern();
       return newView;
     };
-    prototype.wireGoto = function(){
+    prototype.getPath = function(action, id){
+      return this.path.getPath(action, id);
+    };
+    prototype.updateState = function(action, params){
+      var id, viewName, ref$, view, results$ = [];
       if (this.type === 'detail') {
-        this.leavingActions = ['next', 'previous', 'submit', 'delete'];
-        this.goto['next'] = {
-          helperName: 'bp-'
-        };
+        this.state.setState({
+          action: action,
+          currentId: id = params[this.name + '-id']
+        });
+        this.state.updatePreNext(id);
+      } else {
+        this.state.setState({
+          action: action
+        });
       }
+      for (viewName in ref$ = this.composedViews) {
+        view = ref$[viewName];
+        results$.push(view.updateState('reference', params));
+      }
+      return results$;
     };
     return View;
   }());

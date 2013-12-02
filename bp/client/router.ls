@@ -5,42 +5,26 @@ BP ||= {}
 BP.View ||= View
 
 class _Router
-  @add-route-for-views = (views)!->
-    BP.View.resume-views views
-    # console.log "resumed views: ", BP.View.registry
-    BP.View.create-all-views-path-pattern!
-    for name, view of BP.View.registry
-      console.log "view: ", view
-      new Router view .route!
-    # BP.View.wire-views-goto!
-  (@view)->
+  (@bpc)->
+    @route!
 
   route: !->
     self = @
+    view = @bpc.view
     Router.map !->
-      for action, pattern of self.view.patterns
-        @route (self.view.name + '-' + action), do
+      for action, pattern of view.patterns
+        @route (view.name + '-' + action), do
           path: pattern
-          template: @view.name
+          template: view.template-name
           before: ->
-            params = @params
-            self.create-bpc!
-            self.bpc.update-state params
+            self.bpc.init! # 页面顶层的bpc在这里初始化，内含的各个bpc通过'bp-load-bpc'helper，在Meteor渲染页面时初始化
+            view.update-state action, params
             # if id = @params._id or action is 'create'
             #   self.bpc.set-state action: action, current-id: id
             #   self.bpc.update-pre-next id
           wait-on: -> [
             Meteor.subscribe self.names.meteor-collection-name
           ]
-
-  _get-route-name: (action)->
-    @names[action + 'PathName']
-
-  _get-path: (action, id)->
-    @names[action + 'RoutePath'] id
-
-  _get-template: (action)->
-    if action is 'list' then @names.list-template-name else @names.detail-template-name
 
 
 

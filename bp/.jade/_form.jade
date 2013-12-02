@@ -47,7 +47,8 @@ mixin __wrap-filed-with-label-span(label, span)
   .controls(data-field-span=span)
     label #{label}:
       if attributes.ref
-        +_show-reference(attributes.ref, attributes.view)
+        - console.log("label: ", label)
+        +_show-reference(attributes.ref)
     block
 
 mixin __uneditable-content(label, attr, span)

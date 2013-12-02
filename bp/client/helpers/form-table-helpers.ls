@@ -16,8 +16,8 @@ class Abstract-Form
       Router.go @bpc.get-path 'list'
 
   show-reference: (e)!~>
-    ref = $ e.current-target .attr 'bp-ref'
-    $ "div.reference[bp-ref='#ref']" .toggle!
+    ref = $ e.current-target .attr 'bp-view-name'
+    $ "div.reference[bp-view-name='#ref']" .toggle!
 
 class @BP.Form extends Abstract-Form
   -> super ...
