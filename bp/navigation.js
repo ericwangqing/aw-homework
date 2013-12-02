@@ -8,41 +8,50 @@
       this.destinationViewName = destinationViewName;
       this.type = type;
       this.composedPaths = [];
+      this.patterns = {};
     }
     prototype.createPattern = function(){
-      var path;
+      var name, ref$, pattern, path;
       if (this.type === 'list') {
-        this.pattern = '/' + this.destinationViewName;
+        this.patterns['list'] = '/' + this.destinationViewName;
+        this.patterns['reference'] = '/' + this.destinationViewName + '/reference';
       } else if (this.type === 'detail') {
         this.idPlaceHolder = ':' + this.destinationViewName + '-id';
-        this.pattern = '/' + this.destinationViewName + '/' + this.idPlaceHolder;
+        this.patterns['create'] = '/' + this.destinationViewName + '/create';
+        this.patterns['update'] = '/' + this.destinationViewName + '/' + this.idPlaceHolder + '/update';
+        this.patterns['view'] = '/' + this.destinationViewName + '/' + this.idPlaceHolder + '/view';
+        this.patterns['reference'] = '/' + this.destinationViewName + '/' + this.idPlaceHolder + '/reference';
       } else {
         throw new Error("this '" + this + "type' is not supported yet.");
       }
       if (this.composedPaths.length > 0) {
-        this.pattern = this.pattern + (function(){
-          var i$, ref$, len$, results$ = [];
-          for (i$ = 0, len$ = (ref$ = this.composedPaths).length; i$ < len$; ++i$) {
-            path = ref$[i$];
-            results$.push(path.pattern);
-          }
-          return results$;
-        }.call(this)).join('');
+        for (name in ref$ = this.patterns) {
+          pattern = ref$[name];
+          this.patterns[name] = pattern + (fn$.call(this));
+        }
+      }
+      function fn$(){
+        var i$, ref$, len$, results$ = [];
+        for (i$ = 0, len$ = (ref$ = this.composedPaths).length; i$ < len$; ++i$) {
+          path = ref$[i$];
+          results$.push(path.patterns['reference']);
+        }
+        return results$;
       }
     };
-    prototype.getPath = function(id){
+    prototype.getPath = function(action, id){
       var path;
       if (id) {
-        return path = this.pattern.replace(this.idPlaceHolder, id);
+        return path = this.patterns.replace(this.idPlaceHolder, id);
       } else {
-        return path = this.pattern;
+        return path = this.patterns;
       }
     };
     return Path;
   }());
   View = (function(){
     View.displayName = 'View';
-    var isAllResolved, prototype = View.prototype, constructor = View;
+    var isAllResolved, wireViewsGoto, prototype = View.prototype, constructor = View;
     View.registry = {};
     View.getView = function(docName, viewName, type){
       if (!this.registry[viewName]) {
@@ -96,6 +105,13 @@
       }
       return true;
     };
+    wireViewsGoto = function(){
+      var viewName, ref$, view;
+      for (viewName in ref$ = this.registry) {
+        view = ref$[viewName];
+        view.wireGoto();
+      }
+    };
     function View(docName, name, type){
       this.docName = docName;
       this.name = name;
@@ -103,8 +119,7 @@
       this.path = new Path(this.name, this.type);
       this.isMainNav = false;
       this.composedViews = {};
-      this.entraces = [];
-      this.gotos = [];
+      this.gotos = {};
     }
     prototype.addComposedView = function(viewName, composedViewName){
       this.composedViews[viewName] = composedViewName;
@@ -117,8 +132,13 @@
       newView.path.createPattern();
       return newView;
     };
-    prototype.addGoto = function(goto){
-      this.gotos.push(goto);
+    prototype.wireGoto = function(){
+      if (this.type === 'detail') {
+        this.leavingActions = ['next', 'previous', 'submit', 'delete'];
+        this.goto['next'] = {
+          helperName: 'bp-'
+        };
+      }
     };
     return View;
   }());

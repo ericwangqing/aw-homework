@@ -15,7 +15,7 @@ module.exports =
     fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)
 
 
-code = '''
+code = ''' 
 if module
   require! [fs, sugar, './Router']
 

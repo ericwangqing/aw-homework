@@ -1,13 +1,7 @@
-'''
-自动运行：grunt
-手动运行：
-  1）grunt server 
-  2）在新窗口 grunt test
-'''
 module.exports = (grunt)->
   # process.env.DEBUG = 'aw'
   require 'sugar'
-  bp = require './bp/bp-jade'
+  bp = require './bp/jade' # 将bp引入jade，编译出Router和View需要的代码
   grunt.initConfig
     clean: 
       src:
@@ -18,12 +12,13 @@ module.exports = (grunt)->
         ]
       temp: ['src-temp', 'test-temp']
       test: ['test-bin']
-      bp: ['src/main.ls'] # 这个是bp-jade生成的
+
     copy:
       main:
         files: [{expand: true, cwd:'resource/', flatten:true, src: ['**/*'], dest: 'bin/public/resource'}]
       lib:
         files: [{expand: true, cwd:'lib/', src: ['*'], dest: 'bin/public/lib'}]
+
     concat: # 将每个测试中都要用的部分抽出来
       prefix_src:
         # options:
@@ -36,6 +31,7 @@ module.exports = (grunt)->
           dest: 'src-temp/'
           ext: '.ls'
         ]
+
       prefix_test:
         options:
           banner: require('fs').readFileSync('test/header.ls', {encoding: 'utf-8'})
@@ -47,7 +43,21 @@ module.exports = (grunt)->
           dest: 'test-temp/'
           ext: '.ls'
         ]
-    livescript:
+
+    livescript: 
+      bp_main: # jade.ls生成的B+应用启动代码
+        files: [
+          src: ['bp/main.ls']
+          dest: 'bin/main.js'
+        ]
+      bp_lib:
+        files: [
+          expand: true
+          cwd: 'bp'
+          src: ['**/*.ls', '!main.ls', '!jade.ls']
+          dest: 'bin/lib'
+          ext: '.js'
+        ]
       src:
         files: [
           expand: true
@@ -82,7 +92,7 @@ module.exports = (grunt)->
         files: [
           expand: true
           cwd: 'src'
-          src: ['**/*.jade', '!lib/.jade/**/*']
+          src: ['**/*.jade']
           dest: 'bin'
           ext: '.html'
         ]
@@ -90,43 +100,28 @@ module.exports = (grunt)->
           debug: false
           pretty: true
           data:
-            bp: bp
+            bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
           #   grunt: ()-> grunt
     compass:
       all:
         options:
           config: 'compass/config.rb'
 
-    jshint:
-      files: "bin/**/*.js"
-    # env: #
-    #   manual_test:
-    #     SERVER_ALREADY_RUNNING: true
     simplemocha:
       src: 'test-bin/**/*.spec.js'
       options:
         reporter: 'spec'
         slow: 100
         timeout: 3000
+
     watch:
-      script:
-        files: ["src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "src/lib/.jade/**/*.jade", "compass/**/*.sass"]
+      app:
+        files: ["bp/**/*.ls", "!bp/main.ls", "src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "bp/.jade/**/*.jade", "compass/**/*.sass"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
         tasks: ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha"]
         options:
           spawn: true
-          # livereload: false # 这里我们是meteor在reload！
-          # debounceDelay: 2000
-      # html:
-      #   files: ["src/**/*.jade"]
-      #   tasks: ["clean", "copy:main", "concat", "livescript", "jade", "simplemocha"]
-      #   options:
-      #     spawn: true
-      # css:
-      #   files: ["compass/**/*.sass"]
-      #   tasks: ["compass"]
-      #   options:
-      #     spawn: true
+
 
   grunt.loadNpmTasks "grunt-livescript"
   grunt.loadNpmTasks "grunt-contrib-jade"
@@ -142,21 +137,3 @@ module.exports = (grunt)->
   grunt.loadNpmTasks "grunt-contrib-concat"
 
   grunt.registerTask "default", ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha", "watch"]
-  # grunt.registerTask "server", ["clean", "copy", "concat", "livescript", "concurrent"]
-  # grunt.registerTask "test", ["env:manual_test", "concat:prefix_test", "livescript:test", "livescript:test_helper", "simplemocha"]
-
-
-  # grunt.registerTask 'delayed-simplemocha', "run mocha later for nodemon picks up changes", ->
-  #   done = this.async()
-  #   DELAY = TIME_WAIT_SERVER_RESTART 
-  #   grunt.log.writeln 'run mocha after %dms', DELAY
-  #   setTimeout (->
-  #     grunt.task.run 'simplemocha'
-  #     done()
-  #   ), DELAY
-
-  # grunt.event.on 'watch', (action, filepath)->
-  #   console.log 'filepath: ', filepath
-  #   grunt.config ['livescript', 'src'], filepath
-  #   grunt.config ['livescript', 'test'], filepath
-  #   grunt.config ['jade', 'all'], filepath

@@ -19,5 +19,5 @@
       fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry));
     }
   };
-  code = 'if module\n  require! [fs, sugar, \'./Router\']\n\nBP ||= {}\nBP.Router ||= Router\n\ndebugger\nBP.Router.add-route-for-views views = ';
+  code = ' \nif module\n  require! [fs, sugar, \'./Router\']\n\nBP ||= {}\nBP.Router ||= Router\n\ndebugger\nBP.Router.add-route-for-views views = ';
 }).call(this);

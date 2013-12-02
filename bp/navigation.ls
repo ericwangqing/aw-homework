@@ -4,23 +4,30 @@
 class Path 
   (@destination-view-name, @type)->
     @composed-paths = []
+    @patterns = {}
 
-  create-pattern: !->
+  create-pattern: !-> # ['list', 'reference']
     if @type is 'list'
-      @pattern = '/' + @destination-view-name
-    else if @type is 'detail'
+      @patterns['list'] = '/' + @destination-view-name
+      @patterns['reference'] = '/' + @destination-view-name + '/reference'
+    else if @type is 'detail' # ['create', 'update', 'view', 'reference']
       @id-place-holder = ':' + @destination-view-name + '-id'
-      @pattern = '/' + @destination-view-name + '/' + @id-place-holder
+      @patterns['create'] = '/' + @destination-view-name + '/create' 
+      @patterns['update'] = '/' + @destination-view-name + '/' + @id-place-holder + '/update'
+      @patterns['view'] = '/' + @destination-view-name + '/' + @id-place-holder + '/view'
+      @patterns['reference'] = '/' + @destination-view-name + '/' + @id-place-holder + '/reference'
     else
       throw new Error "this '#@type' is not supported yet."
-    if @composed-paths.length > 0
-      @pattern = @pattern + [path.pattern for path in @composed-paths].join ''
 
-  get-path: (id)-> # 区分
+    if @composed-paths.length > 0 # 目前只支持reference视图
+      for name, pattern of @patterns
+        @patterns[name] = pattern + [path.patterns['reference'] for path in @composed-paths]
+
+  get-path: (action, id)-> # 区分
     if id
-      path = @pattern.replace @id-place-holder, id
+      path = @patterns.replace @id-place-holder, id
     else
-      path = @pattern
+      path = @patterns
 
 # view是template被B+加载、实例化以后的产物。
 class View
@@ -57,14 +64,16 @@ class View
       composed-views[view-name] = @@registry[composed-view-or-name].clone view-name
     true
 
+  wire-views-goto = !->
+    for view-name, view of @registry
+      view.wire-goto!
+
+
   (@doc-name, @name, @type)->
     @path = new Path @name, @type
     @is-main-nav = false
     @composed-views = {}
-    # Path可以对应多种不同的entrace，分布在其它各个template中
-    @entraces = [] # {from: view-name, action: action-name}
-    # 每个Entrace对应在departure形成一个Goto
-    @gotos = [] # {from: view-name, action: action-name}, 注意：goto的对象始终是顶层view
+    @gotos = {} # {goto: path, action: action-name}, 注意：goto的对象始终是顶层view
 
   add-composed-view: (view-name, composed-view-name)!-> #defer to resolve
     @composed-views[view-name] = composed-view-name 
@@ -82,8 +91,12 @@ class View
     new-view.path.create-pattern!
     new-view
 
-  add-goto: (goto)!->
-    @gotos.push goto
+  wire-goto: !-> # ['list', 'create', 'update', 'delete', 'view']
+    if @type is 'detail' # 
+      @leaving-actions = ['next', 'previous', 'submit', 'delete']
+      @goto['next'] =
+        helper-name: 'bp-'
+
 
 
 
