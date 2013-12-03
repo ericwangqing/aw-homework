@@ -31,7 +31,7 @@ class @BP.Component
       create-router.apply @ if not @is-composed
       create-helper.apply @ 
       @@bpcs[@view.name] = @ 
-      @.init! # 注意：在这里初始化，而不是在router的before方法里，存在风险！因为这样一个页面有多个同名template时，运行时，用到的helper将会是最后一个出现的template的helper，也就会调用回它的state！
+      # @.init! # 注意：在这里初始化，而不是在router的before方法里，存在风险！因为这样一个页面有多个同名template时，运行时，用到的helper将会是最后一个出现的template的helper，也就会调用回它的state！
 
 
   init: !->

@@ -45,7 +45,7 @@
       if (this.type === 'detail') {
         this.lastId = id || this.lastId;
       }
-      this.lastAction = this.patterns[action]
+      this.lastAction = action && this.patterns[action]
         ? action
         : this.lastAction;
       return path = this.patterns[this.lastAction].replace(this.idPlaceHolder, id);
@@ -117,17 +117,44 @@
         pairs = docViewPairs[docName];
         list = pairs.list, detail = pairs.detail;
         list.links = {
-          create: detail,
-          update: detail,
-          view: detail,
-          'delete': list,
-          list: list
+          create: {
+            view: detail,
+            action: 'create'
+          },
+          update: {
+            view: detail,
+            action: 'update'
+          },
+          view: {
+            view: detail,
+            action: 'view'
+          },
+          'delete': {
+            view: list,
+            action: 'list'
+          },
+          submit: {
+            view: list,
+            action: 'list'
+          }
         };
         detail.links = {
-          previous: detail,
-          next: detail,
-          'delete': list,
-          submit: list
+          previous: {
+            view: detail,
+            action: null
+          },
+          next: {
+            view: detail,
+            action: null
+          },
+          'delete': {
+            view: list,
+            action: 'list'
+          },
+          submit: {
+            view: list,
+            action: 'list'
+          }
         };
       }
     };
@@ -164,6 +191,9 @@
       newView = constructor.resumeView(JSON.parse(JSON.stringify(this)));
       newView.name = newViewName;
       newView.isMainNav = false;
+      if (Meteor.isClient) {
+        newView.state = new BP.State(newViewName);
+      }
       newView.path.destinationViewName = newViewName;
       newView.path.createPattern();
       return newView;
@@ -173,8 +203,8 @@
       if (_.isEmpty(this.links)) {
         return null;
       }
-      linkToView = this.links[action];
-      return linkToView.path.getPath(action, id);
+      linkToView = this.links[action].view;
+      return linkToView.path.getPath(this.links[action].action, id);
     };
     prototype.updateState = function(action, params){
       var id, viewName, ref$, view, results$ = [];

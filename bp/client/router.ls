@@ -15,7 +15,7 @@
             path: pattern
             template: view.template-name
             before: ->
-              # self.bpc.init! # 页面顶层的bpc在这里初始化，内含的各个bpc通过'bp-load-bpc'helper，在Meteor渲染页面时初始化
+              self.bpc.init! # 页面顶层的bpc在这里初始化，内含的各个bpc通过'bp-load-bpc'helper，在Meteor渲染页面时初始化
               view.update-state action, @params
               # if id = @params._id or action is 'create'
               #   self.bpc.set-state action: action, current-id: id

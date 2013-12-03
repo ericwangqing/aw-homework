@@ -12,7 +12,7 @@ class Abstract-Form
       doc-id = $ e.current-target .attr 'bp-doc-id'
       @collection.remove {_id: doc-id}
       alert 'remove successful!'
-      Router.go @bpc.get-path 'list'
+      Router.go @bpc.get-path 'submit'
 
   show-hide-references: !->
     $ 'i.reference' .click (e)!->
@@ -56,7 +56,7 @@ class @BP.Form extends Abstract-Form
       @update-doc-value!
       @collection.upsert {_id: @doc._id}, @doc
       alert 'submit successful!'
-      Router.go @bpc.get-path 'list'
+      Router.go @bpc.get-path 'submit'
 
   update-doc-value: !->
     $ 'form' .find all-input-field-selector .each (index, input)!~>

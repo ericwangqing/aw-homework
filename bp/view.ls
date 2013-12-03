@@ -28,7 +28,7 @@ class Path
 
   get-path: (action, id)-> 
     @last-id = id || @last-id if @type is 'detail' # 如果没有id，detail使用之前的id
-    @last-action = if @patterns[action] then action else @last-action # 当出现未登记的action时，保存上次的action，也就是页面不变。例如：删除列表时，上次的action是list，而这次的delelte并未登记，此时沿用list，也就是说回到列表。
+    @last-action = if action and @patterns[action] then action else @last-action # 当出现未登记的action时，保存上次的action，也就是页面不变。例如：删除列表时，上次的action是list，而这次的delelte并未登记，此时沿用list，也就是说回到列表。
     path = @patterns[@last-action].replace @id-place-holder, id
 
 
@@ -73,8 +73,18 @@ class View
 
     for doc-name, pairs of doc-view-pairs
       {list, detail} = pairs
-      list.links = {create: detail, update: detail, view: detail, 'delete': list, list: list}
-      detail.links = {previous: detail, next: detail, 'delete': list, submit: list}
+      list.links = do
+        create: view: detail, action: 'create'
+        update: view: detail, action: 'update' 
+        view: view: detail, action: 'view'
+        'delete': view: list, action: 'list'
+        submit: view: list, action: 'list'
+
+      detail.links = do
+        previous: view: detail, action: null # 保持和当前的action一致
+        next: view: detail, action: null
+        'delete': view: list, action: 'list'
+        submit: view: list, action: 'list'
 
   is-all-resolved = (composed-views)->
     for view-name, composed-view-or-name of composed-views
@@ -98,14 +108,15 @@ class View
     new-view = @@resume-view JSON.parse JSON.stringify @
     new-view.name = new-view-name
     new-view.is-main-nav = false # composed view不能直接导航
+    new-view.state = new BP.State new-view-name if Meteor.is-client
     new-view.path.destination-view-name = new-view-name
     new-view.path.create-pattern!
     new-view
 
   get-link-path: (action, id)->  
     return null if _.is-empty @links # 此时是组合进来的，是reference，不要渲染其上的link
-    link-to-view = @links[action]
-    link-to-view.path.get-path action, id
+    link-to-view = @links[action].view
+    link-to-view.path.get-path @links[action].action, id
 
   update-state: (action, params)->
     if @type is 'detail'
