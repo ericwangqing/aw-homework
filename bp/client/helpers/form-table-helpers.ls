@@ -6,7 +6,6 @@ class Abstract-Form
 
   register-event-handlers: (events-handlers)!->
     events-handlers['click a.bp-delete'] = @delete-submit
-    events-handlers['click i.reference'] = @show-reference
 
   delete-submit: (e)!~>
     if confirm "真的要删除吗？"
@@ -15,9 +14,10 @@ class Abstract-Form
       alert 'remove successful!'
       Router.go @bpc.get-path 'list'
 
-  show-reference: (e)!~>
-    ref = $ e.current-target .attr 'bp-view-name'
-    $ "div.reference[bp-view-name='#ref']" .toggle!
+  show-hide-references: !->
+    $ 'i.reference' .click (e)!->
+      ref = $ e.current-target .attr 'bp-view-name'
+      $ "div.reference[bp-view-name='#ref']" .toggle!
 
 class @BP.Form extends Abstract-Form
   -> super ...

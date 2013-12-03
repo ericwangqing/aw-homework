@@ -26,7 +26,7 @@ template(name='bp-banner')
 
 template(name='bp-main-nav')
   | {{#each main-nav-paths}}
-  a(href="{{pathFor this}}") {{this}}
+  a(href="{{pathFor this.path}}") {{this.name}}
   | {{/each}}
 
 

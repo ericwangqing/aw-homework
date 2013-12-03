@@ -9,7 +9,7 @@
       this.type = type;
       this.composedPaths = [];
       this.patterns = {};
-      this.last = null;
+      this.lastId = this.lastAction = null;
     }
     prototype.createPattern = function(){
       var name, ref$, pattern, path;
@@ -17,7 +17,7 @@
         this.patterns['list'] = '/' + this.destinationViewName;
         this.patterns['reference'] = '/' + this.destinationViewName + '/reference';
       } else if (this.type === 'detail') {
-        this.idPlaceHolder = ':' + this.destinationViewName + '-id';
+        this.idPlaceHolder = ':' + this.destinationViewName + '_id';
         this.patterns['create'] = '/' + this.destinationViewName + '/create';
         this.patterns['update'] = '/' + this.destinationViewName + '/' + this.idPlaceHolder + '/update';
         this.patterns['view'] = '/' + this.destinationViewName + '/' + this.idPlaceHolder + '/view';
@@ -42,18 +42,19 @@
     };
     prototype.getPath = function(action, id){
       var path;
-      if (id) {
-        path = this.patterns.replace(this.idPlaceHolder, id);
-        return this.last = path;
-      } else {
-        return this.last;
+      if (this.type === 'detail') {
+        this.lastId = id || this.lastId;
       }
+      this.lastAction = this.patterns[action]
+        ? action
+        : this.lastAction;
+      return path = this.patterns[this.lastAction].replace(this.idPlaceHolder, id);
     };
     return Path;
   }());
   View = (function(){
     View.displayName = 'View';
-    var isAllResolved, wireViewsGoto, prototype = View.prototype, constructor = View;
+    var isAllResolved, prototype = View.prototype, constructor = View;
     View.registry = {};
     View.getView = function(docName, viewName, templateName, type){
       if (!this.registry[viewName]) {
@@ -68,13 +69,16 @@
         View.registry[viewName] = this.resumeView(view);
       }
       this.createAllViewsPathPattern();
+      this.wireViewsLinks();
     };
     View.resumeView = function(view){
       var resumedView;
       view.path = import$(new Path(), view.path);
       resumedView = import$(new View(), view);
-      this.BP || (this.BP = {});
-      return this.state = new BP.State(this.name);
+      if (Meteor.isClient) {
+        resumedView.state = new BP.State(view.name);
+      }
+      return resumedView;
     };
     View.createAllViewsPathPattern = function(){
       var views, total, resolvedViews, i$, len$, view, j$, ref$, len1$, composedView;
@@ -96,6 +100,37 @@
         }
       }
     };
+    View.wireViewsLinks = function(){
+      var docViewPairs, viewName, ref$, view, key$, docName, pairs, list, detail;
+      docViewPairs = {};
+      for (viewName in ref$ = this.registry) {
+        view = ref$[viewName];
+        docViewPairs[key$ = view.docName] || (docViewPairs[key$] = {});
+        if (view.type === 'list') {
+          docViewPairs[view.docName].list = view;
+        }
+        if (view.type === 'detail') {
+          docViewPairs[view.docName].detail = view;
+        }
+      }
+      for (docName in docViewPairs) {
+        pairs = docViewPairs[docName];
+        list = pairs.list, detail = pairs.detail;
+        list.links = {
+          create: detail,
+          update: detail,
+          view: detail,
+          'delete': list,
+          list: list
+        };
+        detail.links = {
+          previous: detail,
+          next: detail,
+          'delete': list,
+          submit: list
+        };
+      }
+    };
     isAllResolved = function(composedViews){
       var viewName, composedViewOrName;
       for (viewName in composedViews) {
@@ -106,16 +141,9 @@
         if (!constructor.registry[composedViewOrName]) {
           return false;
         }
-        composedViews[viewName] = constructor.registry[composedViewOrName].clone(viewName);
+        composedViews[viewName] = constructor.registry[composedViewOrName].cloneAsComposed(viewName);
       }
       return true;
-    };
-    wireViewsGoto = function(){
-      var viewName, ref$, view;
-      for (viewName in ref$ = this.registry) {
-        view = ref$[viewName];
-        view.wireGoto();
-      }
     };
     function View(docName, name, templateName, type){
       this.docName = docName;
@@ -125,35 +153,43 @@
       this.path = new Path(this.name, this.type);
       this.isMainNav = false;
       this.composedViews = {};
-      this.gotos = {};
+      this.links = {};
       this.state = null;
     }
     prototype.addComposedView = function(viewName, composedViewName){
       this.composedViews[viewName] = composedViewName;
     };
-    prototype.clone = function(newViewName){
+    prototype.cloneAsComposed = function(newViewName){
       var newView;
       newView = constructor.resumeView(JSON.parse(JSON.stringify(this)));
       newView.name = newViewName;
+      newView.isMainNav = false;
       newView.path.destinationViewName = newViewName;
       newView.path.createPattern();
       return newView;
     };
-    prototype.getPath = function(action, id){
-      return this.path.getPath(action, id);
+    prototype.getLinkPath = function(action, id){
+      var linkToView;
+      if (_.isEmpty(this.links)) {
+        return null;
+      }
+      linkToView = this.links[action];
+      return linkToView.path.getPath(action, id);
     };
     prototype.updateState = function(action, params){
       var id, viewName, ref$, view, results$ = [];
       if (this.type === 'detail') {
-        this.state.setState({
+        this.state.set({
           action: action,
-          currentId: id = params[this.name + '-id']
+          currentId: id = params[this.name + '_id']
         });
         this.state.updatePreNext(id);
-      } else {
-        this.state.setState({
+      } else if (this.type === 'list') {
+        this.state.set({
           action: action
         });
+      } else {
+        throw new Error("unsupported type: '" + this + "type'.");
       }
       for (viewName in ref$ = this.composedViews) {
         view = ref$[viewName];
@@ -163,12 +199,12 @@
     };
     return View;
   }());
-  if (module) {
+  if (typeof module != 'undefined' && module !== null) {
     module.exports = {
       View: View
     };
   } else {
-    BP.View = View;
+    this.BP.View = View;
   }
   function import$(obj, src){
     var own = {}.hasOwnProperty;

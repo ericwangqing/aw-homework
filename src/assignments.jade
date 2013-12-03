@@ -1,30 +1,52 @@
 include ../bp/.jade/bp-mixins
-+template('assignment','assignments-list', 'list')
-  +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+//- ********************************** B+ Component的简洁声明方式 ********************************** 
++component('assignment')
+  +list(['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline']) 
+
+  +detail()
+    +fieldset('题目基本要求')
+      +row()
+        //- 所有text控件的接口都是<xxx-text>(label, attr, condition, required, span)，后面的值可缺省
+        +text('题目', 'title')
+        +no-blank-text('要求', 'requirement', condition=null, required=null, span=6)
+        +min-text('中文内容', '中文内容', min=6)
+      +row()
+        +text('截止时间', 'deadline')(ref='list')
+        +text('发布时间', 'createdAtTime')
+        //- 专用控件的接口都是<xxx-text>(label, attr, condition, required)，后面的值可缺省
+        +number('截止时间', null, null, false)
+        +email('电子邮件', 'email') 
+      +row()
+        +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
 
 
-mixin my-fieldset(title)
-  +fieldset(title)
-    +row()
-      //- 所有text控件的接口都是<xxx-text>(label, attr, condition, required, span)，后面的值可缺省
-      +text('题目', 'title')
-      +no-blank-text('要求', 'requirement', condition=null, required=null, span=6)
-      +min-text('中文内容', '中文内容', min=6)
-    +row()
-      +text('截止时间', 'deadline')(ref='assignments-list')
-      +text('发布时间', 'createdAtTime')
-      //- 专用控件的接口都是<xxx-text>(label, attr, condition, required)，后面的值可缺省
-      +number('截止时间', null, null, false)
-      +email('电子邮件', 'email') 
-    +row()
-      +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+//- ********************************** B+ Component的详细声明方式 ********************************** 
+//- +template('assignment','assignments-list', 'list')
+//-   +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
 
-//- 注意：这里用的是mixin，不是原始template！
-//- 用mixin，会形成相应的导航路径，如果不需要导航路径，仅仅将template用作模块划分，以便复用，那么，直接用不带加号的template
-+template('assignment', 'assignment', 'detail') 
-  +form('assignment')
-    //- 这些表单控件都是 label，attr，options的参数结构
-    +my-fieldset('题目基本要求')
-    //- +my-fieldset('下一个题目的要求')
 
-+main-nav(['assignments-list'])
+//- mixin my-fieldset(title)
+//-   +fieldset(title)
+//-     +row()
+//-       //- 所有text控件的接口都是<xxx-text>(label, attr, condition, required, span)，后面的值可缺省
+//-       +text('题目', 'title')
+//-       +no-blank-text('要求', 'requirement', condition=null, required=null, span=6)
+//-       +min-text('中文内容', '中文内容', min=6)
+//-     +row()
+//-       +text('截止时间', 'deadline')(ref='assignments-list')
+//-       +text('发布时间', 'createdAtTime')
+//-       //- 专用控件的接口都是<xxx-text>(label, attr, condition, required)，后面的值可缺省
+//-       +number('截止时间', null, null, false)
+//-       +email('电子邮件', 'email') 
+//-     +row()
+//-       +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+
+//- //- 注意：这里用的是mixin，不是原始template！
+//- //- 用mixin，会形成相应的导航路径，如果不需要导航路径，仅仅将template用作模块划分，以便复用，那么，直接用不带加号的template
+//- +template('assignment', 'assignment', 'detail') 
+//-   +form('assignment')
+//-     //- 这些表单控件都是 label，attr，options的参数结构
+//-     +my-fieldset('题目基本要求')
+//-     //- +my-fieldset('下一个题目的要求')
+
+//- +main-nav(['assignments-list'])

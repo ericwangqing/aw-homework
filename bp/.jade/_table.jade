@@ -5,7 +5,8 @@ include _constants-and-utils
 include _conditions-and-buttons
 
 mixin table(items, columnNames, attributesNames)
-  +_guarded-link('create')
+  +_if-action('list')
+    +_guarded-link('create')
   table
     thead
       +_head-row(columnNames)
@@ -23,13 +24,15 @@ mixin _head-row(columnNames)
   tr
     +_each-cell(columnNames)
       th(cols=colIndex) #{cellName}
-    th(cols=colIndex+1) 操作
+    +_if-action('list')
+      th(cols=colIndex+1) 操作
 
 mixin _row(attributesNames)
   tr
     +_each-cell(attributesNames)
       +_guarded-cell(cellName)
-    +_guarded-operation-cell
+    +_if-action('list')
+      +_guarded-operation-cell
 
 mixin _each-cell(cellNames)
   - colIndex = 0

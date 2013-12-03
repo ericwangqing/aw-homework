@@ -7,14 +7,14 @@ class Path
   (@destination-view-name, @type)->
     @composed-paths = []
     @patterns = {}
-    @last = null
+    @last-id = @last-action = null
 
   create-pattern: !-> # ['list', 'reference']
     if @type is 'list'
       @patterns['list'] = '/' + @destination-view-name
       @patterns['reference'] = '/' + @destination-view-name + '/reference'
     else if @type is 'detail' # ['create', 'update', 'view', 'reference']
-      @id-place-holder = ':' + @destination-view-name + '-id'
+      @id-place-holder = ':' + @destination-view-name + '_id'
       @patterns['create'] = '/' + @destination-view-name + '/create' 
       @patterns['update'] = '/' + @destination-view-name + '/' + @id-place-holder + '/update'
       @patterns['view'] = '/' + @destination-view-name + '/' + @id-place-holder + '/view'
@@ -26,12 +26,10 @@ class Path
       for name, pattern of @patterns
         @patterns[name] = pattern + [path.patterns['reference'] for path in @composed-paths]
 
-  get-path: (action, id)-> # 区分
-    if id
-      path = @patterns.replace @id-place-holder, id
-      @last = path
-    else
-      @last
+  get-path: (action, id)-> 
+    @last-id = id || @last-id if @type is 'detail' # 如果没有id，detail使用之前的id
+    @last-action = if @patterns[action] then action else @last-action # 当出现未登记的action时，保存上次的action，也就是页面不变。例如：删除列表时，上次的action是list，而这次的delelte并未登记，此时沿用list，也就是说回到列表。
+    path = @patterns[@last-action].replace @id-place-holder, id
 
 
 # view是template被B+加载、实例化以后的产物。
@@ -45,12 +43,13 @@ class View
     for view-name, view of views
       View.registry[view-name] = @resume-view view
     @create-all-views-path-pattern!
+    @wire-views-links!
 
   @resume-view = (view)->
     view.path = new Path! <<< view.path
     resumed-view = new View! <<< view
-    @BP ||= {}
-    @state = new BP.State @name
+    resumed-view.state = new BP.State view.name if Meteor.is-client
+    resumed-view
 
 
   @create-all-views-path-pattern = !->
@@ -65,46 +64,59 @@ class View
           resolved-views.push view
           view = null
 
+  @wire-views-links = !->
+    doc-view-pairs = {}
+    for view-name, view of @registry
+      doc-view-pairs[view.doc-name] ||= {}
+      doc-view-pairs[view.doc-name].list = view if view.type is 'list'
+      doc-view-pairs[view.doc-name].detail = view if view.type is 'detail'
+
+    for doc-name, pairs of doc-view-pairs
+      {list, detail} = pairs
+      list.links = {create: detail, update: detail, view: detail, 'delete': list, list: list}
+      detail.links = {previous: detail, next: detail, 'delete': list, submit: list}
+
   is-all-resolved = (composed-views)->
     for view-name, composed-view-or-name of composed-views
       continue if typeof composed-view-or-name is 'object' # already resolved
       return false if not @@registry[composed-view-or-name] # not resolved
-      composed-views[view-name] = @@registry[composed-view-or-name].clone view-name
+      composed-views[view-name] = @@registry[composed-view-or-name].clone-as-composed view-name
     true
-
-  wire-views-goto = !->
-    for view-name, view of @registry
-      view.wire-goto!
 
 
   (@doc-name, @name, @template-name, @type)->
     @path = new Path @name, @type
     @is-main-nav = false
     @composed-views = {}
-    @gotos = {} # {goto: path, action: action-name}, 注意：goto的对象始终是顶层view
+    @links = {} # 注意：link的对象始终是顶层view
     @state = null # state将在BPC加载时，通过resume-view实例化
 
   add-composed-view: (view-name, composed-view-name)!-> #defer to resolve
     @composed-views[view-name] = composed-view-name 
 
-  clone: (new-view-name)->
+  clone-as-composed: (new-view-name)->
     new-view = @@resume-view JSON.parse JSON.stringify @
     new-view.name = new-view-name
+    new-view.is-main-nav = false # composed view不能直接导航
     new-view.path.destination-view-name = new-view-name
     new-view.path.create-pattern!
     new-view
 
-  get-path: (action, id)->
-    @path.get-path action, id
+  get-link-path: (action, id)->  
+    return null if _.is-empty @links # 此时是组合进来的，是reference，不要渲染其上的link
+    link-to-view = @links[action]
+    link-to-view.path.get-path action, id
 
   update-state: (action, params)->
     if @type is 'detail'
-      @state.set-state action: action, current-id: id = params[@name + '-id']
+      @state.set action: action, current-id: id = params[@name + '_id']
       @state.update-pre-next id
+    else if @type is 'list'
+      @state.set action: action
     else
-      @state.set-state action: action
+      throw new Error "unsupported type: '#@type'."
     for view-name, view of @composed-views
       view.update-state 'reference', params # 目前暂时只支持reference
 
-if module then module.exports = {View} else BP.View = View # 让Jade和Meteor都可以使用
+if module? then module.exports = {View} else @BP.View = View # 让Jade和Meteor都可以使用
 

@@ -94,6 +94,7 @@ class Detail-Template-Helper extends BP.Template-Helper
     @enable-pre-next-links!
     @enable-typeahead-fields!
     @enable-form-validation!
+    @enable-show-hide-references!
 
   enable-pre-next-links: !-> 
     @helpers['bp-pre-link'] = ~> 
@@ -118,5 +119,10 @@ class Detail-Template-Helper extends BP.Template-Helper
       config-name: @template-name + attr #一个页面可能有多个表单，一个表单有多个typeahead的域
       input-name: attr
       candidates: candidates
+
+  enable-show-hide-references: !->
+    @post-render-methods.push @form.show-hide-references
+
+
 
   

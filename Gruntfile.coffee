@@ -54,7 +54,7 @@ module.exports = (grunt)->
         files: [
           expand: true
           cwd: 'bp'
-          src: ['**/*.ls', '!main.ls', '!jade.ls']
+          src: ['**/*.ls', '!main.ls', '!_jade.ls']
           dest: 'bin/lib'
           ext: '.js'
         ]
@@ -88,7 +88,20 @@ module.exports = (grunt)->
           ext: '.js'
         ]
     jade:
-      all:
+      bp:
+        files: [
+          expand: true
+          cwd: 'bp/client'
+          src: ['**/*.jade']
+          dest: 'bin/lib/client'
+          ext: '.html'
+        ]
+        options:
+          debug: false
+          pretty: true
+          data:
+            bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
+       all:
         files: [
           expand: true
           cwd: 'src'

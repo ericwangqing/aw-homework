@@ -1,8 +1,8 @@
 @BP ||= {}
 top = @
-
-do enable-handlebar-switch-bpcs-in-its-rendering = !->
-  Handlebars.register-helper 'bp-load-bpc', (view-name)-> BP.Component.bpcs[view-name].init!
+if Meteor.is-client
+  do enable-handlebar-switch-bpcs-in-its-rendering = !->
+    Handlebars.register-helper 'bp-load-bpc', (view-name)-> BP.Component.bpcs[view-name].init!
 
 # Bpc：B Plus Component
 # 每个Bpc对应一个View
@@ -10,33 +10,34 @@ class @BP.Component
   # Facade of other BP module
   @bpcs = {} # hold all bpc for using
   @main-nav-paths = []
-  create-bpc-for-views = (views)->
-    bpcs = {}
-    BP.View.resume-views views
+  @create-bpc-for-views = (views)->
+    BP.View.resume-views views 
     for view-name, view of BP.View.registry
-      if view.type is 'list'
-        bpc = new BP.List-Component view
-      else if view.type is 'detail'
-        bpc = new BP.Detail-Component view
-      else
-        throw new Error "the '#view.type' type of bpc is not suppor yet."
-      @bpcs[view-name] = bpcs[view-name] = bpc
-    bpcs
+      @create-bpc view
 
-  (@view)->
-    @doc-name = @view.doc-name
-    create-names.apply @, & # names中有此BP Component用的各种名字，如collection、template、helper等等名称。这里贯彻BP的命名规范。
+  @create-bpc = (view, is-composed=false)->
+    if _.is-empty view.composed-views
+      bpc = new List-Component view, is-composed if view.type is 'list'
+      bpc = new Detail-Component view, is-composed if view.type is 'detail'
+    else
+      bpc = new Composite-Component view, is-composed
+    bpc
+
+
+  (@view, @is-composed)->
+    create-names.call @, @view.doc-name # names中有此BP Component用的各种名字，如collection、template、helper等等名称。这里贯彻BP的命名规范。
+    create-collection.apply @
     if Meteor.is-client
-      create-router.apply @
+      create-router.apply @ if not @is-composed
       create-helper.apply @ 
+      @@bpcs[@view.name] = @ 
+      @.init! # 注意：在这里初始化，而不是在router的before方法里，存在风险！因为这样一个页面有多个同名template时，运行时，用到的helper将会是最后一个出现的template的helper，也就会调用回它的state！
+
 
   init: !->
-    create-collection.apply @
   # init: !->
-    if Meteor.is-server
-      @publish-data!
-    if Meteor.is-client
-      @helper.init!
+    [comp.init! for comp in @composed-components] if @composed-components?
+    @helper.init!
 
 
   get-state: (attr)-> @view.state.get attr
@@ -45,7 +46,7 @@ class @BP.Component
 
   get-path: (action, doc-or-doc-id)~> # 给Template用（通过BPC Facade暴露出去）# view-name 为detail和list时，可以缺省
     id  = if typeof doc-or-doc-id is 'object' then doc-or-doc-id?._id else doc-or-doc-id
-    @view.get-path action, id
+    @view.get-link-path action, id
 
   publish-data: !->
     # _defered-publish-data! # 延时pub，模拟网络缓慢、测试nProgress
@@ -53,16 +54,16 @@ class @BP.Component
       cursor = top[@names.meteor-collection-name].find!
 
 class List-Component extends BP.Component
-  (@view)->
+  ->
     super ...
     
 class Detail-Component extends BP.Component
-  (@view)->
+  ->
     super ...
 
 class Composite-Component extends BP.Component
-  (@view)->
-    @composed-components = @@create-bpc-for-views @view.composed-views
+  (view, is-composed)->
+    @composed-components = [(@@create-bpc composed-view, true) for name, composed-view of view.composed-views]
     super ...
 
 
@@ -70,40 +71,15 @@ class Composite-Component extends BP.Component
     
 /* ------------------------ Private Methods ------------------- */
 # 命名约定见：http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=243892266
-create-names = !(doc-name)->
-  @names = 
-    # -------------- doc和collection名称 ----------------------
-    doc-name                    :   doc-name
-    mongo-collection-name       :   doc-name.pluralize!
-    meteor-collection-name      :   doc-name.pluralize!capitalize!
-
-    # -------------- Template和其方法名称 ----------------------
-    list-template-name          :   doc-name.pluralize!  + '-list'
-    list-data-retriever-name    :   doc-name.pluralize!
-    detail-template-name        :   doc-name
-    detail-data-retriever-name  :   doc-name
-
-    # -------------- Route名称和路径 --------------------------
-  _base-route-name              =   doc-name.pluralize! 
-  _base-route-path              =   '/' + doc-name.pluralize!
-  @names <<< do
-    list-path-name              :   _base-route-name
-    list-route-path             :   -> _base-route-path
-    create-path-name            :   _base-route-name    + '-create'
-    create-route-path           :   -> _base-route-path + '/create'
-    delete-path-name            :   _base-route-name    + '-delete'
-    delete-route-path           :   -> _base-route-path + '/delete'
-    update-path-name            :   _base-route-name    + '-update'
-    update-route-path           :   (id) ->
-                                      id ||= ':_id' # 前者用于生成链接（Template），后者用于匹配链接（Router）
-                                      _base-route-path + "/#id/update"
-    view-path-name              :   _base-route-name    + '-view'
-    view-route-path             :   (id) ->
-                                      id ||= ':_id' # 前者用于生成链接（Template），后者用于匹配链接（Router）
-                                      _base-route-path + "/#id/view"
+create-names = !(doc-name)-> 
+  @names = new BP.Names doc-name
 
 create-collection = !->
-  @collection = top[@names.meteor-collection-name] = new Meteor.Collection @names.mongo-collection-name
+  if not top[@names.meteor-collection-name]
+    top[@names.meteor-collection-name] = new Meteor.Collection @names.mongo-collection-name
+    @publish-data! if Meteor.is-server
+  @collection = top[@names.meteor-collection-name]
+
 
 # create-state = !->
 #   if Meteor.is-client
