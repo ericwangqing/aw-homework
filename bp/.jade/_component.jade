@@ -10,9 +10,13 @@ mixin component(_docName, isMainNav)
 mixin list(titles, attrs)
   - attrs = attrs ? attrs : titles
   +template(docName, names.listTemplateName, 'list')
-    +table(names.mongoCollectionName, titles, attrs)
+    - currentViewName = attributes.viewName ? attributes.viewName : names.listTemplateName
+    .bp-list(bp-view-name=currentViewName)
+      +table(names.mongoCollectionName, titles, attrs)
 
 mixin detail()
   +template(docName, names.detailTemplateName, 'detail')
-    +form(names.detailDataRetrieverName)
-      block
+    - currentViewName = attributes.viewName ? attributes.viewName : names.detailTemplateName
+    .bp-detail(bp-view-name=currentViewName)
+      +form(names.detailDataRetrieverName)
+        block

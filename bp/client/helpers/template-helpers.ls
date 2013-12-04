@@ -105,7 +105,7 @@ class Detail-Template-Helper extends BP.Template-Helper
   _enable-nav-link: (nav-id-name)->
     if doc-id = @bpc.get-state nav-id-name
       action = @get-current-action!
-      @bpc.get-path action, doc-id 
+      @bpc.get-path action, doc-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
 
 
   enable-typeahead-fields: !->

@@ -5,7 +5,7 @@
   View = require('./view').View;
   Names = require('./Names');
   module.exports = {
-    getView: function(docName, templateName, templateType){
+    getView: function(docName, viewName, templateName, templateType){
       return View.getView.apply(View, arguments);
     },
     setMainNav: function(templateNames){

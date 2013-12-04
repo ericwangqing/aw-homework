@@ -6,7 +6,7 @@ include _conditions-and-buttons
 mixin form(item)
   +_if-doc-permit('update create')
     | {{#with #{item}}}
-    form.bp-form(parsley-validate, novalidate, bp-action='{{bp-current-action}}') 
+    form.bp-form(parsley-validate, novalidate) 
       block
       .buttons
         +_guarded-permission-and-action-button('update', '提交')

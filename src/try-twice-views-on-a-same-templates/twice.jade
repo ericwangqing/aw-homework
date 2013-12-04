@@ -1,0 +1,9 @@
+template(name='twice')
+  | {{> once}}
+  | {{change-view}}
+  .twice
+    | {{> once}}
+
+template(name='once')
+  .once
+    h3 {{homework}}

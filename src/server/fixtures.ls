@@ -13,6 +13,7 @@ Meteor.startup ->
         created-at-time: '2013-12-12'
         last-modified-at: '2013-12-12'
         state: 'published'
+        'bp-current-action': 'abc'
 
       Assignments.insert do
         # _id: '111111'
@@ -26,3 +27,4 @@ Meteor.startup ->
         created-at-time: '2013-12-12'
         last-modified-at: '2013-12-12'
         state: 'published'
+        'bp-current-action': 'abc'

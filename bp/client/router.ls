@@ -53,6 +53,6 @@ do config-and-static-route = !~>
   Router.map ->
     @route 'default', do
       path: '/'
-      template: 'splash'
+      template: 'twice'
       # yield-templates:
 

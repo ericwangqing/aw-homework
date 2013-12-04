@@ -32,9 +32,9 @@ mixin template(docName, templateName, templateType)
 
 mixin _reference(topView, templateName)
   - console.log("call reference, ref: ", ref)
-  - var currentViewName = 'ref-' + templateName
+  - currentViewName = 'ref-' + templateName
   - topView.addComposedView(currentViewName, templateName)
-  | {{bp-load-bpc '#{currentViewName}'}}
+  //- | {{bp-load-bpc '#{currentViewName}'}}
   .reference(bp-view-name=currentViewName)
     | {{> #{templateName}}}
 
