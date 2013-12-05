@@ -1,7 +1,6 @@
 @BP ||= {}
 # Adpater 本身没有状态，因此可以被多个有相同template的view共用：
 # 1）状态保存在view的state里，通过view操作
-# 2）注册到Meteor的helper，加上了view.name的前缀，以便Meteor调用时，能够链接回正确的view
 class @BP.Template-adapter
   @get = (type, names, template)->
     switch type
@@ -16,13 +15,12 @@ class @BP.Template-adapter
   wire-view: !(view)->
     @view = view
     @data-retriever = view.data-retriever
-    @data-retriever-name = view.name + '-' + @data-retriever-name
     @create-helpers!
     @create-renderers!
     @create-event-handlers!
     @template.helpers @helpers
     @template.events @events-handlers
-    @template.rendered = !~>
+    @template.rendered = !~> 
       [method.call @ for method in @renderers]
 
   create-helpers: !->
@@ -30,8 +28,8 @@ class @BP.Template-adapter
       "bp-attribute-permit"           :  @permission.attribute-permission-checker
       "bp-doc-permit"                 :  @permission.doc-permission-checker
       "bp-collection-permit"          :  @permission.collection-permission-checker
-      "#{@view.name}-bp-action-is"    :  @view.current-action-checker
-      "#{@view.name}-bp-path-for"     :  @view.get-path
+      "bp-action-is"                  :  @view.current-action-checker
+      "bp-path-for"                   :  @view.get-path
       "#{@data-retriever-name}"       :  @view.data-retriever 
 
   create-renderers: !-> @renderers = []
@@ -47,9 +45,9 @@ class Detail-template-adpater extends BP.Template-adapter
   create-helpers: !->
     super ...
     @helpers <<<
-      "#{@view.name}-bp-pre-link"           : @_enable-nav-link("previous") 
-      "#{@view.name}-bp-next-link"          : @_enable-nav-link("next") 
-      "#{@view.name}-bp-add-typeahead"      : @_enable-add-typeahead-to-input-field! 
+      "bp-pre-link"           : @_enable-nav-link("previous") 
+      "bp-next-link"          : @_enable-nav-link("next") 
+      "bp-add-typeahead"      : @_enable-add-typeahead-to-input-field! 
 
   create-renderers: !->
     super ...

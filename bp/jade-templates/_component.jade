@@ -12,11 +12,11 @@ mixin list(titles, attrs)
   +template(docName, names.listTemplateName, 'list')
     - currentViewName = attributes.viewName ? attributes.viewName : names.listTemplateName // 可以给视图（view）以不同于template的名字，通过attributes给出
     .bp-list(bp-view-name=currentViewName)
-      +table(currentViewName + '-' + names.listDataRetrieverName, titles, attrs)
+      +table(names.listDataRetrieverName, titles, attrs)
 
 mixin detail()
   +template(docName, names.detailTemplateName, 'detail')
     - currentViewName = attributes.viewName ? attributes.viewName : names.detailTemplateName
     .bp-detail(bp-view-name=currentViewName)
-      +form(currentViewName + '-' + names.detailDataRetrieverName)
+      +form(names.detailDataRetrieverName)
         block
