@@ -1,95 +1,105 @@
 class @BP.View extends BP._View
   @template-grouped-views = {}
+  @doc-grouped-views = {}
 
   @resume-views = !(jade-views)->
     for view-name, jade-view of jade-views
       @registry[view-name] = view = @resume-view jade-view
       @template-grouped-views[view.template-name] ||= {}
-      @template-grouped-views[view.template-name][view.type] = view
-    @wire-views-appearances!
+      @template-grouped-views[view.template-name][view.name] = view
+      @doc-grouped-views[view.doc-name] ||= {}
+      @doc-grouped-views[view.doc-name][view.type] = view
+    @wire-views-appearances! if Meteor.is-client
 
   @resume-view = (jade-view)->
     view = (if jade-view.type is 'list' then new List-view! else new Detail-view!) <<< jade-view
+    view.names = new BP.Names view.doc-name
+    view.create-pub-sub!
     if Meteor.is-client
-      view.names = new BP.Names view.doc-name
       view.state = new BP.State view.name
       view.links = {}
-      view.create-pub-sub!
       view.create-view-appearances!
       view.create-ui!
+    view
 
   @wire-views-appearances = !->
-    for template-name, {list, detail} of @template-grouped-views
+    for doc-name, {list, detail} of @doc-grouped-views
       list.links =
-        go-create: detail.appearances.create
-        go-update: detail.appearances.update
-        'delete' : list.appearances.list
+        go-create : view: detail, appearance: detail.appearances.create
+        go-update : view: detail, appearance: detail.appearances.update
+        'delete'  : view: list,   appearance: list.appearances.list
       detail.links =
-        create    : list.appearances.list
-        update    : list.appearances.list
-        'delete'  : list.appearances.list
-        'next'    : detail.current-appearance
-        'previous': detail.current-appearance
+        create    : view: list,   appearance: list.appearances.list
+        update    : view: list,   appearance: list.appearances.list
+        'delete'  : view: list,   appearance: list.appearances.list
+        'next'    : view: detail, appearance: -> detail.appearances[detail.current-appearance-name]
+        'previous': view: detail, appearance: -> detail.appearances[detail.current-appearance-name]
 
   publish-data: (collection)!->
-    Meteor.publish @pub-sub.name, ~> 
-      cursor = @pub-sub.query collection
+    Meteor.publish @pub-sub.name, (id)~> 
+      eval "query = " + @pub-sub.query
+      # debugger
+      console.log "view: #{@name}, pub-sub.name: #{@pub-sub.name}, query: ", query
+      cursor = collection.find query
+
+  subscribe-data: (collection)->
     @collection = collection
-    Meteor.publish @pub-sub.name, ~> 
-      cursor = collection.find @pub-sub.query
+    Meteor.subscribe @pub-sub.name if @type is 'list'
+    Meteor.subscribe @pub-sub.name, @get-state 'current-id' if @type is 'detail'
 
-  subscribe-data: ->
-    Meteor.subscribe @pub-sub.name if type is 'list'
-    Meteor.subscribe @pub-sub.name, @get-state 'current-id' if type is 'list'
-
-  get-path: (link-name, id)-> 
-    path-pattern = destination-appearance = @links[link-name]
-    path-pattern.replace @id-place-holder, id
+  get-path: (link-name, doc-or-doc-id)~> 
+    id = if typeof doc-or-doc-id is 'string' then doc-or-doc-id else doc-or-doc-id._id
+    {view, appearance} = @links[link-name]
+    path-pattern = if typeof appearance is 'function' then appearance! else appearance
+    path-pattern?.replace view.id-place-holder, id
 
   change-to-appearance: (appearance-name, params)->
     @current-appearance-name = appearance-name
-    @state.set current-id: params._id or params.id
+    @state.set current-id: (params[@name + '_id'] or params.id)
 
-  get-current-action: -> @current-appearance-name
+  get-current-action: ~> @current-appearance-name
 
-  current-action-checker: (action-name)-> action-name is @current-appearance-name
+  current-action-checker: (action-name)~> action-name is @current-appearance-name
 
-  get-state: (action-name)-> @state.get 'action-name'
+  get-state: (action-name)-> @state.get action-name
 
-class List-view extends View
+class List-view extends BP.View
   create-pub-sub: !->
     @pub-sub = 
-      name: @names.mongo-collection-name
-      query: {}
+      name: @names.meteor-collection-name
+      query: "{}"
 
   create-view-appearances: !->
+    # debugger
     @appearances = 
-      list      : "/#@name/list"
-      view      : "/#@name/view"
-      reference : "/#@name/reference"
+      list      : "/#{@name}/list"
+      view      : "/#{@name}/view"
+      reference : "/#{@name}/reference"
 
-  data-retriever: ->
+  data-retriever: ~>
+    @ui.collection = @collection
     @docs = @collection.find! .fetch!
-    @bpc.set-state 'doc-ids', [doc._id for doc in @docs]
+    @state.set 'doc-ids', [doc._id for doc in @docs]
     @docs
 
   create-ui: !->
     @ui = new BP.Table!
 
-class Detail-view extends View
+class Detail-view extends BP.View
   create-pub-sub: !->
     @pub-sub =
       name: @names.doc-name
-      query: {_id: id}
+      query: "{_id: id}"
 
   create-view-appearances: !->
+    @id-place-holder = ':' + @name + '_id'
     @appearances = 
       create    : '/' + @name + '/create'
       update    : '/' + @name + '/' + @id-place-holder + '/update'
       view      : '/' + @name + '/' + @id-place-holder + '/view'
       reference : '/' + @name + '/' + @id-place-holder + '/reference'
 
-  data-retriever: ->
+  data-retriever: ~>
     form = @ui
     form.collection = @collection
     if @current-appearance-name in ['update', 'view']

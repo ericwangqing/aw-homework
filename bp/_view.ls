@@ -5,7 +5,7 @@ class View
     throw new Error "view: '#view-name' already exists" if @registry[view-name]
     @registry[view-name] = new View doc-name, view-name, template-name, type 
 
-  (@doc-name, @name, @template-name)->
+  (@doc-name, @name, @template-name, @type)->
     @is-main-nav = false
     @composed-views = {}
     # @links = {} # 注意：link的对象始终是顶层view

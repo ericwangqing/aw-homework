@@ -34,11 +34,11 @@ mixin _guarded-permission-and-action-button(action, label)
 
 mixin _guarded-permission-button(action, label)
   +_if-collection-permit(action)
-    +_link-button(action) 
+    +_link-button(action, null, true) 
       | #{label}
 
 mixin _link-button(action, href, isLink)
-  - var href = href || (isLink? ("{{" + currentViewName + "-bp-path-for '"+ action +"' this}}") : '#')
+  - var href = href || (isLink? ("{{" + currentViewName + "-bp-path-for '"+ action.camelize(false) +"' this}}") : '#')
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
   a(href=href, class='bp-#{action}', bp-doc-id=bpDocId)
     - if(action == 'next') // next的文字出现在前面，图标在后面，和其它相反
@@ -46,10 +46,11 @@ mixin _link-button(action, href, isLink)
       i.fa.fa-arrow-right.fa-fw
     - else
       case action
-        when 'create'   : i.fa.fa-plus.fa-fw 
-        when 'update'   : i.fa.fa-pencil.fa-fw 
-        when 'delete'   : i.fa.fa-trash-o.fa-fw 
-        when 'previous' : i.fa.fa-arrow-left.fa-fw
+        when 'create'     :   i.fa.fa-plus.fa-fw 
+        when 'go-create'  :   i.fa.fa-plus.fa-fw 
+        when 'go-update'  :   i.fa.fa-pencil.fa-fw 
+        when 'delete'     :   i.fa.fa-trash-o.fa-fw 
+        when 'previous'   :   i.fa.fa-arrow-left.fa-fw
         defaule: i
       block
 

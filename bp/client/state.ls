@@ -2,6 +2,7 @@
 
 class @BP.State
   (@namespace)->
+    Session.set 'bp', {} if not Session.get 'bp'
 
   get: (attr)->
     attr = attr.camelize false

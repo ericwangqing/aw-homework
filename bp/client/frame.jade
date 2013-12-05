@@ -1,0 +1,47 @@
+head
+  meta(name='viewport', content='width=device-width, initial-scale=1')
+  script(src='/lib/parsley.messages.zh_cn.js')
+  script(src='/lib/parsley.js')
+  script(src='/lib/typeahead.js')
+
+template(name='layout')
+  .container
+    header
+      | {{> bp-banner}}
+      | {{> bp-main-nav}}
+      //- h1#header {{greeting}} 
+    aside.left-sidebar
+      | {{> bp-second-nav}}
+    article.main-content
+      //- | {{> splash}}
+      //- | {{{BP-Composite 'tests-list' 'assignments-list' }}}
+      //- | {{> assignments-list}}
+      | {{yield}}      
+    aside.right-sidebar
+    footer
+
+template(name='bp-banner')
+  i.fa.fa-camera-retro fa-camera-retro
+  a(href='/') BP Banner
+
+template(name='bp-main-nav')
+  | {{#each main-nav-paths}}
+  a(href="{{pathFor this.path}}") {{this.name}}
+  | {{/each}}
+
+
+template(name='bp-second-nav')
+  | 2nd Nav
+
+
+template(name='splash')
+  #splash
+    .logo B+ Plus
+    .slug 敏捷 • 超乎你的想象
+
+template(name='not-found')
+  .warning
+    | 亲，没找到哦。。。
+
+template(name='loading')
+  #loading

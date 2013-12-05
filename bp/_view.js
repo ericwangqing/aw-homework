@@ -11,10 +11,11 @@
       }
       return this.registry[viewName] = new View(docName, viewName, templateName, type);
     };
-    function View(docName, name, templateName){
+    function View(docName, name, templateName, type){
       this.docName = docName;
       this.name = name;
       this.templateName = templateName;
+      this.type = type;
       this.isMainNav = false;
       this.composedViews = {};
     }

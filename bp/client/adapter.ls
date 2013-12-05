@@ -1,25 +1,26 @@
+@BP ||= {}
 class @BP.Template-adapter
   @get = (type, names, template)->
     switch type
-    case 'list'   then new List-template-adpater   template, names[list-data-retriever-name]
-    case 'detail' then new Detail-template-adpater template, names[detail-data-retriever-name]
+    case 'list'   then new List-template-adpater   template, names.list-data-retriever-name
+    case 'detail' then new Detail-template-adpater template, names.detail-data-retriever-name
     default throw new Error "type: '#type' is not supported yet."
 
-  (@data-retriever-name, @template)->
+  (@template, @data-retriever-name)->
     @view = null # 等待Iron-Router在before方法中通过component.change-to-view方法设定。
     @permission = new BP.Permission!
 
-  wire-view: !->
+  wire-view: !(view)->
     @view = view
     @ui = view.ui
-    @data-retriever-name = @view-name + '-' + @data-retriever-name
+    @data-retriever-name = view.name + '-' + @data-retriever-name
     @create-helpers!
     @create-renderers!
     @create-event-handlers!
     @template.helpers @helpers
     @template.events @events-handlers
-    @template.rendered = !->
-      [method.call @ for method in self.post-render-methods]
+    @template.rendered = !~>
+      [method.call @ for method in @renderers]
 
   data-retriever: ~> @view.data-retriever.apply @view, &
 
@@ -34,19 +35,15 @@ class @BP.Template-adapter
 
   create-renderers: !-> @renderers = []
 
-  create-event-handlers: !-> @events-handlers = @form.register-event-handlers!
+  create-event-handlers: !-> @events-handlers = @ui.register-event-handlers!
     
 
 
 # ----------------------- Detail ---------------------------------
 class List-template-adpater extends BP.Template-adapter
-  ->
-  super ...
 
 
 class Detail-template-adpater extends BP.Template-adapter
-  ->
-  super ...
 
   create-helpers: !->
     super ...
@@ -61,7 +58,7 @@ class Detail-template-adpater extends BP.Template-adapter
     @renderers.push @ui.add-validation
 
   add-typeahead-to-input-field:  (attr, candidates)!~> # 模板中的ahead控件将调用它，以便render后，动态添加typeahead功能
-    @post-render-methods.push @ui.get-typeahead-render do
+    @renderers.push @ui.get-typeahead-render do
       config-name: @view.name + attr #一个页面可能有多个表单，一个表单有多个typeahead的域
       input-name: attr
       candidates: candidates

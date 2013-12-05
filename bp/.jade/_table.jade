@@ -6,7 +6,7 @@ include _conditions-and-buttons
 
 mixin table(items, columnNames, attributesNames)
   +_if-action('list')
-    +_guarded-link('create')
+    +_guarded-link('go-create')
   table
     thead
       +_head-row(columnNames)
@@ -50,6 +50,6 @@ mixin _guarded-cell(attr)
 
 mixin _guarded-operation-cell()
   td(cols=colIndex+1) 
-    +_guarded-link('update')
+    +_guarded-link('go-update')
     +_guarded-permission-button('delete')
 

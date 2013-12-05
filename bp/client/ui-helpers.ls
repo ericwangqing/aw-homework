@@ -4,15 +4,17 @@ class Abstract-Form
   !->
     @events-handlers = {}
 
-  register-event-handlers: !->
+  register-event-handlers: ->
     @events-handlers['click a.bp-delete'] = @delete-submit
     @events-handlers
     
   delete-submit: (e)!~>
+    e.prevent-default
     if confirm "真的要删除吗？"
       doc-id = $ e.current-target .attr 'bp-doc-id'
       @collection.remove {_id: doc-id}
       alert 'remove successful!'
+      window.location.href = e.current-target.href
 
   show-hide-references: !->
     $ 'i.reference' .click (e)!->
@@ -22,11 +24,11 @@ class Abstract-Form
 class @BP.Form extends Abstract-Form
   -> super!
   
-  register-event-handlers: !->
+  register-event-handlers: ->
     super ...
     @events-handlers['focus div.controls input, div.controls textarea'] = @tab-focuse-with-div-control-highlight
     @events-handlers['blur div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight
-    @events-handlers['click a.bp-create'] = events-handlers['click a.bp-update'] = @create-and-update-submit
+    @events-handlers['click a.bp-create'] = @events-handlers['click a.bp-update'] = @create-and-update-submit
     @events-handlers
 
   tab-focuse-with-div-control-highlight: (e)!->
@@ -52,11 +54,13 @@ class @BP.Form extends Abstract-Form
     catch error
       console.log error
 
-  create-and-update-submit: !~> 
+  create-and-update-submit: (e)!~> 
+    e.prevent-default!
     if $ 'form' .parsley 'validate'
       @update-doc-value!
       @collection.upsert {_id: @doc._id}, @doc
       alert 'submit successful!'
+      window.location.href = e.current-target.href
 
   update-doc-value: !->
     $ 'form' .find all-input-field-selector .each (index, input)!~>

@@ -47,12 +47,12 @@ body
           a
             margin-left: 5px
 
-      a.bp-update, a.bp-create, a.bp-delete
+      a.bp-update, a.bp-create, a.bp-go-update, a.bp-go-create, a.bp-delete
         +sassy-button-structure(2px, 14px, 2px 5px)
         margin: 10px 2px
-      a.bp-update
+      a.bp-update, a.bp-go-update
         +sassy-button-gradient("matte", lighten(#4ba3cc, 10%))
-      a.bp-create
+      a.bp-create, a.bp-go-create
         +sassy-button-gradient("matte", lighten(#e86a43, 10%))
       a.bp-delete
         +sassy-button-gradient("matte", lighten(#cc3512, 20%))

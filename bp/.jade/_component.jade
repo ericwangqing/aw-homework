@@ -12,11 +12,11 @@ mixin list(titles, attrs)
   +template(docName, names.listTemplateName, 'list')
     - currentViewName = attributes.viewName ? attributes.viewName : names.listTemplateName
     .bp-list(bp-view-name=currentViewName)
-      +table(names.mongoCollectionName, titles, attrs)
+      +table(currentViewName + '-' + names.listDataRetrieverName, titles, attrs)
 
 mixin detail()
   +template(docName, names.detailTemplateName, 'detail')
     - currentViewName = attributes.viewName ? attributes.viewName : names.detailTemplateName
     .bp-detail(bp-view-name=currentViewName)
-      +form(names.detailDataRetrieverName)
+      +form(currentViewName + '-' + names.detailDataRetrieverName)
         block

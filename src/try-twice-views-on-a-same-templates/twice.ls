@@ -35,3 +35,8 @@ if Meteor.is-client
 
 # class @OOO extends BP._Template
 
+class A
+  a: ->
+
+class B extends A
+
