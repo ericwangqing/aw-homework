@@ -25,12 +25,12 @@ class @BP.Template-adapter
 
   create-helpers: !->
     @helpers =
-      "#{@view.name}-bp-attribute-permit"   :  @permission.attribute-permission-checker
-      "#{@view.name}-bp-doc-permit"         :  @permission.doc-permission-checker
-      "#{@view.name}-bp-collection-permit"  :  @permission.collection-permission-checker
-      "#{@view.name}-bp-action-is"          :  @view.current-action-checker
-      "#{@view.name}-bp-path-for"           :  @view.get-path
-      "#{@data-retriever-name}"             :  @view.data-retriever 
+      "bp-attribute-permit"           :  @permission.attribute-permission-checker
+      "bp-doc-permit"                 :  @permission.doc-permission-checker
+      "bp-collection-permit"          :  @permission.collection-permission-checker
+      "#{@view.name}-bp-action-is"    :  @view.current-action-checker
+      "#{@view.name}-bp-path-for"     :  @view.get-path
+      "#{@data-retriever-name}"       :  @view.data-retriever 
 
   create-renderers: !-> @renderers = []
 

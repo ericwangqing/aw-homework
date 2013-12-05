@@ -1,5 +1,5 @@
 mixin _if-action(action)
-  | {{#if bp-action-is '#{action}'}}
+  | {{#if #{currentViewName}-bp-action-is '#{action}'}}
   block
   | {{/if}}
 
@@ -38,7 +38,7 @@ mixin _guarded-permission-button(action, label)
       | #{label}
 
 mixin _link-button(action, href, isLink)
-  - var href = href || (isLink? ("{{bp-path-for '"+ action +"' this}}") : '#')
+  - var href = href || (isLink? ("{{" + currentViewName + "-bp-path-for '"+ action +"' this}}") : '#')
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
   a(href=href, class='bp-#{action}', bp-doc-id=bpDocId)
     - if(action == 'next') // next的文字出现在前面，图标在后面，和其它相反
@@ -58,14 +58,14 @@ mixin _guarded-link(action)
     +_link-button(action, null, true)
 
 mixin _previous-link()
-  | {{#if bp-pre-link}}
-  +_link-button('previous', '{{bp-pre-link}}')
+  | {{#if #{currentViewName}-bp-pre-link}}
+  +_link-button('previous', '{{' + currentViewName + '-bp-pre-link}}')
     | 上一条
   | {{/if}}
 
 mixin _next-link()
-  | {{#if bp-next-link}}
-  +_link-button('next', '{{bp-next-link}}')
+  | {{#if #{currentViewName}-bp-next-link}}
+  +_link-button('next', '{{' + currentViewName + '-bp-next-link}}')
     | 下一条
   | {{/if}}
 

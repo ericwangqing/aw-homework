@@ -37,7 +37,7 @@ code = '''
 # BP.Component ||= Component
 
 # debugger
-BP.Component.create-components-from-jade-views jade-views = 
+BP.Component.create-bpc-for-views views = 
 '''
 
 

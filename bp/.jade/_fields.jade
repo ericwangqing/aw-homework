@@ -24,7 +24,7 @@ mixin max-text(label, attr, max, required, span)
 mixin ahead(label, attr, candidates, required, span)
   //- // console.log("candidates are: ", JSON.stringify(candidates));
   +text(label, attr, null, required, span)(attributes)
-  | {{bp-add-typeahead "#{attr}" "#{candidates}"}}
+  | {{#{currentViewName}-bp-add-typeahead "#{attr}" "#{candidates}"}}
 
 //- ------ 待实现 ------
   range text

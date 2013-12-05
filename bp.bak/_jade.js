@@ -2,7 +2,7 @@
 (function(){
   var fs, View, Names, code;
   fs = require('fs');
-  View = require('./_view').View;
+  View = require('./view').View;
   Names = require('./Names');
   module.exports = {
     getView: function(docName, viewName, templateName, templateType){
@@ -37,5 +37,5 @@
       return this.names = new Names(docName);
     }
   };
-  code = ' \n# if module?\n#   require! [fs, sugar, \'./Component\'] \n\n# BP ||= {}\n# BP.Component ||= Component\n\n# debugger\nBP.Component.create-components-from-jade-views jade-views = ';
+  code = ' \n# if module?\n#   require! [fs, sugar, \'./Component\'] \n\n# BP ||= {}\n# BP.Component ||= Component\n\n# debugger\nBP.Component.create-bpc-for-views views = ';
 }).call(this);
