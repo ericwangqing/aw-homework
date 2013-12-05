@@ -1,8 +1,11 @@
 top = @
 
-class Collection extends BP.Abstract-Registable
+class Collection
+  @registry = {}
+  @get = (collection-name)->
+    @registry[collection-name] ||= new Meteor.Collection collection-name
 
-class @BP.Component extends BP.Abstract-Registable
+class @BP.Component
   @main-nav-paths = []
 
   @create-components-from-jade-views =  (jade-views)->
@@ -36,14 +39,9 @@ class @BP.Component extends BP.Abstract-Registable
       path: path-pattern
       template: component.template-name
       before: ->
-        # component.change-to-view view
         view.change-to-appearance appearance-name, @params
       wait-on: ->
         view.subscribe-data component.collection
-
-
-  # change-to-view: (view)->
-  #   @template-adapter.wire-view view
 
 /* ------------------------ Private Methods ------------------- */
 initial-template-adpater-for-views = !->
@@ -55,8 +53,8 @@ initial-template-adpater-for-views = !->
 
 create-meteor-collection = !-> 
   collection-name = @names.meteor-collection-name
-  @collection = Collection.get collection-name, 'Meteor.Collection', collection-name
-  top[collection-name] = @collection
+  @collection = Collection.get collection-name
+  top[collection-name] = @collection # 注意！！！ 为了方便调试，在顶层（window）暴露出来，上线时去除。
   
 publish-data-for-views = !->
   (view, view-name) <~! _.each @views

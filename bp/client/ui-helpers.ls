@@ -1,11 +1,19 @@
 @BP ||= {}
 all-input-field-selector = 'input, select, textarea'
+
+restrict-selector-to-view = (selector, view-selector)->
+  (selector.split ',' .map -> it.trim! |> ("#{view-selector} " +) ).join ', '
+
+
 class Abstract-Form
-  !->
+  (view)->
+    @view = view
+    @view-selector = "div[bp-view-name='#{@view.name}']"
     @events-handlers = {}
+    @rv = restrict-selector-to-view _, @view-selector
 
   register-event-handlers: ->
-    @events-handlers['click a.bp-delete'] = @delete-submit
+    @events-handlers['click ' + @rv 'a.bp-delete'] = @delete-submit
     @events-handlers
     
   delete-submit: (e)!~>
@@ -16,19 +24,18 @@ class Abstract-Form
       alert 'remove successful!'
       window.location.href = e.current-target.href
 
-  show-hide-references: !->
-    $ 'i.reference' .click (e)!->
+  show-hide-references: !~>
+    $ @rv 'i.reference' .click (e)!->
       ref = $ e.current-target .attr 'bp-view-name'
-      $ "div.reference[bp-view-name='#ref']" .toggle!
+      $ @rv "div.reference[bp-view-name='#ref']" .toggle!
 
 class @BP.Form extends Abstract-Form
-  -> super!
   
   register-event-handlers: ->
     super ...
-    @events-handlers['focus div.controls input, div.controls textarea'] = @tab-focuse-with-div-control-highlight
-    @events-handlers['blur div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight
-    @events-handlers['click a.bp-create'] = @events-handlers['click a.bp-update'] = @create-and-update-submit
+    @events-handlers['focus ' + @rv 'div.controls input, div.controls textarea'] = @tab-focuse-with-div-control-highlight
+    @events-handlers['blur ' + @rv 'div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight
+    @events-handlers['click ' + @rv 'a.bp-create'] = @events-handlers['click ' + @rv 'a.bp-update'] = @create-and-update-submit
     @events-handlers
 
   tab-focuse-with-div-control-highlight: (e)!->
@@ -41,14 +48,14 @@ class @BP.Form extends Abstract-Form
     # control.find 'input, textarea' .focus! 
 
   get-typeahead-render: ({config-name, input-name, candidates})->
-    ->
-      $ "input[name='#{input-name}']" .typeahead do
+    ~>
+      $ @rv "input[name='#{input-name}']" .typeahead do
         name:  config-name
         local: [str.trim! for str in candidates.split ',']
 
-  add-validation: !-> 
+  add-validation: !~> 
     try
-      form = $ 'form' .first!
+      form = $ @rv 'form' .first!
       # console.log "form.context is: ", form.context
       form.parsley() # if form.context # Meteor会在这里执行两次，第一次时Parsley还没有完成form初始化
     catch error
@@ -56,19 +63,19 @@ class @BP.Form extends Abstract-Form
 
   create-and-update-submit: (e)!~> 
     e.prevent-default!
-    if $ 'form' .parsley 'validate'
+    if $ @rv 'form' .parsley 'validate'
       @update-doc-value!
       @collection.upsert {_id: @doc._id}, @doc
       alert 'submit successful!'
       window.location.href = e.current-target.href
 
-  update-doc-value: !->
-    $ 'form' .find all-input-field-selector .each (index, input)!~>
+  update-doc-value: !~>
+    $ @rv 'form' .find all-input-field-selector .each (index, input)!~>
       @update-by-json-path ($ input .attr 'name'), ($ input .val!)
 
   update-by-json-path: !(json-path, value)-> # TODO: 改为JSON Path实现，应对复杂表单
-    # 目前仅仅是简单表单，input的name直接对应doc的attribute
-    @doc[json-path] = value
+      # 目前仅仅是简单表单，input的name直接对应doc的attribute
+      @doc[json-path] = value
 
 
 class @BP.Table extends Abstract-Form

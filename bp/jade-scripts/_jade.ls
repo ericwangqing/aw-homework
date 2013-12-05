@@ -27,8 +27,13 @@ module.exports =
 
 
 
-
 code = ''' 
+# ********************************************************
+# *                                                      *
+# *        IT IS AUTO GENERATED DON'T EDIT               *
+# *                                                      *
+# ********************************************************
+
 # if module?
 #   require! [fs, sugar, './Component'] 
 

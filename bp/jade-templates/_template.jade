@@ -1,17 +1,3 @@
-//- mixin template(docName, templateType, references)
-//-   - var templateName = (templateType == 'detail') ? docName : (docName.pluralize() + '-list')
-//-   - var viewId = Date.now() + Math.random() // template每次被插入，得到一个新view
-//-   - bp.makeBpc(docName) // 产生初始化BPC的代码
-//-   template(name=templateName)
-//-     //- 这里向BPC注册当前的view
-//-     | {{bp-register-view '#{docName}' '#{templateName}' '#{viewId}'}}
-//-     block
-//-     if references 
-//-       - if(typeof references == 'string') {references = [references];}
-//-       each ref in references
-//-         .reference(bp-view-name=ref)
-//-           | {{> #{ref}}}
-
 
 mixin template(docName, templateName, templateType)
   - console.log("************* 1 ***********")

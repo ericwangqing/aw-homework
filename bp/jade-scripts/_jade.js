@@ -37,5 +37,5 @@
       return this.names = new Names(docName);
     }
   };
-  code = ' \n# if module?\n#   require! [fs, sugar, \'./Component\'] \n\n# BP ||= {}\n# BP.Component ||= Component\n\n# debugger\nBP.Component.create-components-from-jade-views jade-views = ';
+  code = ' \n# ********************************************************\n# *                                                      *\n# *        IT IS AUTO GENERATED DON\'T EDIT               *\n# *                                                      *\n# ********************************************************\n\n# if module?\n#   require! [fs, sugar, \'./Component\'] \n\n# BP ||= {}\n# BP.Component ||= Component\n\n# debugger\nBP.Component.create-components-from-jade-views jade-views = ';
 }).call(this);

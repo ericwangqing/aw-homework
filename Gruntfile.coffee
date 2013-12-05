@@ -1,7 +1,7 @@
 module.exports = (grunt)->
   # process.env.DEBUG = 'aw'
   require 'sugar'
-  bp = require './bp/_jade' # 将bp引入jade，编译出Router和View需要的代码
+  bp = require './bp/jade-scripts/_jade' # 将bp引入jade，编译出Router和View需要的代码
   grunt.initConfig
     clean: 
       src:
@@ -54,7 +54,7 @@ module.exports = (grunt)->
         files: [
           expand: true
           cwd: 'bp'
-          src: ['**/*.ls', '!main.ls', '!_jade.ls']
+          src: ['**/*.ls', '!main.ls', '!jade-scripts/_jade.ls']
           dest: 'bin/lib'
           ext: '.js'
         ]

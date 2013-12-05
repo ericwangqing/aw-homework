@@ -15,7 +15,7 @@ class Names
 
       # -------------- Route名称和路径 --------------------------
     _base-route-name              =   doc-name.pluralize! 
-    _base-route-path              =   '/' + doc-name.pluralize!
+    _base-route-path              =   '/' + doc-name.pluralize! 
 
     # @ <<< do
     #   list-path-name              :   _base-route-name

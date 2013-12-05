@@ -1,14 +1,14 @@
 class @BP.View extends BP._View
-  @template-grouped-views = {}
-  @doc-grouped-views = {}
+  @template-grouped-views = @_tgv = {}
+  @doc-grouped-views = @_dgv = {}
 
   @resume-views = !(jade-views)->
     for view-name, jade-view of jade-views
-      @registry[view-name] = view = @resume-view jade-view
-      @template-grouped-views[view.template-name] ||= {}
-      @template-grouped-views[view.template-name][view.name] = view
-      @doc-grouped-views[view.doc-name] ||= {}
-      @doc-grouped-views[view.doc-name][view.type] = view
+      @registry[view-name] = _v = @resume-view jade-view
+      @_tgv[_v.template-name] ||= {}
+      @_tgv[_v.template-name][_v.name] = _v
+      @_dgv[_v.doc-name] ||= {}
+      @_dgv[_v.doc-name][_v.type] = _v
     @wire-views-appearances! if Meteor.is-client
 
   @resume-view = (jade-view)->
@@ -16,8 +16,8 @@ class @BP.View extends BP._View
     view.names = new BP.Names view.doc-name
     view.create-pub-sub!
     if Meteor.is-client
-      view.state = new BP.State view.name
       view.links = {}
+      view.state = new BP.State view.name
       view.create-view-appearances!
       view.create-ui!
     view
@@ -32,14 +32,14 @@ class @BP.View extends BP._View
         create    : view: list,   appearance: list.appearances.list
         update    : view: list,   appearance: list.appearances.list
         'delete'  : view: list,   appearance: list.appearances.list
-        'next'    : view: detail, appearance: -> detail.appearances[detail.current-appearance-name]
+        'next'    : view: detail, appearance: -> detail.appearances[detail.current-appearance-name] # 保持当前的appearance，仅仅更换id
         'previous': view: detail, appearance: -> detail.appearances[detail.current-appearance-name]
 
   publish-data: (collection)!->
     Meteor.publish @pub-sub.name, (id)~> 
       eval "query = " + @pub-sub.query
       # debugger
-      console.log "view: #{@name}, pub-sub.name: #{@pub-sub.name}, query: ", query
+      # console.log "view: #{@name}, pub-sub.name: #{@pub-sub.name}, query: ", query
       cursor = collection.find query
 
   subscribe-data: (collection)->
@@ -70,7 +70,6 @@ class List-view extends BP.View
       query: "{}"
 
   create-view-appearances: !->
-    # debugger
     @appearances = 
       list      : "/#{@name}/list"
       view      : "/#{@name}/view"
@@ -83,7 +82,7 @@ class List-view extends BP.View
     @docs
 
   create-ui: !->
-    @ui = new BP.Table!
+    @ui = new BP.Table @
 
 class Detail-view extends BP.View
   create-pub-sub: !->
@@ -100,15 +99,14 @@ class Detail-view extends BP.View
       reference : '/' + @name + '/' + @id-place-holder + '/reference'
 
   data-retriever: ~>
-    form = @ui
-    form.collection = @collection
+    @ui.collection = @collection
     if @current-appearance-name in ['update', 'view']
-      form.doc = @collection.find-one _id: (@state.get 'current-id')
-    else
-      form.doc ={}
+      @ui.doc = @collection.find-one _id: (@state.get 'current-id')
+    else # create
+      @ui.doc ={}
 
   create-ui: !->
-    @ui = new BP.Form!
+    @ui = new BP.Form @
 /* ------------------------ Private Methods ------------------- */
 
 

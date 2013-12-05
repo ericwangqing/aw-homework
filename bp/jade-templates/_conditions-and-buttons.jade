@@ -71,8 +71,6 @@ mixin _next-link()
   | {{/if}}
 
 mixin _show-reference(ref)
-  //- - var viewName = viewName? viewNane : templateName
-  //- - console.log("_show-reference: references: ", references)
   - var referredViewName = bp.getRef(ref)
   - if(references.none(referredViewName)){references.push(referredViewName);}
   i.fa.fa-info.reference(bp-view-name = 'ref-' + referredViewName)

@@ -21,7 +21,7 @@
     }
     return View;
   }());
-  /* ------------------------ Private Methods ------------------- */
+  this.BP || (this.BP = {});
   if (typeof module != 'undefined' && module !== null) {
     module.exports = {
       View: View
