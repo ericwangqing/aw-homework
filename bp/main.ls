@@ -12,4 +12,4 @@
 # BP.Component ||= Component
 
 # debugger
-BP.Component.create-components-from-jade-views jade-views = {"assignments-list":{"docName":"assignment","name":"assignments-list","templateName":"assignments-list","type":"list","isMainNav":true,"referredViews":{}},"assignment":{"docName":"assignment","name":"assignment","templateName":"assignment","type":"detail","isMainNav":false,"referredViews":{"ref-assignment":{"referredViewName":"assignment","query":"{\"title\": /工作流/}"}}}}
+BP.Component.create-components-from-jade-views jade-views = {"assignments-list":{"docName":"assignment","name":"assignments-list","templateName":"assignments-list","type":"list","isMainNav":true,"referredViews":{}},"assignment":{"docName":"assignment","name":"assignment","templateName":"assignment","type":"detail","isMainNav":false,"referredViews":{}}}

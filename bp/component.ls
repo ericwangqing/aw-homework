@@ -49,9 +49,9 @@ class @BP.Component
       template: component.template-name
       before: ->
         component.adapter.load-view view
-        view.change-to-appearance appearance-name, @params
+        view.change-to-appearance appearance-name
       wait-on: ->
-        view.subscribe-data component.collection
+        view.subscribe-data component.collection, @params
 
 /* ------------------------ Private Methods ------------------- */
 initial-template-adpater-for-views = !->
