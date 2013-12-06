@@ -44,7 +44,7 @@ mixin _each-cell(cellNames)
 
 mixin _guarded-cell(attr)
   +_if-else-attribute-permit(attr, 'look')
-    td(cols=colIndex) {{#{attr}}}
+    td(cols=colIndex) {{bs '#{attr}'}}
   +_else()
     td.cant-look(cols=colIndex)
 

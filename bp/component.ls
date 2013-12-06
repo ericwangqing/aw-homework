@@ -1,4 +1,10 @@
 top = @
+if Meteor.is-client
+  do enable-handlebar-switch-views-in-its-rendering = !->
+    Handlebars.register-helper 'bp-load-view', (view-name)-> 
+      component = BP.Component.view-name-component-map[view-name]
+      view = component.views[view-name]
+      component.adapter.load-view view
 
 class Collection
   @registry = {}
@@ -7,11 +13,14 @@ class Collection
 
 class @BP.Component
   @main-nav-paths = []
+  @view-name-component-map = {} 
 
   @create-components-from-jade-views =  (jade-views)->
     BP.View.resume-views jade-views
-    (views, template-name)  <-! _.each BP.View.template-grouped-views
-    new BP.Component template-name, views
+    (views, template-name)  <~! _.each BP.View.template-grouped-views
+    component = new BP.Component template-name, views
+    [@view-name-component-map[view.name] = component for view-name, view of views] if Meteor.is-client
+
 
   (@template-name, @views)-> # template-name, template-adapter, views
     @doc-name = _.values @views .0.doc-name # 这里所有的views都是一个template的，当然对应一种doc
@@ -39,16 +48,16 @@ class @BP.Component
       path: path-pattern
       template: component.template-name
       before: ->
+        component.adapter.load-view view
         view.change-to-appearance appearance-name, @params
       wait-on: ->
         view.subscribe-data component.collection
 
 /* ------------------------ Private Methods ------------------- */
 initial-template-adpater-for-views = !->
-  @template-adapter = BP.Template-adapter.get @type, @names, @template # 'list', 'detail'
-  (view, view-name) <~! _.each @views
-  @template-adapter.ui = view.ui
-  @template-adapter.wire-view view
+  @adapter = BP.Template-adapter.get @type, @names, @template # 'list', 'detail'
+  # (view, view-name) <~! _.each @views
+  # @adapter.load-view view
 
 
 create-meteor-collection = !-> 

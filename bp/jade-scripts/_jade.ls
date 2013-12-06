@@ -16,7 +16,7 @@ module.exports =
   save-view: (view)!->
     fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)
 
-  get-ref: (ref)->
+  get-ref-name: (ref)->
     switch ref
     case 'detail' then @names.detail-template-name
     case 'list' then @names.list-template-name

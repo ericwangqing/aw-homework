@@ -7,7 +7,10 @@ class View
 
   (@doc-name, @name, @template-name, @type)->
     @is-main-nav = false
-    @composed-views = {}
+    @referred-views = {}
+
+  add-referred-view: (view-name, referred-as)!-> #defer to resolve
+    @referred-views[view-name] = referred-as 
 
 @BP ||= {}
 if module? then module.exports = {View} else @BP._View = View # 让Jade和Meteor都可以使用

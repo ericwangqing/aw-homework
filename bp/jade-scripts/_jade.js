@@ -23,7 +23,7 @@
     saveView: function(view){
       fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry));
     },
-    getRef: function(ref){
+    getRefName: function(ref){
       switch (ref) {
       case 'detail':
         return this.names.detailTemplateName;

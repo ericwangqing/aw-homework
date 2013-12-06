@@ -17,8 +17,11 @@
       this.templateName = templateName;
       this.type = type;
       this.isMainNav = false;
-      this.composedViews = {};
+      this.referredViews = {};
     }
+    prototype.addReferredView = function(viewName, referredAs){
+      this.referredViews[viewName] = referredAs;
+    };
     return View;
   }());
   this.BP || (this.BP = {});

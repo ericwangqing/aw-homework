@@ -12,14 +12,13 @@ class @BP.Template-adapter
     @view = null # 等待Iron-Router在before方法中通过component.change-to-view方法设定。
     @permission = new BP.Permission! # permission与view无关，因此可以共用。
 
-  wire-view: !(view)->
+  load-view: !(view)->
     @view = view
-    @data-retriever = view.data-retriever
     @create-helpers!
     @create-renderers!
     @create-event-handlers!
     @template.helpers @helpers
-    @template.events @events-handlers
+    @template.events @events-handlers 
     @template.rendered = !~> 
       [method.call @ for method in @renderers]
 

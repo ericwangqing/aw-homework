@@ -20,7 +20,7 @@ class @BP.View extends BP._View
       view.state = new BP.State view.name
       view.create-view-appearances!
       view.create-ui!
-    view
+    view 
 
   @wire-views-appearances = !->
     for doc-name, {list, detail} of @doc-grouped-views

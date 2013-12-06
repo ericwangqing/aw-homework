@@ -25,9 +25,9 @@ class Abstract-Form
       window.location.href = e.current-target.href
 
   show-hide-references: !~>
-    $ @rv 'i.reference' .click (e)!->
+    $ @rv 'i.reference' .click (e)!-> # 可否考虑为全页面就设定一次呢？
       ref = $ e.current-target .attr 'bp-view-name'
-      $ @rv "div.reference[bp-view-name='#ref']" .toggle!
+      $ "div.reference[bp-view-name='#ref']" .toggle!
 
 class @BP.Form extends Abstract-Form
   

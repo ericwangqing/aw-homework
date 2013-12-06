@@ -6,7 +6,7 @@ mixin template(docName, templateName, templateType)
   - references = [];
   - console.log("************* 2 ***********: ")
   //- 切换bpc的helper，保障同一个template，多个view的情况下渲染正确
-  //- | {{bp-load-bpc '#{currentViewName}'}} !!!! 注意 ！！！ 顶层template在Router的before里面load-bpc，写在这里无用，在<template>标签外了，Meteor是不会执行的。
+  //- | {{bp-load-view '#{currentViewName}'}} !!!! 注意 ！！！ 顶层template在Router的before里面load-bpc，写在这里无用，在<template>标签外了，Meteor是不会执行的。
   template(name=templateName)
     block
     each ref in references
@@ -16,13 +16,13 @@ mixin template(docName, templateName, templateType)
 
 
 
-mixin _reference(topView, templateName)
+mixin _reference(topView, ref)
   - console.log("call reference, ref: ", ref)
-  - currentViewName = 'ref-' + templateName
-  - topView.addComposedView(currentViewName, templateName)
-  //- | {{bp-load-bpc '#{currentViewName}'}}
+  - currentViewName = 'ref-' + ref.referredViewName
+  - topView.addReferredView(currentViewName, ref)
+  | {{bp-load-view '#{currentViewName}'}}
   .reference(bp-view-name=currentViewName)
-    | {{> #{templateName}}}
+    | {{> #{ref.referredViewName}}}
 
 mixin main-nav(templateNames)
   - bp.setMainNav(templateNames)
