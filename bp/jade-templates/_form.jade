@@ -12,10 +12,10 @@ mixin form(item)
         +_guarded-permission-and-action-button('update', '提交')
         +_guarded-permission-and-action-button('create', '提交')
         +_if-action('update')
-            +_guarded-permission-button('delete', '删除')
+          +_guarded-permission-button('delete', '删除')
       .pre-next
-            //- +_previous-link()
-            //- +_next-link()
+        +_previous-link()
+        +_next-link()
     | {{/with}}  
 
 

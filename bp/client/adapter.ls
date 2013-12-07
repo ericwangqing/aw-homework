@@ -41,8 +41,8 @@ class Detail-template-adpater extends BP.Template-adapter
   create-helpers: !->
     super ...
     @helpers <<<
-      # "bp-pre-link"           : @_enable-nav-link("previous") 
-      # "bp-next-link"          : @_enable-nav-link("next") 
+      "bp-pre-link"           : @_enable-nav-link("previous") 
+      "bp-next-link"          : @_enable-nav-link("next") 
       "bp-add-typeahead"      : @_enable-add-typeahead-to-input-field! 
 
   create-renderers: !->
@@ -58,8 +58,8 @@ class Detail-template-adpater extends BP.Template-adapter
         candidates: candidates
 
   _enable-nav-link: (nav)->
-    if doc-id = @view.get-state nav + '-id'
-      @view.get-path action = nav, doc-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
+    ~>
+      @view.get-path action = nav, if nav is 'previous' then @view.previous-id else @view.next-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
 
 
 

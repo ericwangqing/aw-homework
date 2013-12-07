@@ -16,17 +16,6 @@ class @BP.State
       bp[@namespace][attr] = value
     else
       bp[@namespace] <<< obj-attr
-    Session.set 'bp', bp
-
-  update-pre-next: (current-id)!->
-    pre = next = null
-    if doc-ids = @get 'doc-ids' # 在List Template里查询数据后，会更新'doc-ids'
-      for id, index in doc-ids
-        break if id is current-id
-        pre = id
-      next = doc-ids[index + 1] 
-    @set 'previous-id', pre
-    @set 'next-id', next
- 
+    Session.set 'bp', bp 
 
 

@@ -42,10 +42,10 @@ class @BP.Component
       @route path-name, do
         path: path-pattern
         template: view.template-name
-        before: ->
+        before: !->
           # self.adapter.load-view view
-          view.change-to-appearance appearance-name
-        wait-on: ->
+          view.change-to-appearance appearance-name, @params
+        wait-on: -> # 注意：wait-on实际上在before之前执行！！
           view.subscribe-data @params
         
 

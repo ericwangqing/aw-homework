@@ -1,5 +1,6 @@
 class @BP.View extends BP._View
   @doc-grouped-views = @_dgv = {}
+  @transfer-state-between-views = new BP.State '_transfer-state' if Meteor.is-client
 
   @register-in-doc-grouped-views = (view)!->
     @_dgv[view.doc-name] ||= {}
@@ -64,6 +65,7 @@ class @BP.View extends BP._View
 
 
   publish-data: !->
+    debugger
     view = @
     Meteor.publish view.pub-sub.name, (id)-> 
       eval "query = " + view.pub-sub.query
@@ -81,12 +83,10 @@ class @BP.View extends BP._View
       # Meteor.subscribe referred-view.pub-sub.name, !->
       #   referred-view.collection = BP.Collection.registry[referred-view.names.meteor-collection-name]
       #   referred-view.retrieve-as-referred-view!
-
-  get-path: (link-name, doc-or-doc-id)~> # doc: 当页面上有
-    id = if typeof doc-or-doc-id is 'string' then doc-or-doc-id else doc-or-doc-id._id
+  get-path: (link-name, doc-or-doc-id)~>
     {view, appearance} = @links[link-name]
-    path-pattern = if typeof appearance is 'function' then appearance! else appearance
-    path-pattern?.replace view.id-place-holder, id
+    view.get-appearance-path appearance, doc-or-doc-id
+
 
   change-to-appearance: (appearance-name, params)->
     @current-appearance-name = appearance-name
@@ -95,8 +95,6 @@ class @BP.View extends BP._View
   get-current-action: ~> @current-appearance-name
 
   current-action-checker: (action-name)~> action-name is @current-appearance-name
-
-  get-state: (action-name)-> @state.get action-name
 
 class List-view extends BP.View
   create-pub-sub: !->
@@ -110,9 +108,13 @@ class List-view extends BP.View
       view      : "/#{@name}/view"
       reference : "/#{@name}/reference"
 
+  get-appearance-path: (appearance)-> 
+    path-pattern = if typeof appearance is 'function' then appearance! else appearance
+    path-pattern
+
   data-retriever: ~> # doc: 业务逻辑中，由用户权限和流程权限决定的筛选在服务端完成（Meteor Method），而由用户体验形成的筛选在客户端完成，也即是在template中声明的query，用在这里。
-    @doc-ids = @collection.find (@query or {}), {_id: 1} .fetch!
-    @state.set 'doc-ids', @doc-ids
+    @doc-ids = @collection.find (@query or {}) .fetch! .map -> it._id
+    @@transfer-state-between-views.set 'doc-ids', @doc-ids
     @docs = @collection.find (@query or {})
 
   subscribe-data: (params)->
@@ -138,10 +140,15 @@ class Detail-view extends BP.View
       view      : '/' + @name + '/' + @id-place-holder + '/view'     
       reference : '/' + @name + '/' + @id-place-holder + '/reference' 
 
+  get-appearance-path: (appearance, doc-or-doc-id)-> 
+    return null if not doc-or-doc-id
+    id = if typeof doc-or-doc-id is 'string' then doc-or-doc-id else doc-or-doc-id._id
+    path-pattern = if typeof appearance is 'function' then appearance! else appearance
+    path-pattern?.replace @id-place-holder, id
+
   data-retriever: ~>
-    @ui.doc = doc = if @is-referred then @retreive-as-ref-view! else @retrieve-as-main-view! 
-    @state.set 'doc' doc
-    doc
+    @ui.doc = @state.get 'doc'
+    # @collection.find-one _id: @doc-id
 
   retreive-as-ref-view: ->
     @state.get 'doc'
@@ -156,19 +163,29 @@ class Detail-view extends BP.View
     doc = docs?[0] or {}
 
   subscribe-data: (params)->
-    Meteor.subscribe @pub-sub.name, @doc-id = params[@name + '_id']
+    Meteor.subscribe @pub-sub.name, @doc-id = params[@name + '_id'] # 注意：wait-on实际上在before之前执行！！，所以在这里给@dod-id赋值，而不是在change-to-appearance里。
+
+  change-to-appearance: (appearance-name, params)->
+    BP.RRR = @ # 调试
+    super ...
+    @doc-ids = @@transfer-state-between-views.get 'doc-ids'
+    if @doc-id and @doc-ids and not _.is-empty @doc-ids
+      @update-previous-and-next-ids!
+    doc = if @is-referred then @retreive-as-ref-view! else @retrieve-as-main-view! 
+    @state.set 'doc' doc
+
+  update-previous-and-next-ids: !->
+    pre = next = null
+    for id, index in @doc-ids
+      break if id is @doc-id
+      pre = id
+    next = @doc-ids[index + 1] 
+    @previous-id = pre
+    @next-id = next
 
   create-ui: !->
     @ui = new BP.Form @
-/* ------------------------ Private Methods ------------------- */
-
-
-# class @BP.State
-#   update: (params)->
-#     @get-transferred-state!
-
-#   get-transferred-state: !->
-
+    
 if module? then module.exports = {View} else @BP.View = View # 让Jade和Meteor都可以使用
 
 
