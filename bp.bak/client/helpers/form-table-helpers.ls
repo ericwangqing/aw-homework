@@ -1,6 +1,6 @@
 @BP ||= {}
 all-input-field-selector = 'input, select, textarea'
-class Abstract-Form
+class Abstract-UI
   (@bpc)->
     @collection = @bpc.collection 
 
@@ -19,7 +19,7 @@ class Abstract-Form
       ref = $ e.current-target .attr 'bp-view-name'
       $ "div.reference[bp-view-name='#ref']" .toggle!
 
-class @BP.Form extends Abstract-Form
+class @BP.Form extends Abstract-UI
   -> super ...
   
   register-event-handlers: (events-handlers)!->
@@ -67,7 +67,7 @@ class @BP.Form extends Abstract-Form
     @doc[json-path] = value
 
 
-class @BP.Table extends Abstract-Form
+class @BP.Table extends Abstract-UI
   -> super ...
   # ------------- 下面改用Router的Before 来实现了 ----------------------
   # register-event-handlers: (events-handlers)!->

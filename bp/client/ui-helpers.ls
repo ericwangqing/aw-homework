@@ -8,6 +8,7 @@ restrict-selector-to-view = (selector, view-selector)->
 class Abstract-Form
   (view)->
     @view = view
+    @collection = BP.Collection.get view.names.meteor-collection-name
     @view-selector = "div[bp-view-name='#{@view.name}']"
     @events-handlers = {}
     @rv = restrict-selector-to-view _, @view-selector
@@ -20,7 +21,7 @@ class Abstract-Form
     e.prevent-default
     if confirm "真的要删除吗？"
       doc-id = $ e.current-target .attr 'bp-doc-id'
-      @collection.remove {_id: doc-id}
+      @collection.remove {_id: doc-id} # 对collection的操作是否应该移回到component中？
       alert 'remove successful!'
       window.location.href = e.current-target.href
 

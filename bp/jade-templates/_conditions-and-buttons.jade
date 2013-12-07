@@ -72,6 +72,6 @@ mixin _next-link()
 
 mixin _show-reference(ref, query)
   - var referredViewName = bp.getRefName(ref)
-  - if(references.none(referredViewName)){references.push({referredViewName: referredViewName, query: query});} // 一个reference可在多个域标注
+  - if(references.none(referredViewName)){references.push({referredViewName: 'homework', query: query});} // 一个reference可在多个域标注
   i.fa.fa-info.reference(bp-view-name = 'ref-' + referredViewName)
 

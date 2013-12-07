@@ -21,7 +21,7 @@ mixin _reference(topView, ref)
   - console.log("call reference, ref: ", ref)
   - currentViewName = 'ref-' + ref.referredViewName
   - topView.addReferredView(currentViewName, ref)
-  | {{bp-load-view '#{currentViewName}'}}
+  //- | {{bp-load-view '#{currentViewName}'}}
   .reference(bp-view-name=currentViewName)
     | {{> #{ref.referredViewName}}}
 

@@ -2,18 +2,16 @@
 # Adpater 本身没有状态，因此可以被多个有相同template的view共用：
 # 1）状态保存在view的state里，通过view操作
 class @BP.Template-adapter
-  @get = (type, names, template)->
-    switch type
-    case 'list'   then new List-template-adpater   template, names.list-data-retriever-name
-    case 'detail' then new Detail-template-adpater template, names.detail-data-retriever-name
+  @get = (view)->
+    switch view.type
+    case 'list'   then new List-template-adpater   view
+    case 'detail' then new Detail-template-adpater view
     default throw new Error "type: '#type' is not supported yet."
 
-  (@template, @data-retriever-name)->
-    @view = null # 等待Iron-Router在before方法中通过component.change-to-view方法设定。
+  (@view)->
+    @template = Template[view.template-name] # Meteor的template实际上是一个加载template html之后，编译成的函数。也就是说只编译一次，因此不会出现变化。
     @permission = new BP.Permission! # permission与view无关，因此可以共用。
-
-  load-view: !(view)->
-    @view = view
+    @data-retriever-name = if @view.type is 'list' then @view.names.list-data-retriever-name else @view.names.detail-data-retriever-name
     @create-helpers!
     @create-renderers!
     @create-event-handlers!
@@ -40,12 +38,11 @@ class List-template-adpater extends BP.Template-adapter
 
 
 class Detail-template-adpater extends BP.Template-adapter
-
   create-helpers: !->
     super ...
     @helpers <<<
-      "bp-pre-link"           : @_enable-nav-link("previous") 
-      "bp-next-link"          : @_enable-nav-link("next") 
+      # "bp-pre-link"           : @_enable-nav-link("previous") 
+      # "bp-next-link"          : @_enable-nav-link("next") 
       "bp-add-typeahead"      : @_enable-add-typeahead-to-input-field! 
 
   create-renderers: !->
@@ -54,18 +51,15 @@ class Detail-template-adpater extends BP.Template-adapter
     @renderers.push @view.ui.add-validation
 
   _enable-add-typeahead-to-input-field: -> 
-    let self = @, view = @view
-      (attr, candidates)!-> # 模板中的ahead控件将调用它，以便render后，动态添加typeahead功能
-        self.renderers.push view.ui.get-typeahead-render do
-          config-name: view.name + attr #一个页面可能有多个表单，一个表单有多个typeahead的域
-          input-name: attr
-          candidates: candidates
+    (attr, candidates)!~> # 模板中的ahead控件将调用它，以便render后，动态添加typeahead功能
+      @renderers.push @view.ui.get-typeahead-render do
+        config-name: @view.name + attr #一个页面可能有多个表单，一个表单有多个typeahead的域
+        input-name: attr
+        candidates: candidates
 
   _enable-nav-link: (nav)->
-    let view = @view # 用闭包保证多个view，各自有自己的path
-      ->
-        if doc-id = view.get-state nav + '-id'
-          view.get-path action = nav, doc-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
+    if doc-id = @view.get-state nav + '-id'
+      @view.get-path action = nav, doc-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
 
 
 
