@@ -10,6 +10,7 @@ class @BP.Collection
   @registry = {}
   @get = (collection-name)->
     @registry[collection-name] ||= new Meteor.Collection collection-name
+    top[collection-name] = @registry[collection-name] # 开发时暴露出来，便于插入数据和调试。
 
 class @BP.Component
   @main-nav-paths = []

@@ -1,0 +1,36 @@
+//- Assignment = [teacher, requirement, for-students, deadline]
+
+//- Homework = [aid, student, content, score]
+
+include ../bp/jade-templates/bp-mixins
+
+-var links = {'写作业': {from: 'list/list/item', to: 'assignment/create', relation: 'homework.aid = assignment._id'}} // link path: /view/appearance/position
+
++component('assignment')()
+  +list(['题目', '要求', '截止时间'])
+
+  +detail()
+    +filedset('作业要求')
+      +row()
+        +no-blank-text('题目')
+        +datetime('截止时间')
+        +ahead('学生', 'student', ['沈少伟', '陈伟津', '陈杰文', '林臻南', '王伟哲', '谷阳波', '曾灏', '卢焯权'])(span=6)
+      +row()
+        +block-text('要求')(optional=true, span=FULL_ROW)
+
+    +auto-insert('老师', 'Meteor.user.name')
+
+-var refs = {assignment: {fields: ['题目', '要求', '截止时间'] query:{aid: _id}}, ''}}
++component('homework')(refs=refs)
+  +list(['题目', '截止时间', '内容', '学生'])
+
+  +detail()
+    +fieldset('作业要求')
+      +row()
+        +ref('题目')(span=HALF_ROW)
+        +ref('截止时间')(span=HALF_ROW)
+      +row()
+        +ref('要求')(span=HALF_ROW)
+    +fieldset('作业内容')
+      +row()
+        +html('内容')(span=FULL_ROW)

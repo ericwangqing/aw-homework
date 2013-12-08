@@ -1,36 +1,36 @@
 include ../bp/jade-templates/bp-mixins
 //- ********************************** B+ Component的简洁声明方式 ********************************** 
 +component('assignment')
-  +list(['题目', '要求', '截止时间'], ['题目', 'requirement', 'deadline']) 
+  +list(['题目', '要求', '截止时间']) 
 
   +detail()
     +fieldset('题目基本要求')
       +row()
         //- 所有text控件的接口都是<xxx-text>(label, attr, condition, required, span)，后面的值可缺省
-        +text('题目', '题目')
-        +no-blank-text('要求', 'requirement', condition=null, required=null, span=6)
-        +min-text('中文内容', '中文内容', min=6) 
+        +text('题目')
+        +no-blank-text('要求')(span=HALF_ROW)
+        +min-text('中文内容')(min=6)
       +row()
         //- +text('截止时间', 'deadline')(ref='detail', query='{"题目": /工作流/}')
-        +text('截止时间', 'deadline')
-        +text('发布时间', 'createdAtTime')
+        +text('截止时间')
+        +text('发布时间')
         //- 专用控件的接口都是<xxx-text>(label, attr, condition, required)，后面的值可缺省
-        +number('截止时间', null, null, false)
+        +number('截止时间')(optional=true)
         +email('电子邮件', 'email') 
       +row()
-        +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+        +ahead('自动填充')(candidates=['2012-03-01', '2013-01-01', '日本']) 
 
 
 //- +component('homework')
-//-   +list(['题目', '要求', '截止时间'], ['题目', 'requirement', 'deadline']) 
+//-   +list(['题目', '要求', '截止时间'], ['题目', 'requirement', 'deadline'])   
 
-//-   +detail()
-//-     +fieldset('题目基本要求')
+//-   +detail() 
+//-     +fieldset('题目基本要求')    
 //-       +row()
 //-         //- 所有text控件的接口都是<xxx-text>(label, attr, condition, required, span)，后面的值可缺省
 //-         +text('题目', '题目')
 //-         +no-blank-text('要求', 'requirement', condition=null, required=null, span=6)
-//-         +min-text('中文内容', '中文内容', min=6) 
+//-         +min-text('中文内容', '中文内容', min=6)  
 //-       +row()
 //-         //- +text('截止时间', 'deadline')(ref='detail', query='{"题目": /工作流/}')
 //-         +text('截止时间', 'deadline')
@@ -38,6 +38,71 @@ include ../bp/jade-templates/bp-mixins
 //-         //- 专用控件的接口都是<xxx-text>(label, attr, condition, required)，后面的值可缺省
 //-         +number('截止时间', null, null, false)
 //-         +email('电子邮件', 'email') 
+//-       +row()
+//-         +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+
+
+//- ********************************** B+ Component的详细声明方式 ********************************** 
+//- +template('assignment','assignments-list', 'list')
+//-   +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+
+
+//- mixin my-fieldset(title)
+//-   +fieldset(title)
+//-     +row()
+//-       //- 所有text控件的接口都是<xxx-text>(label, at
+//-       +row()
+//-         +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+
+
+//- ********************************** B+ Component的详细声明方式 ********************************** 
+//- +template('assignment','assignments-list', 'list')
+//-   +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+
+
+//- mixin my-fieldset(title)
+//-   +fieldset(title)
+//-     +row()
+//-       //- 所有text控件的接口都是<xxx-text>(label, at
+//-       +row()
+//-         +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+
+
+//- ********************************** B+ Component的详细声明方式 ********************************** 
+//- +template('assignment','assignments-list', 'list')
+//-   +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+
+
+//- mixin my-fieldset(title)
+//-   +fieldset(title)
+//-     +row()
+//-       //- 所有text控件的接口都是<xxx-text>(label, at
+//-       +row()
+//-         +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+
+
+//- ********************************** B+ Component的详细声明方式 ********************************** 
+//- +template('assignment','assignments-list', 'list')
+//-   +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+
+
+//- mixin my-fieldset(title)
+//-   +fieldset(title)
+//-     +row()
+//-       //- 所有text控件的接口都是<xxx-text>(label, at
+//-       +row()
+//-         +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
+
+
+//- ********************************** B+ Component的详细声明方式 ********************************** 
+//- +template('assignment','assignments-list', 'list')
+//-   +table('assignments', ['题目', '要求', '截止时间'], ['title', 'requirement', 'deadline'])
+
+
+//- mixin my-fieldset(title)
+//-   +fieldset(title)
+//-     +row()
+//-       //- 所有text控件的接口都是<xxx-text>(label, at
 //-       +row()
 //-         +ahead('ahead', 'ahead', ['2012-03-01', '2013-01-01', '日本']) 
 

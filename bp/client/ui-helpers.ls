@@ -4,7 +4,6 @@ all-input-field-selector = 'input, select, textarea'
 restrict-selector-to-view = (selector, view-selector)->
   (selector.split ',' .map -> it.trim! |> ("#{view-selector} " +) ).join ', '
 
-
 class Abstract-Form
   (view)->
     @view = view
@@ -35,7 +34,7 @@ class @BP.Form extends Abstract-Form
   register-event-handlers: ->
     super ...
     @events-handlers['focus ' + @rv 'div.controls input, div.controls textarea'] = @tab-focuse-with-div-control-highlight
-    @events-handlers['blur ' + @rv 'div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight
+    @events-handlers['blur '  + @rv 'div.controls input, div.controls textarea'] = @tab-blur-with-div-control-highlight
     @events-handlers['click ' + @rv 'a.bp-create'] = @events-handlers['click ' + @rv 'a.bp-update'] = @create-and-update-submit
     @events-handlers
 

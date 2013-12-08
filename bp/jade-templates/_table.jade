@@ -5,6 +5,7 @@ include _constants-and-utils
 include _conditions-and-buttons
 
 mixin table(items, columnNames, attributesNames)
+  - var attributesNames = attributesNames ? attributesNames : columnNames
   +_if-action('list')
     +_guarded-link('go-create')
   table
