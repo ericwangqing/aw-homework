@@ -41,23 +41,28 @@ class Detail-template-adpater extends BP.Template-adapter
   create-helpers: !->
     super ...
     @helpers <<<
-      "bp-pre-link"           : @_enable-nav-link("previous") 
-      "bp-next-link"          : @_enable-nav-link("next") 
-      "bp-add-typeahead"      : @_enable-add-typeahead-to-input-field! 
+      "bp-auto-insert"        : @add-auto-insert-field
+      "bp-pre-link"           : @enable-nav-link("previous") 
+      "bp-next-link"          : @enable-nav-link("next") 
+      "bp-add-typeahead"      : @enable-add-typeahead-to-input-field! 
+
+  add-auto-insert-field: !(attr, expression)~>
+    console.log "attr: #attr, expression: #expression"
+    @view.auto-insert-fields[attr] = attr: attr, expression: expression
 
   create-renderers: !->
     super ...
     @renderers.push @view.ui.show-hide-references # 需要在selector里面写入当前view-name
     @renderers.push @view.ui.add-validation
 
-  _enable-add-typeahead-to-input-field: -> 
+  enable-add-typeahead-to-input-field: -> 
     (attr, candidates)!~> # 模板中的ahead控件将调用它，以便render后，动态添加typeahead功能
       @renderers.push @view.ui.get-typeahead-render do
         config-name: @view.name + attr #一个页面可能有多个表单，一个表单有多个typeahead的域
         input-name: attr
         candidates: candidates
 
-  _enable-nav-link: (nav)->
+  enable-nav-link: (nav)->
     ~>
       @view.get-path action = nav, if nav is 'previous' then @view.previous-id else @view.next-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
 

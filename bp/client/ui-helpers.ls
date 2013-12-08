@@ -72,10 +72,16 @@ class @BP.Form extends Abstract-Form
   update-doc-value: !~>
     $ @rv 'form' .find all-input-field-selector .each (index, input)!~>
       @update-by-json-path ($ input .attr 'name'), ($ input .val!)
+    @insert-auto-fields!
 
   update-by-json-path: !(json-path, value)-> # TODO: 改为JSON Path实现，应对复杂表单
       # 目前仅仅是简单表单，input的name直接对应doc的attribute
       @doc[json-path] = value
+
+  insert-auto-fields: !->
+    for attr, auto-config of @view.auto-insert-fields
+      eval ("value = " + auto-config.expression)
+      @doc[attr] = value
 
 
 class @BP.Table extends Abstract-Form

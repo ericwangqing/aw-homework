@@ -1,4 +1,8 @@
 class @BP.Detail-view extends BP.View
+  ->
+    super ...
+    @auto-insert-fields = {}
+    
   create-pub-sub: !->
     @pub-sub = if @is-referred then
       name: 'ref-' + @names.meteor-collection-name # referred 需要订阅一个集合，而不是一个doc

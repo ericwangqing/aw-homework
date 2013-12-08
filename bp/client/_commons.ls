@@ -12,7 +12,7 @@ do config-and-static-route = !~>
     loding-template: 'loading'
     not-found-template: 'not-found'
 
-  filters = 
+  filters =   
     n-progress-hook: ->
       if @ready!
         N-progress.done!
@@ -36,4 +36,7 @@ do config-and-static-route = !~>
       path: '/'
       template: 'splash'
       # yield-templates:
+
+/* --------------------- Meteor Account 的配置 --------------- */
+Accounts.ui.config password-signup-fields: 'USERNAME_ONLY'
 

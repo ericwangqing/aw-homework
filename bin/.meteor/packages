@@ -11,3 +11,5 @@ sugar
 iron-router
 nprogress
 spin
+accounts-ui
+accounts-password

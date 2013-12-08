@@ -7,7 +7,6 @@ head
 template(name='layout')
   .container
     header
-      | {{> bp-banner}}
       | {{> bp-main-nav}}
       //- h1#header {{greeting}} 
     aside.left-sidebar
@@ -25,9 +24,16 @@ template(name='bp-banner')
   a(href='/') BP Banner
 
 template(name='bp-main-nav')
-  | {{#each main-nav-paths}}
-  a(href="{{pathFor this.path}}") {{this.name}}
-  | {{/each}}
+  div.main-nav
+    ul
+      li
+        | {{> bp-banner}}
+      | {{#each main-nav-paths}}
+      li
+        a(href="{{pathFor this.path}}") {{this.name}}
+      | {{/each}}
+      li.pull-right
+        {{loginButtons}}
 
 
 template(name='bp-second-nav')

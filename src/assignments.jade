@@ -35,4 +35,4 @@ include ../bp/jade-templates/bp-mixins
         +block-text('要求')(optional=true, span=FULL_ROW, placeholder='作业详细要求')
         //- +html-text('要求')(optional=true, span=FULL_ROW, placeholder='作业详细要求')
 
-    //- +auto-insert('老师', 'Meteor.user.name')
+    +auto-insert('老师', 'Meteor.user().profile.fullname')

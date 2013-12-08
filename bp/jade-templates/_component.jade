@@ -20,3 +20,7 @@ mixin detail()
     .bp-detail(bp-view-name=currentViewName)
       +form(names.detailDataRetrieverName)
         block
+
+    //- +auto-insert('老师', 'Meteor.user().profile.fullname')
+mixin auto-insert(attr, valueExpression)
+  | {{bp-auto-insert '#{attr}' '#{valueExpression}'}}
