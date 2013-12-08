@@ -129,7 +129,7 @@ module.exports = (grunt)->
 
     watch:
       app:
-        files: ["bp/**/*.ls", "!bp/main.ls", "src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "bp/.jade/**/*.jade", "compass/**/*.sass"]
+        files: ["bp/**/*.ls", "!bp/main.ls", "src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "bp/**/*.jade", "compass/**/*.sass"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
         tasks: ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha"]
         options:

@@ -14,7 +14,8 @@ include ../bp/jade-templates/bp-mixins
       +row()
         +no-blank-text('题目')
         +datetime('截止时间')
-        +ahead('学生', 'student', ['沈少伟', '陈伟津', '陈杰文', '林臻南', '王伟哲', '谷阳波', '曾灏', '卢焯权'])(span=6)
+        - var candidates = ['沈少伟', '陈伟津', '陈杰文', '林臻南', '王伟哲', '谷阳波', '曾灏', '卢焯权']
+        +ahead('学生', 'student', )(span=HALF_ROW, candidates=candidates)
       +row()
         +block-text('要求')(optional=true, span=FULL_ROW)
 
