@@ -1,9 +1,15 @@
 template(name='twice')
   | {{> once}}
-  | {{change-view}}
-  .twice
-    | {{> once}}
+  //- | {{change-view}}
+  //- .twice
+  //-   | {{> once}}
 
 template(name='once')
   .once
-    h3 {{homework}}
+    {{#with homework}}
+    h3 name: {{name}}, value: {{value}}
+    {{/with}}
+
+    {{#with assignment}}
+    h3 name: {{name}}, value: {{value}}
+    {{/with}}    

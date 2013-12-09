@@ -4,8 +4,6 @@
 require! [fs, './_view'.View, './Names']
 
 module.exports =
-  links: {}
-
   get-view: (doc-name, view-name, template-name, template-type)->
     View.get-view.apply View, &
 
@@ -29,15 +27,6 @@ module.exports =
 
   get-names: (doc-name)-> 
     @names = new Names doc-name 
-
-  clear-links: !-> @links = {}
-
-  get-table-row-addtional-links: -> # link.icon. link.path, link.guard
-    results = []
-    for path, config of @links
-      results.push {path: path, icon: config.icon, guard: config.guard} if config.at is 'row'
-    results
-
 
 
 code = ''' 

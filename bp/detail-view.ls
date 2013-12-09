@@ -19,11 +19,18 @@ class @BP.Detail-view extends BP.View
       view      : '/' + @name + '/' + @id-place-holder + '/view'     
       reference : '/' + @name + '/' + @id-place-holder + '/reference' 
 
-  get-appearance-path: (appearance, doc-or-doc-id)-> 
-    return null if not doc-or-doc-id
-    id = if typeof doc-or-doc-id is 'string' then doc-or-doc-id else doc-or-doc-id._id
+  get-appearance-path: (appearance, doc)-> 
+    return null if not doc
     path-pattern = if typeof appearance is 'function' then appearance! else appearance
-    path-pattern?.replace @id-place-holder, id
+    path-pattern?.replace @id-place-holder, doc._id
+
+  add-links: (list)!-> @links =
+    create    : view: list,   appearance: list.appearances.list
+    update    : view: list,   appearance: list.appearances.list
+    'delete'  : view: list,   appearance: list.appearances.list
+    'next'    : view: @,      appearance: ~> @appearances[@current-appearance-name] # 保持当前的appearance，仅仅更换id
+    'previous': view: @,      appearance: ~> @appearances[@current-appearance-name]
+
 
   data-retriever: ~>
     @ui.doc = @state.get 'doc'

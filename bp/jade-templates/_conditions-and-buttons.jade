@@ -40,7 +40,7 @@ mixin _guarded-permission-button(action, label)
 mixin _link-button(action, href, isLink, label)
   - var path = attributes.path ? attributes.path : action
   - var href = href || (isLink ? ("{{bp-path-for '"+ path.camelize(false) +"' this}}") : '#')
-  - var tooltip = label ? label : ''
+  - var tooltip = attributes.label ? attributes.label : ''
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
   a(href=href, class='bp-#{action}', title=tooltip, bp-doc-id=bpDocId)
     - if(action == 'next') // next的文字出现在前面，图标在后面，和其它相反
@@ -76,4 +76,11 @@ mixin _show-reference(ref, query)
   - var referredViewName = bp.getRefName(ref)
   - if(references.none(referredViewName)){references.push({referredViewName: 'homework', query: query});} // 一个reference可在多个域标注
   i.fa.fa-info.reference(bp-view-name = 'ref-' + referredViewName)
+
+mixin add-addtional-links(links)
+  each link in links
+    | {{#if #{link.guard}}}
+    +_guarded-link(link.icon)(path=link.path, label=link.label)
+    | {{/if}}
+
 

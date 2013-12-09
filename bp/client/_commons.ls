@@ -34,7 +34,7 @@ do config-and-static-route = !~>
   Router.map ->
     @route 'default', do
       path: '/'
-      template: 'splash'
+      template: 'twice'
       # yield-templates:
 
 /* --------------------- Meteor Account 的配置 --------------- */

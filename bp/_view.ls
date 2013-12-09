@@ -47,16 +47,8 @@ class @BP.View extends BP._View
 
   @wire-views-appearances = !->
     for doc-name, {list, detail} of @doc-grouped-views
-      list.links =
-        go-create : view: detail, appearance: detail.appearances.create
-        go-update : view: detail, appearance: detail.appearances.update
-        'delete'  : view: list,   appearance: list.appearances.list
-      detail.links =
-        create    : view: list,   appearance: list.appearances.list
-        update    : view: list,   appearance: list.appearances.list
-        'delete'  : view: list,   appearance: list.appearances.list
-        'next'    : view: detail, appearance: -> detail.appearances[detail.current-appearance-name] # 保持当前的appearance，仅仅更换id
-        'previous': view: detail, appearance: -> detail.appearances[detail.current-appearance-name]
+      list.add-links detail
+      detail.add-links list
 
   init: ->
     @names = new BP.Names @doc-name

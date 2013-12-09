@@ -6,6 +6,8 @@ include _conditions-and-buttons
 
 mixin table(items, columnNames, attributesNames)
   - var attributesNames = attributesNames ? attributesNames : columnNames
+  - rowLinks = [], tableLinks = []
+  block
   +_if-action('list')
     +_guarded-link('go-create')
   table
@@ -34,6 +36,7 @@ mixin _row(attributesNames)
       +_guarded-cell(cellName)
     +_if-action('list')
       +_guarded-operation-cell
+      +add-addtional-links(tableLinks)
 
 mixin _each-cell(cellNames)
   - colIndex = 0
@@ -53,9 +56,12 @@ mixin _guarded-operation-cell()
   td(cols=colIndex+1) 
     +_guarded-link('go-update')
     +_guarded-permission-button('delete')
-    - var addtionalLinks = bp.getTableRowAddtionalLinks!
-    each link in addtionalLinks
-      | {{#if #{link.guard}}}
-      +_guarded-link(link.icon)(path=link.path)
-      | {{/if}}
+    +add-addtional-links(rowLinks)
 
+//- --------------- 添加links ---------------------------------------------
+
+mixin add-row-link(link)
+  - rowLinks.push(link)
+
+mixin add-table-link(link)
+  - tableLinks.push(link)
