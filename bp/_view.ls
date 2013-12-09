@@ -7,20 +7,24 @@ class @BP.View extends BP._View
     @_dgv[view.doc-name] ||= {}
     @_dgv[view.doc-name][view.type] = view
 
-  @resume-views = !(jade-views)->
+  @resume-views = !(jade-views, customized-view-class-name, type)->
     for view-name, jade-view of jade-views
-      @registry[view-name] = view = @resume-view jade-view
+      @registry[view-name] = view = @resume-view jade-view, customized-view-class-name, type
       @register-in-doc-grouped-views view
     # @create-referred-views!
     @wire-views-appearances! if Meteor.is-client
 
-  @resume-view = (jade-view)->
-    view = (@create-view-by-type jade-view.type) <<< jade-view
+  @resume-view = (jade-view, customized-view-class-name, type)->
+    view = (@create-view-by-type jade-view.type, customized-view-class-name, type) <<< jade-view
     view.init!
     view
     
-  @create-view-by-type = (type)->
-    if type is 'list' then new BP.List-view! else new BP.Detail-view!
+  @create-view-by-type = (type, customized-view-class-name, customized-type)->
+    if customized-view-class-name and type is customized-type
+      eval "view = new #{customized-view-class-name}();" 
+    else
+      view =  if type is 'list' then new BP.List-view! else new BP.Detail-view!
+    view
 
   @create-referred-views = !->
     View = @
@@ -83,7 +87,7 @@ class @BP.View extends BP._View
       #   referred-view.collection = BP.Collection.registry[referred-view.names.meteor-collection-name]
       #   referred-view.retrieve-as-referred-view!
 
-  get-path: (link-name, doc-or-doc-id)~>
+  get-path: (link-name, doc-or-doc-id)->
     {view, appearance} = @links[link-name]
     view.get-appearance-path appearance, doc-or-doc-id
 

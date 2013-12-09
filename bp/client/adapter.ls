@@ -26,7 +26,7 @@ class @BP.Template-adapter
       "bp-doc-permit"                 :  @permission.doc-permission-checker
       "bp-collection-permit"          :  @permission.collection-permission-checker
       "bp-action-is"                  :  @view.current-action-checker
-      "bp-path-for"                   :  @view.get-path
+      "bp-path-for"                   :  ~> @view.get-path.apply @view, &
       "#{@data-retriever-name}"       :  @view.data-retriever 
 
   create-renderers: !-> @renderers = []

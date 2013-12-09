@@ -19,10 +19,10 @@ include ../bp/jade-templates/bp-mixins
 //-         +email('电子邮件', 'email') 
 //-       +row()
 //-         +ahead('自动填充')(candidates=['2012-03-01', '2013-01-01', '日本']) 
-
-+component('assignment')()
-  +list(['题目', '要求', '截止时间'])
-
++component('assignment')
+  +list(['题目', '要求', '截止时间'])(className='Agile-assignment')
+  - bp.links.createHomework = {at: 'row', label: '写作业', 'to': 'homework.detail.create', guard: "true", icon: 'go-create'}
+  - bp.links.updateHomework = {at: 'row', label: '写作业', 'to': 'homework.detail.update', guard: "assignment.homework", icon: 'go-update'}
   +detail()
     +fieldset('作业要求')
       +row()
@@ -36,3 +36,19 @@ include ../bp/jade-templates/bp-mixins
         //- +html-text('要求')(optional=true, span=FULL_ROW, placeholder='作业详细要求')
 
     +auto-insert('老师', 'Meteor.user().profile.fullname')
+
+//- -var cited = {assignment: {fields: ['题目', '要求', '截止时间'] query:{aid: _id}}, ''}}
+//- +component('homework')(cited=cited)
+//-   +list(['题目', '截止时间', '内容', '学生'])
+
+//-   +detail()
+//-     +fieldset('作业要求')
+//-       +row()
+//-         +ref('题目')(span=HALF_ROW)
+//-         +ref('截止时间')(span=HALF_ROW)
+//-       +row()
+//-         +ref('要求')(span=HALF_ROW)
+//-     +fieldset('作业内容')
+//-       +row()
+//-         +html('内容')(span=FULL_ROW)
+

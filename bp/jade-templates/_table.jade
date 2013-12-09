@@ -53,4 +53,9 @@ mixin _guarded-operation-cell()
   td(cols=colIndex+1) 
     +_guarded-link('go-update')
     +_guarded-permission-button('delete')
+    - var addtionalLinks = bp.getTableRowAddtionalLinks!
+    each link in addtionalLinks
+      | {{#if #{link.guard}}}
+      +_guarded-link(link.icon)(path=link.path)
+      | {{/if}}
 

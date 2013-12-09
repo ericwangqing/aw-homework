@@ -20,8 +20,12 @@
       }
       return results$;
     },
+    setListClassName: function(listClassName){
+      this.listClassName = listClassName;
+      return console.log("class-name: ", this.listClassName);
+    },
     saveView: function(view){
-      fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry));
+      fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry) + (this.listClassName ? ", '" + this.listClassName.camelize() + "', 'list'" : ''));
     },
     getRefName: function(ref){
       switch (ref) {
@@ -35,6 +39,21 @@
     },
     getNames: function(docName){
       return this.names = new Names(docName);
+    },
+    getTableRowAddtionalLinks: function(links){
+      var results, path, config;
+      results = [];
+      for (path in links) {
+        config = links[path];
+        if (config.at === 'row') {
+          results.push({
+            path: path,
+            icon: config.icon,
+            guard: config.guard
+          });
+        }
+      }
+      return results;
     }
   };
   code = ' \n# ********************************************************\n# *                                                      *\n# *        IT IS AUTO GENERATED DON\'T EDIT               *\n# *                                                      *\n# ********************************************************\n\n# if module?\n#   require! [fs, sugar, \'./Component\'] \n\n# BP ||= {}\n# BP.Component ||= Component\n\n# debugger\nBP.Component.create-components-from-jade-views jade-views = ';

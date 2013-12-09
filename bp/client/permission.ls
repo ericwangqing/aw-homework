@@ -13,7 +13,7 @@ class @BP.Permission
     # 下面是暂时的fake
     true
 
-  collection-permission-checker: (action)~>
+  collection-permission-checker: (action, collection-name)~>
     #TODO：接入Bp-Permission模块，提供权限功能
     # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, doc-id, action
     # 下面是暂时的fake

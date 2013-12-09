@@ -15,9 +15,9 @@ class @BP.Collection
 class @BP.Component
   @main-nav-paths = []
 
-  @create-components-from-jade-views =  (jade-views)->
+  @create-components-from-jade-views =  (jade-views, view-customizer-class-name, type)->
     # debugger
-    BP.View.resume-views jade-views
+    BP.View.resume-views jade-views, view-customizer-class-name, type
     (view, view-name)  <~! _.each BP.View.registry
     component = new BP.Component view
 

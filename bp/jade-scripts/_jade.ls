@@ -4,6 +4,8 @@
 require! [fs, './_view'.View, './Names']
 
 module.exports =
+  links: {}
+
   get-view: (doc-name, view-name, template-name, template-type)->
     View.get-view.apply View, &
 
@@ -13,8 +15,11 @@ module.exports =
       name = name.trim!
       View.registry[name].is-main-nav = true
 
+  set-list-class-name: (@list-class-name) -> console.log "class-name: ", @list-class-name
+
   save-view: (view)!->
-    fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)
+    fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry) +  
+      if @list-class-name then ", '#{@list-class-name.camelize!}', 'list'" else ''
 
   get-ref-name: (ref)->
     switch ref
@@ -24,6 +29,14 @@ module.exports =
 
   get-names: (doc-name)-> 
     @names = new Names doc-name 
+
+  clear-links: !-> @links = {}
+
+  get-table-row-addtional-links: -> # link.icon. link.path, link.guard
+    results = []
+    for path, config of @links
+      results.push {path: path, icon: config.icon, guard: config.guard} if config.at is 'row'
+    results
 
 
 

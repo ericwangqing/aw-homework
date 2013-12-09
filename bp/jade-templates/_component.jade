@@ -8,6 +8,8 @@ mixin component(_docName, isMainNav)
     +main-nav(names.listTemplateName)
 
 mixin list(titles, attrs)
+  - if(attributes.className){bp.setListClassName(attributes.className)}
+  - bp.clearLinks() // 清空之前模板里用到的links
   - attrs = attrs ? attrs : titles // 可以只给属性名（attrs），此时就用属性名作为标题
   +template(docName, names.listTemplateName, 'list')
     - currentViewName = attributes.viewName ? attributes.viewName : names.listTemplateName // 可以给视图（view）以不同于template的名字，通过attributes给出
@@ -15,6 +17,7 @@ mixin list(titles, attrs)
       +table(names.listDataRetrieverName, titles, attrs)
 
 mixin detail()
+  - bp.clearLinks() // 清空之前模板里用到的links
   +template(docName, names.detailTemplateName, 'detail')
     - currentViewName = attributes.viewName ? attributes.viewName : names.detailTemplateName
     .bp-detail(bp-view-name=currentViewName)
