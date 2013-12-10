@@ -14,11 +14,11 @@ module.exports =
       View.registry[name].is-main-nav = true
 
   value: (attr, cited)->
+
     for doc-name, fields of cited
       if attr in fields 
-        "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
-      else
-        "{{bs '#attr'}}"
+        return "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
+    "{{bs '#attr'}}"
 
   get-cited-doc: (attr, cited)->
     console.log "attr: #attr, cited: ", cited

@@ -20,9 +20,10 @@ include ../bp/jade-templates/bp-mixins
 //-       +row()
 //-         +ahead('自动填充')(candidates=['2012-03-01', '2013-01-01', '日本']) 
 +component('assignment')
-  +list(['题目', '要求', '截止时间'])(className='Assignments-list')
-    +add-row-link({label: '写作业', path: 'create-homework', appearance: 'homework.detail.create', guard: "true", icon: 'go-create'})
-    +add-row-link({label: '写作业', path: 'update-homework', appearance: 'homework.detail.update', guard: "assignment.homework", icon: 'go-update'})
+  //- +list(['题目', '要求', '截止时间'])(className='Assignments-list')
+  +list(['题目', '要求', '截止时间'])
+    //- +add-row-link({label: '写作业', path: 'create-homework', appearance: 'homework.detail.create', guard: "true", icon: 'go-create'})
+    //- +add-row-link({label: '写作业', path: 'update-homework', appearance: 'homework.detail.update', guard: "assignment.homework", icon: 'go-update'})
   
   +detail()
     +fieldset('作业要求')
@@ -38,18 +39,18 @@ include ../bp/jade-templates/bp-mixins
 
     +auto-insert('老师', 'Meteor.user().profile.fullname')
 
--var cited = {assignment: ['题目', '要求', '截止时间']}
-+component('homework')(cited=cited)
-  +list(['题目', '截止时间', '内容', '学生'])
+//- -var cited = {assignment: ['题目', '要求', '截止时间']}
+//- +component('homework')(cited=cited)
+//-   +list(['题目', '截止时间', '内容', '学生'])
 
-  +detail()(className='Homework-detail')
-    +fieldset('作业要求')
-      +row()
-        +ref('题目')(span=HALF_ROW)
-        +ref('截止时间')(span=HALF_ROW)
-      +row()
-        +ref('要求')(span=HALF_ROW)
-    //- +fieldset('作业内容')
+//-   +detail()(className='Homework-detail')
+//-     +fieldset('作业要求')
+//-       +row()
+//-         +ref('题目')(span=HALF_ROW)
+//-         +ref('截止时间')(span=HALF_ROW)
+//-       +row()
+//-         +ref('要求')(span=HALF_ROW)
+//-     //- +fieldset('作业内容')
     //-   +row()
     //-     +html('内容')(span=FULL_ROW)
 

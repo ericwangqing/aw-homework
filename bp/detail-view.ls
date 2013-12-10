@@ -1,15 +1,10 @@
 class @BP.Detail-view extends BP.View
   ->
     super ...
+    @transferred-state = BP.Abstract-data-manager.state-transferred-across-views
     @auto-insert-fields = {}
     
-  create-pub-sub: !->
-    @pub-sub = if @is-referred then
-      name: 'ref-' + @names.meteor-collection-name # referred 需要订阅一个集合，而不是一个doc
-      query: @query
-    else
-      name: @names.doc-name
-      query: "{_id: id}"
+  create-data-manager: !-> @data-manager = new BP.Detail-data-manager @
 
   create-view-appearances: !-> # doc: 目前reference只支持 detail类型。
     @id-place-holder = ':' + @name + '_id'
@@ -32,33 +27,13 @@ class @BP.Detail-view extends BP.View
     'previous': view: @,      appearance: ~> @appearances[@current-appearance-name]
 
 
-  data-retriever: ~>
-    @ui.doc = @state.get 'doc'
-    # @collection.find-one _id: @doc-id
-
-  retreive-as-ref-view: ->
-    @state.get 'doc'
-
-  retrieve-as-main-view: ->
-    doc = if @current-appearance-name is 'create' then {} else
-      @collection.find-one _id: @doc-id
-
-  retrieve-as-referred-view: ->
-    docs = @collection.find @pub-sub.query .fetch!
-    @state.set 'docs' docs
-    doc = docs?[0] or {}
-
-  subscribe-data: (params)->
-    Meteor.subscribe @pub-sub.name, @doc-id = params[@name + '_id'] # 注意：wait-on实际上在before之前执行！！，所以在这里给@dod-id赋值，而不是在change-to-appearance里。
 
   change-to-appearance: (appearance-name, params)->
     BP.RRR = @ # 调试
     super ...
-    @doc-ids = @@transfer-state-between-views.get 'doc-ids'
+    @doc-ids = @transferred-state.get 'doc-ids'
     if @doc-id and @doc-ids and not _.is-empty @doc-ids
       @update-previous-and-next-ids!
-    doc = if @is-referred then @retreive-as-ref-view! else @retrieve-as-main-view! 
-    @state.set 'doc', doc or {}
 
   update-previous-and-next-ids: !->
     pre = next = null

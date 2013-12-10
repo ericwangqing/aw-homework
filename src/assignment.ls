@@ -30,6 +30,10 @@ class @Homework-detail extends BP.Detail-view
       cursor = view.colloection.find if type is 'by-assignment-id' then assignment-id: id else _id: id
 
 class @Assignments-list extends BP.List-view
+  publish-data: !->
+    view = @
+    Meteor.publish view.pub-sub.name, (type, id)->
+      cursor = view.colloection.find if type is 'by-assignment-id' then assignment-id: id else _id: id
   # get-path: (link-name, doc-or-doc-id)->
   #   switch link-name
   #     return 

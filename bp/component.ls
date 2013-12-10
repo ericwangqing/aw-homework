@@ -27,7 +27,8 @@ class @BP.Component
       @route!
 
     if Meteor.is-server 
-      @view.publish-data!
+      # debugger
+      @view.data-manager.publish!
 
   create-template-adpater: !->
     @adapter = BP.Template-adapter.get @view
@@ -47,7 +48,7 @@ class @BP.Component
           # self.adapter.load-view view
           view.change-to-appearance appearance-name, @params
         wait-on: -> # 注意：wait-on实际上在before之前执行！！
-          view.subscribe-data @params
+          view.data-manager.subscribe @params
         
 
   add-to-main-nav: (view, path-name)!->

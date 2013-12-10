@@ -21,16 +21,14 @@
       return results$;
     },
     value: function(attr, cited){
-      var docName, fields, results$ = [];
+      var docName, fields;
       for (docName in cited) {
         fields = cited[docName];
         if (in$(attr, fields)) {
-          results$.push("{{#with " + docName + "}} {{bs '" + attr + "'}} {{/with}}");
-        } else {
-          results$.push("{{bs '" + attr + "'}}");
+          return "{{#with " + docName + "}} {{bs '" + attr + "'}} {{/with}}";
         }
       }
-      return results$;
+      return "{{bs '" + attr + "'}}";
     },
     getCitedDoc: function(attr, cited){
       var docName, fields;

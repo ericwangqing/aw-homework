@@ -27,7 +27,7 @@ class @BP.Template-adapter
       "bp-collection-permit"          :  @permission.collection-permission-checker
       "bp-action-is"                  :  @view.current-action-checker
       "bp-path-for"                   :  ~> @view.get-path.apply @view, &
-      "#{@data-retriever-name}"       :  @view.data-retriever 
+      "#{@data-retriever-name}"       :  ~> @view.data-manager.meteor-template-retreiver.apply  @view.data-manager, &
 
   create-renderers: !-> @renderers = []
 

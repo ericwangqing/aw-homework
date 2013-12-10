@@ -36,7 +36,8 @@ mixin _guarded-permission-and-action-button(action, label)
 mixin _guarded-permission-button(action, label)
   +_if-collection-permit(action)
     +_link-button(action, null, true) 
-      | #{label}
+      if label
+        | #{label}
 
 mixin _link-button(action, href, isLink, label)
   - var path = attributes.path ? attributes.path : action

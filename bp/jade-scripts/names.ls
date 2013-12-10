@@ -13,7 +13,11 @@ class Names
       detail-template-name        :   doc-name
       detail-data-retriever-name  :   doc-name
 
-      # -------------- Route名称和路径 --------------------------
+    # -------------- Data Publish名称 --------------------------
+      list-data-publish-name      :   doc-name.pluralize!capitalize!
+      detail-data-publish-name    :   doc-name.capitalize!
+
+    # -------------- Route名称和路径 --------------------------
     _base-route-name              =   doc-name.pluralize! 
     _base-route-path              =   '/' + doc-name.pluralize! 
 

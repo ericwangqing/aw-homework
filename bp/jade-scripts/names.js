@@ -13,7 +13,9 @@
         listTemplateName: docName.pluralize() + '-list',
         listDataRetrieverName: docName.pluralize(),
         detailTemplateName: docName,
-        detailDataRetrieverName: docName
+        detailDataRetrieverName: docName,
+        listDataPublishName: docName.pluralize().capitalize(),
+        detailDataPublishName: docName.capitalize()
       });
       _baseRouteName = docName.pluralize();
       _baseRoutePath = '/' + docName.pluralize();
