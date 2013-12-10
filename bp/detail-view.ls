@@ -58,7 +58,7 @@ class @BP.Detail-view extends BP.View
     if @doc-id and @doc-ids and not _.is-empty @doc-ids
       @update-previous-and-next-ids!
     doc = if @is-referred then @retreive-as-ref-view! else @retrieve-as-main-view! 
-    @state.set 'doc' doc
+    @state.set 'doc', doc or {}
 
   update-previous-and-next-ids: !->
     pre = next = null

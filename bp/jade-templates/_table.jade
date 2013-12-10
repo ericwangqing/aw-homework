@@ -47,8 +47,11 @@ mixin _each-cell(cellNames)
     block
 
 mixin _guarded-cell(attr)
-  +_if-else-attribute-permit(attr, 'look')
-    td(cols=colIndex) {{bs '#{attr}'}}
+  - var citedDoc = bp.getCitedDoc(attr, cited)
+  - var citedClass = citedDoc ? 'cited' : null
+  +_if-else-attribute-permit(attr, 'look')(citedDoc=citedDoc)
+    td(cols=colIndex, class=citedClass) 
+      != bp.value(attr, cited)
   +_else()
     td.cant-look(cols=colIndex)
 

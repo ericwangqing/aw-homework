@@ -13,6 +13,20 @@ module.exports =
       name = name.trim!
       View.registry[name].is-main-nav = true
 
+  value: (attr, cited)->
+    for doc-name, fields of cited
+      if attr in fields 
+        "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
+      else
+        "{{bs '#attr'}}"
+
+  get-cited-doc: (attr, cited)->
+    console.log "attr: #attr, cited: ", cited
+    for doc-name, fields of cited
+      return doc-name if attr in fields 
+    null
+
+
   set-list-class-name: (@list-class-name) -> console.log "class-name: ", @list-class-name
 
   save-view: (view)!->

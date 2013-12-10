@@ -1,5 +1,9 @@
 include _form
 
+mixin ref(label, attr)
+  - var attr = attr ? attr : label
+  +__guarded-input-wrapper(label, attr)(attributes)
+
 //- --------------- 各种文本域，都是 input type = 'text' --------------------
 
 //- 可以自由添加Parsely validation条件的text attributes: condition, required, span, ref, query
@@ -42,7 +46,7 @@ mixin min-text(label, attr)
   - addCondition(attributes, P.minlength(attributes.min))
   +text(label, attr)(attributes)
 
-mixin max-text(label, attr, max, required, span)
+mixin max-text(label, attr)
   - addCondition(attributes, P.maxlength(attributes.max))
   +text(label, attr)(attributes)
 

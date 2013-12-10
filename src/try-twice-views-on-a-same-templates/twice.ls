@@ -2,11 +2,15 @@ if Meteor.is-client
   homework = 'old homework'
   counter = 0
   previous-callee = null
-  Template.once.helpers 'homework': ->
+  Template.once.helpers 'assignment': ->
     homework = {name: 'homework', value: "great"}
 
-  Template.once.helpers 'assignment': ->
-    homework = {name: 'assignment', value: "also-great"}
+  Template.once.helpers 'homeworks': -> [
+    {name: 'assignment1', value: "also-great"}
+    {name: 'assignment2', value: "also-great"}
+    {name: 'assignment3', value: "also-great"}
+  ]
+
 
   # Handlebars.registerHelper 'change-view', !->
   #   homework := 'new homework'

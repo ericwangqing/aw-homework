@@ -6,10 +6,9 @@ template(name='twice')
 
 template(name='once')
   .once
-    {{#with homework}}
+    {{#each homeworks}}
     h3 name: {{name}}, value: {{value}}
-    {{/with}}
-
-    {{#with assignment}}
-    h3 name: {{name}}, value: {{value}}
-    {{/with}}    
+      {{#with assignment}}
+      h3 name: {{name}}, value: {{value}}
+      {{/with}}    
+    {{/each}}

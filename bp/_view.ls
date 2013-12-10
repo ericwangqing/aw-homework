@@ -17,7 +17,7 @@ class @BP.View extends BP._View
   @resume-view = (jade-view, customized-view-class-name, type)->
     view = (@create-view-by-type jade-view.type, customized-view-class-name, type) <<< jade-view
     view.init!
-    view
+    @registry[view.name] = view
     
   @create-view-by-type = (type, customized-view-class-name, customized-type)->
     if customized-view-class-name and type is customized-type

@@ -3,6 +3,7 @@ mixin component(_docName, isMainNav)
   - if(typeof isMainNav == 'undefined'){isMainNav = true} // 默认将component的list加到主导航
   - docName = _docName
   - names = bp.getNames(docName)
+  - cited = attributes.cited
   block
   if isMainNav
     +main-nav(names.listTemplateName)

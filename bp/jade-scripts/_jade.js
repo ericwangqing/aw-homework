@@ -20,6 +20,29 @@
       }
       return results$;
     },
+    value: function(attr, cited){
+      var docName, fields, results$ = [];
+      for (docName in cited) {
+        fields = cited[docName];
+        if (in$(attr, fields)) {
+          results$.push("{{#with " + docName + "}} {{bs '" + attr + "'}} {{/with}}");
+        } else {
+          results$.push("{{bs '" + attr + "'}}");
+        }
+      }
+      return results$;
+    },
+    getCitedDoc: function(attr, cited){
+      var docName, fields;
+      console.log("attr: " + attr + ", cited: ", cited);
+      for (docName in cited) {
+        fields = cited[docName];
+        if (in$(attr, fields)) {
+          return docName;
+        }
+      }
+      return null;
+    },
     setListClassName: function(listClassName){
       this.listClassName = listClassName;
       return console.log("class-name: ", this.listClassName);
@@ -42,4 +65,9 @@
     }
   };
   code = ' \n# ********************************************************\n# *                                                      *\n# *        IT IS AUTO GENERATED DON\'T EDIT               *\n# *                                                      *\n# ********************************************************\n\n# if module?\n#   require! [fs, sugar, \'./Component\'] \n\n# BP ||= {}\n# BP.Component ||= Component\n\n# debugger\nBP.Component.create-components-from-jade-views jade-views = ';
+  function in$(x, xs){
+    var i = -1, l = xs.length >>> 0;
+    while (++i < l) if (x === xs[i]) return true;
+    return false;
+  }
 }).call(this);

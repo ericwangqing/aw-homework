@@ -9,17 +9,18 @@ mixin _if-collection-permit(action)
   | {{/if}}
 
 mixin _if-doc-permit(action)
-  | {{#if bp-doc-permit this '#{action}'}}
+  | {{#if bp-doc-permit '#{action}'}}
   block
   | {{/if}}
 
 mixin _if-attribute-permit(attr, action)
-  | {{#if bp-attribute-permit this '#{attr}' #{action}}}
+  - var citedDoc = attributes.citedDoc ? attributes.citedDoc : ''
+  | {{#if bp-attribute-permit '#{attr}' '#{action}' '#{citedDoc}'}}
   block
   | {{/if}}
 
 mixin _if-else-attribute-permit(attr, action)
-  | {{#if bp-attribute-permit this '#{attr}' #{action}}}
+  | {{#if bp-attribute-permit '#{attr}' '#{action}'}}
   block
 
 mixin _else()
