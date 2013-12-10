@@ -8,6 +8,9 @@ class @BP.Abstract-faces-manager
   get-path: (face, doc)->
     path-pattern = if typeof face is 'function' then face! else face
 
+  get-path-name: (face-name)->
+    @view.name + '-' + face-name
+
 # ------------------------ Detail -----------------------------
 class @BP.Detail-faces-manager extends BP.Abstract-faces-manager
   create-faces: ->

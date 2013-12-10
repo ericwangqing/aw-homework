@@ -24,7 +24,8 @@ class @BP.Component
   (@view)-> # template-name, template-adapter, views
     if Meteor.is-client
       @create-template-adpater!
-      @route!
+      @add-main-navs!
+      @view.route!
 
     if Meteor.is-server 
       # debugger
@@ -33,23 +34,12 @@ class @BP.Component
   create-template-adpater: !->
     @adapter = BP.Template-adapter.get @view
 
-  route: !->
-    self = @
-    view = self.view
-    Router.map !->
-      (path-pattern, face-name) <~! _.each view.faces
-      path-name = view.name + '-' + face-name
-      self.add-to-main-nav view, path-name if view.is-main-nav and face-name is 'list'
-      
-      @route path-name, do
-        path: path-pattern
-        template: view.template-name
-        before: !->
-          # self.adapter.load-view view
-          view.change-to-face face-name, @params
-        wait-on: -> # 注意：wait-on实际上在before之前执行！！
-          view.data-manager.subscribe @params
-        
+  add-main-navs: !->
+    if @view.is-main-nav
+      for face-name, path-pattern of @view.faces
+        if face-name is 'list'
+          path-name = @view.faces-manager.get-path-name face-name
+          @add-to-main-nav @view, path-name 
 
   add-to-main-nav: (view, path-name)!->
     @@main-nav-paths.push {name: view.name, path: path-name}

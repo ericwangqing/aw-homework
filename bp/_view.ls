@@ -51,3 +51,16 @@ class @BP.View extends BP._View
 
   current-action-checker: (action-name)~> action-name is @current-face-name
 
+  route: !->
+    self = @
+    (path-pattern, face-name) <~! _.each @faces
+    path-name = @faces-manager.get-path-name face-name
+    Router.map !->
+      @route path-name, do
+        path: path-pattern
+        template: self.template-name
+        before: !->
+          self.change-to-face face-name, @params
+        wait-on: -> # 注意：wait-on实际上在before之前执行！！
+          self.data-manager.subscribe @params
+
