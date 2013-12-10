@@ -35,21 +35,19 @@ class @BP.View extends BP._View
     if Meteor.is-client
       @links = {}
       @state = new BP.State @name
-      @create-view-appearances! 
+      @create-faces! 
       @create-ui!
     @create-data-manager!
 
+  get-path: (link-name, doc)->
+    {view, face} = @links[link-name]
+    view.faces-manager.get-path face, doc
 
-  get-path: (link-name, doc-or-doc-id)->
-    {view, appearance} = @links[link-name]
-    view.get-appearance-path appearance, doc-or-doc-id
-
-  change-to-appearance: (appearance-name, params)->
+  change-to-face: (face-name, params)->
     @data-manager.store-data-in-state!
-    @current-appearance-name = appearance-name
-    # @state.set current-id: (params[@name + '_id'] or params.id)
+    @current-face-name = face-name
 
-  get-current-action: ~> @current-appearance-name
+  get-current-action: ~> action = @current-face-name
 
-  current-action-checker: (action-name)~> action-name is @current-appearance-name
+  current-action-checker: (action-name)~> action-name is @current-face-name
 

@@ -2,21 +2,14 @@ class BP.List-view extends BP.View
 
   create-data-manager: !-> @data-manager = new BP.List-data-manager @
 
-  create-view-appearances: !->
-    @appearances = 
-      list      : "/#{@name}/list"
-      view      : "/#{@name}/view"
-      reference : "/#{@name}/reference"
+  create-faces: !-> 
+    @faces-manager = new BP.List-faces-manager @ 
+    @faces = @faces-manager.create-faces!
 
-  get-appearance-path: (appearance)-> 
-    path-pattern = if typeof appearance is 'function' then appearance! else appearance
-    path-pattern
+  create-ui: !->  @ui = new BP.Table @
 
   add-links: (detail)!-> @links =
-    go-create : view: detail, appearance: detail.appearances.create
-    go-update : view: detail, appearance: detail.appearances.update
-    'delete'  : view: @,      appearance: @appearances.list
+    go-create : view: detail, face: detail.faces.create
+    go-update : view: detail, face: detail.faces.update
+    'delete'  : view: @,      face: @faces.list
 
-
-  create-ui: !->
-    @ui = new BP.Table @

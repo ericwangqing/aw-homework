@@ -42,7 +42,7 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
     super ...
 
   subscribe: (params)->
-    Meteor.subscribe @meteor-pub-name, @doc-id = params[@view.name + '_id'] # 注意：wait-on实际上在before之前执行！！，所以在这里给@dod-id赋值，而不是在change-to-appearance里。
+    Meteor.subscribe @meteor-pub-name, @doc-id = params[@view.name + '_id'] # 注意：wait-on实际上在before之前执行！！，所以在这里给@dod-id赋值，而不是在change-to-face里。
 
   store-data-in-state: !->
     @doc = (@collection.find-one _id: @doc-id) or {} # incase doc not founded, show empty fields on page instead of thrown errors.
@@ -50,3 +50,18 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
 
   meteor-template-retreiver: ~> # doc: detail先将doc查询出，存在state中，然后Meteor的helper从state里面读取。这样方便点击pre、next时，不用经过router。
     @view.ui.doc = @state.get 'doc'
+
+  set-previous-and-next-ids: !-> # doc: 从list拿到列表的doc ids并更新pre 和 next
+    @doc-ids = @@state-transferred-across-views.get 'doc-ids'
+    if @doc-id and @doc-ids and not _.is-empty @doc-ids
+      @update-previous-and-next-ids!
+
+  update-previous-and-next-ids: !-> # doc: 从list拿到列表的doc ids并更新pre 和 next
+    pre = next = null
+    for id, index in @doc-ids
+      break if id is @doc-id
+      pre = id
+    next = @doc-ids[index + 1] 
+    @previous-id = pre
+    @next-id = next
+

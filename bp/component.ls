@@ -37,16 +37,16 @@ class @BP.Component
     self = @
     view = self.view
     Router.map !->
-      (path-pattern, appearance-name) <~! _.each view.appearances
-      path-name = view.name + '-' + appearance-name
-      self.add-to-main-nav view, path-name if view.is-main-nav and appearance-name is 'list'
+      (path-pattern, face-name) <~! _.each view.faces
+      path-name = view.name + '-' + face-name
+      self.add-to-main-nav view, path-name if view.is-main-nav and face-name is 'list'
       
       @route path-name, do
         path: path-pattern
         template: view.template-name
         before: !->
           # self.adapter.load-view view
-          view.change-to-appearance appearance-name, @params
+          view.change-to-face face-name, @params
         wait-on: -> # 注意：wait-on实际上在before之前执行！！
           view.data-manager.subscribe @params
         
