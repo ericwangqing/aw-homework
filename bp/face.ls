@@ -5,8 +5,8 @@ class @BP.Abstract-faces-manager
 
   create-faces: -> ABSTRACT-METHOD!
 
-  get-path: (face, doc)->
-    path-pattern = if typeof face is 'function' then face! else face
+  get-path: (pattern, doc)->
+    path-pattern = if typeof pattern is 'function' then pattern! else pattern
 
   get-path-name: (face-name)->
     @view.name + '-' + face-name
@@ -20,7 +20,7 @@ class @BP.Detail-faces-manager extends BP.Abstract-faces-manager
       update  : "/#{@view.name}/#{@id-place-holder}/update"   
       view    : "/#{@view.name}/#{@id-place-holder}/view"     
 
-  get-path: (face, doc-or-id)-> 
+  get-path: (pattern, doc-or-id)-> 
     path-pattern = super ...
     if not doc-or-id then null else
       id = if typeof doc-or-id is 'string' then doc-or-id else doc-or-id._id

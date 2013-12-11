@@ -1,11 +1,4 @@
 top = @
-# if Meteor.is-client
-  # do enable-handlebar-switch-views-in-its-rendering = !->
-  #   Handlebars.register-helper 'bp-load-view', (view-name)-> 
-  #     component = BP.Component.view-name-component-map[view-name]
-  #     view = component.views[view-name]
-  #     component.adapter.load-view view
-
 class @BP.Collection
   @registry = {}
   @get = (collection-name)->
@@ -15,9 +8,9 @@ class @BP.Collection
 class @BP.Component
   @main-nav-paths = []
 
-  @create-components-from-jade-views =  (jade-views, view-customizer-class-name, type)->
+  @create-components-from-jade-views =  (jade-views)->
     # debugger
-    BP.View.resume-views jade-views, view-customizer-class-name, type
+    BP.View.resume-views jade-views
     (view, view-name)  <~! _.each BP.View.registry
     component = new BP.Component view
 

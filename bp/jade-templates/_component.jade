@@ -9,16 +9,22 @@ mixin component(_docName, isMainNav)
     +main-nav(names.listTemplateName)
 
 mixin list(titles, attrs)
-  - if(attributes.className){bp.setListClassName(attributes.className)}
   - attrs = attrs ? attrs : titles // 可以只给属性名（attrs），此时就用属性名作为标题
   +template(docName, names.listTemplateName, 'list')
+    - if(attributes.className){bp.setCustomClassName(attributes.className)}
     - currentViewName = attributes.viewName ? attributes.viewName : names.listTemplateName // 可以给视图（view）以不同于template的名字，通过attributes给出
     .bp-list(bp-view-name=currentViewName)
       +table(names.listDataRetrieverName, titles, attrs)
         block
 
+  //- template(name=names.listRowTemplateName)
+  //-   +_row(rowAttributesNames)
+
+
+
 mixin detail()
   +template(docName, names.detailTemplateName, 'detail')
+    - if(attributes.className){bp.setCustomClassName(attributes.className)}
     - currentViewName = attributes.viewName ? attributes.viewName : names.detailTemplateName
     .bp-detail(bp-view-name=currentViewName)
       +form(names.detailDataRetrieverName)
@@ -26,6 +32,6 @@ mixin detail()
 
     //- +auto-insert('老师', 'Meteor.user().profile.fullname')
 mixin auto-insert(attr, valueExpression)
-  | {{bp-auto-insert '#{attr}' '#{valueExpression}'}}
+  | {{bp-auto-insert '#{attr}' "#{valueExpression}"}}
 
 

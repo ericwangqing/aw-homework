@@ -9,6 +9,7 @@ class Names
 
       # -------------- Template和其方法名称 ----------------------
       list-template-name          :   doc-name.pluralize!  + '-list'
+      list-row-template-name      :   doc-name.pluralize!  + '-list-row'
       list-data-retriever-name    :   doc-name.pluralize!
       detail-template-name        :   doc-name
       detail-data-retriever-name  :   doc-name

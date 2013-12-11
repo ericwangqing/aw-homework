@@ -28,6 +28,10 @@ mixin _else()
   block
   | {{/if}}
 
+mixin _mark-current-doc-id()
+  .current-doc-id(bp-doc-id='{{_id}}')
+    block
+
 //- button和link-button的本质区别在于，link本质是导航，不对数据进行任何操作，button是操作，操作后依据结果导航。
 mixin _guarded-permission-and-action-button(action, label)
   +_if-action(action)
@@ -44,12 +48,13 @@ mixin _link-button(action, href, isLink, label)
   - var href = href || (isLink ? ("{{bp-path-for '"+ path.camelize(false) +"' this}}") : '#')
   - var tooltip = attributes.label ? attributes.label : ''
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
-  a(href=href, class='bp-#{action}', title=tooltip, bp-doc-id=bpDocId)
+  a(href=href, class="bp-#{action}", title=tooltip, bp-doc-id=bpDocId)
     - if(action == 'next') // next的文字出现在前面，图标在后面，和其它相反
       block
       i.fa.fa-arrow-right.fa-fw
     - else
       case action
+        when 'go'         :   i.fa.fa-reply.fa-fw 
         when 'create'     :   i.fa.fa-plus.fa-fw 
         when 'go-create'  :   i.fa.fa-plus.fa-fw 
         when 'go-update'  :   i.fa.fa-pencil.fa-fw 
@@ -66,7 +71,7 @@ mixin _previous-link()
   | {{#if bp-pre-link}}
   +_link-button('previous', '{{bp-pre-link}}')
     | 上一条
-  | {{/if}}
+  | {{/if}} 
 
 mixin _next-link()
   | {{#if bp-next-link}}
@@ -81,8 +86,25 @@ mixin _show-reference(ref, query)
 
 mixin add-addtional-links(links)
   each link in links
-    | {{#if #{link.guard}}}
+    - var isNegative = link.guard[0] == '!'
+    - if(isNegative){link.guard = link.guard.from(1)}
+    - console.log("isNegative: ", isNegative, link.guard, link.context)
+    if isNegative
+      | {{#unless #{link.guard}}}
+      +_with-or-without-context(link)
+      | {{/unless}}
+    else
+      | {{#if #{link.guard}}}
+      +_with-or-without-context(link)
+      | {{/if}}
+
+mixin _with-or-without-context(link)
+  if link.context
+    | {{#with #{link.context}}}
     +_guarded-link(link.icon)(path=link.path, label=link.label)
-    | {{/if}}
+    | {{/with}}
+  else
+    +_guarded-link(link.icon)(path=link.path, label=link.label)
+
 
 

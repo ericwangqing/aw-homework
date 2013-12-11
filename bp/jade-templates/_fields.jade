@@ -24,10 +24,13 @@ mixin _text(label, attr, htmlTag)
     if htmlTag == 'input'
       - var valueStr = attr? ("name='" + attr + "' value='{{bs \"" + attr + "\"}}' ") : '' 
       != "<input type='text' " + valueStr + validationStr + placeholderStr + " tabindex='" + index +"'/>"
-    else
+    else // 包括了普通textarea和html editor
       - var nameStr =  attr? ("name='" + attr + "'") : '' 
       - var valueStr = attr? ("{{bs '" + attr + "'}}") : '' 
-      != "<textarea type='text' " + nameStr + validationStr + placeholderStr + " tabindex='" + index + "'>" + valueStr + "</textarea>"
+      if attributes.isHtml
+        != "<textarea id='" + attributes.id + "' type='text' " + nameStr + placeholderStr + " tabindex='" + index + "'>" + valueStr + "</textarea>"
+      else
+        != "<textarea type='text' " + nameStr + validationStr + placeholderStr + " tabindex='" + index + "'>" + valueStr + "</textarea>"
     //- input(type='text', name=value, value!="{{bs '#{value}'}}") 
 
 mixin text(label, attr)

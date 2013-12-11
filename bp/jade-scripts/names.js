@@ -11,6 +11,7 @@
         mongoCollectionName: docName.pluralize(),
         meteorCollectionName: docName.pluralize().capitalize(),
         listTemplateName: docName.pluralize() + '-list',
+        listRowTemplateName: docName.pluralize() + '-list-row',
         listDataRetrieverName: docName.pluralize(),
         detailTemplateName: docName,
         detailDataRetrieverName: docName,

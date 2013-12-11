@@ -15,9 +15,9 @@ module.exports = (grunt)->
 
     copy:
       main:
-        files: [{expand: true, cwd:'resource/', flatten:true, src: ['**/*'], dest: 'bin/public/resource'}]
+        files: [{expand: true, cwd:'resource/', flatten:true, src: ['**/*.*'], dest: 'bin/public/resource'}]
       lib:
-        files: [{expand: true, cwd:'lib/', src: ['*'], dest: 'bin/public/lib'}]
+        files: [{expand: true, cwd:'lib/', src: ['**/*'], dest: 'bin/public/lib'}]
 
     concat: # 将每个测试中都要用的部分抽出来
       prefix_src:

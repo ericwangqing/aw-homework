@@ -29,7 +29,7 @@ class @BP.Template-adapter
       "bp-path-for"                   :  ~> @view.get-path.apply @view, &
       "#{@data-retriever-name}"       :  ~> @view.data-manager.meteor-template-retreiver.apply  @view.data-manager, &
 
-  create-renderers: !-> @renderers = []
+  create-renderers: !-> @renderers = @view.add-to-template-rendered! or []
 
   create-event-handlers: !-> @events-handlers = @view.ui.register-event-handlers!
     
@@ -45,10 +45,11 @@ class Detail-template-adpater extends BP.Template-adapter
       "bp-pre-link"           : @enable-nav-link("previous") 
       "bp-next-link"          : @enable-nav-link("next") 
       "bp-add-typeahead"      : @enable-add-typeahead-to-input-field! 
+      "bp-add-html-editor"    : @enable-html-editor-field! 
 
   add-auto-insert-field: !(attr, expression)~>
     console.log "attr: #attr, expression: #expression"
-    @view.auto-insert-fields[attr] = attr: attr, expression: expression
+    @view.data-manager.auto-insert-fields[attr] = attr: attr, expression: expression
 
   create-renderers: !->
     super ...
@@ -61,6 +62,16 @@ class Detail-template-adpater extends BP.Template-adapter
         config-name: @view.name + attr #一个页面可能有多个表单，一个表单有多个typeahead的域
         input-name: attr
         candidates: candidates
+
+  enable-html-editor-field: ->
+    (editor-id, toolbar-id, placeholder)!~>
+      Meteor.defer -> # 这里需要等parentNode就位，如果不defer，parentNode会undefined
+        new wysihtml5.Editor editor-id, 
+          toolbar: toolbar-id
+          parser-rules: wysihtml5-parser-rules
+          stylesheets: '/lib/wysihtml5/wysihtml5.css'
+          placeholder-text: placeholder
+      # , 2000
 
   enable-nav-link: (nav)->
     ~>

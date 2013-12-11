@@ -6,7 +6,7 @@
   Names = require('./Names');
   module.exports = {
     getView: function(docName, viewName, templateName, templateType){
-      return View.getView.apply(View, arguments);
+      return this.view = View.getView.apply(View, arguments);
     },
     setMainNav: function(templateNames){
       var i$, len$, name, results$ = [];
@@ -41,12 +41,8 @@
       }
       return null;
     },
-    setListClassName: function(listClassName){
-      this.listClassName = listClassName;
-      return console.log("class-name: ", this.listClassName);
-    },
-    saveView: function(view){
-      fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry) + (this.listClassName ? ", '" + this.listClassName.camelize() + "', 'list'" : ''));
+    setCustomClassName: function(className){
+      return this.view.customClass = className;
     },
     getRefName: function(ref){
       switch (ref) {
@@ -60,6 +56,9 @@
     },
     getNames: function(docName){
       return this.names = new Names(docName);
+    },
+    saveView: function(view){
+      fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry));
     }
   };
   code = ' \n# ********************************************************\n# *                                                      *\n# *        IT IS AUTO GENERATED DON\'T EDIT               *\n# *                                                      *\n# ********************************************************\n\n# if module?\n#   require! [fs, sugar, \'./Component\'] \n\n# BP ||= {}\n# BP.Component ||= Component\n\n# debugger\nBP.Component.create-components-from-jade-views jade-views = ';

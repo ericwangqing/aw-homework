@@ -4,8 +4,9 @@
 require! [fs, './_view'.View, './Names']
 
 module.exports =
+
   get-view: (doc-name, view-name, template-name, template-type)->
-    View.get-view.apply View, &
+    @view = View.get-view.apply View, &
 
   set-main-nav: (template-names)->
     template-names = template-names.split ',' if typeof template-names is 'string'
@@ -26,12 +27,7 @@ module.exports =
       return doc-name if attr in fields 
     null
 
-
-  set-list-class-name: (@list-class-name) -> console.log "class-name: ", @list-class-name
-
-  save-view: (view)!->
-    fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry) +  
-      if @list-class-name then ", '#{@list-class-name.camelize!}', 'list'" else ''
+  set-custom-class-name: (class-name)-> @view.custom-class = class-name
 
   get-ref-name: (ref)->
     switch ref
@@ -41,6 +37,10 @@ module.exports =
 
   get-names: (doc-name)-> 
     @names = new Names doc-name 
+
+  save-view: (view)!->
+    fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)
+
 
 
 code = ''' 

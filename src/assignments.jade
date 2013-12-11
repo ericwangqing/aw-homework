@@ -20,12 +20,12 @@ include ../bp/jade-templates/bp-mixins
 //-       +row()
 //-         +ahead('自动填充')(candidates=['2012-03-01', '2013-01-01', '日本']) 
 +component('assignment')
-  //- +list(['题目', '要求', '截止时间'])(className='Assignments-list')
-  +list(['题目', '要求', '截止时间'])
-    //- +add-row-link({label: '写作业', path: 'create-homework', appearance: 'homework.detail.create', guard: "true", icon: 'go-create'})
-    //- +add-row-link({label: '写作业', path: 'update-homework', appearance: 'homework.detail.update', guard: "assignment.homework", icon: 'go-update'})
+  +list(['题目', '要求', '截止时间'])(className='Assignments-list')
+    +add-item-link({label: '开始写作业', path: 'create-homework', guard: "!homework._id", icon: 'go-create'})
+    +add-item-link({label: '更新作业', path: 'update-homework', context: 'homework', guard: "homework._id", icon: 'go-update'})
+  //- +list(['题目', '要求', '截止时间'])
   
-  +detail()
++detail()
     +fieldset('作业要求')
       +row()
         +no-blank-text('题目')
@@ -39,18 +39,23 @@ include ../bp/jade-templates/bp-mixins
 
     +auto-insert('老师', 'Meteor.user().profile.fullname')
 
-//- -var cited = {assignment: ['题目', '要求', '截止时间']}
-//- +component('homework')(cited=cited)
-//-   +list(['题目', '截止时间', '内容', '学生'])
+-var cited = {assignment: ['题目', '要求', '截止时间']}
++component('homework')(cited=cited)
+  +list(['题目', '截止时间', '内容', '学生'])(className='Homework-list')
+    +remove-link('go-create')
+    +add-list-link({label: '看作业要求列表', path: 'go-assignments-list', guard: true, icon: 'go'})
 
-//-   +detail()(className='Homework-detail')
-//-     +fieldset('作业要求')
-//-       +row()
-//-         +ref('题目')(span=HALF_ROW)
-//-         +ref('截止时间')(span=HALF_ROW)
-//-       +row()
-//-         +ref('要求')(span=HALF_ROW)
-//-     //- +fieldset('作业内容')
-    //-   +row()
-    //-     +html('内容')(span=FULL_ROW)
+  +detail()(className='Homework-detail')(className='Homework-detail')
+    +fieldset('作业要求')
+      +row()
+        +ref('题目')(span=HALF_ROW)
+        +ref('截止时间')(span=HALF_ROW)
+      +row()
+        +ref('要求')(span=HALF_ROW)
+    +fieldset('作业内容')
+      +row()
+        +html('内容')(span=FULL_ROW, placeholder='在这里开始作业吧~')
+
+    +auto-insert('assignment-id', "BP.AbstractDataManager._state.get('assignment')._id")
+
 

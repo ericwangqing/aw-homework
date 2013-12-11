@@ -79,9 +79,9 @@ class @BP.Form extends Abstract-Form
       @doc[json-path] = value
 
   insert-auto-fields: !->
-    for attr, auto-config of @view.auto-insert-fields
+    for attr, auto-config of @view.data-manager.auto-insert-fields
       eval ("value = " + auto-config.expression)
-      @doc[attr] = value
+      @doc[attr.camelize(false)] = value
 
 
 class @BP.Table extends Abstract-Form

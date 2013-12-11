@@ -6,21 +6,22 @@ class @BP.View extends BP._View
     @_dgv[view.doc-name] ||= {}
     @_dgv[view.doc-name][view.type] = view
 
-  @resume-views = !(jade-views, customized-view-class-name, type)->
+  @resume-views = !(jade-views)->
     for view-name, jade-view of jade-views
-      @registry[view-name] = view = @resume-view jade-view, customized-view-class-name, type
+      @registry[view-name] = view = @resume-view jade-view
       @register-in-doc-grouped-views view
     # @create-referred-views!
     @wire-views-appearances! if Meteor.is-client
 
-  @resume-view = (jade-view, customized-view-class-name, type)->
-    view = (@create-view-by-type jade-view.type, customized-view-class-name, type) <<< jade-view
+  @resume-view = (jade-view)->
+    view = (@create-view-by-type jade-view.custom-class, jade-view.type) <<< jade-view
     view.init!
     @registry[view.name] = view
     
-  @create-view-by-type = (type, customized-view-class-name, customized-type)->
-    if customized-view-class-name and type is customized-type
-      eval "view = new #{customized-view-class-name}();" 
+  @create-view-by-type = (customized-view-class-name, type)->
+    # view =  if type is 'list' then new BP.List-view! else new BP.Detail-view!
+    if customized-view-class-name
+      eval "view = new #{customized-view-class-name.camelize()}();"
     else
       view =  if type is 'list' then new BP.List-view! else new BP.Detail-view!
     view
@@ -63,4 +64,7 @@ class @BP.View extends BP._View
           self.change-to-face face-name, @params
         wait-on: -> # 注意：wait-on实际上在before之前执行！！
           self.data-manager.subscribe @params
-
+  
+  # ----------------------------- Hooks 留给客户化定制时，在这里插入各种渲染后的逻辑 ---------------
+  add-to-template-rendered: (methods)!-> []# ABSTRACT-METHOD
+  # add-to-template-row-meteor-rendered: (methods)!-> []# ABSTRACT-METHOD

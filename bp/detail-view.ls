@@ -1,8 +1,4 @@
 class @BP.Detail-view extends BP.View
-  ->
-    super ...
-    @transferred-state = BP.Abstract-data-manager.state-transferred-across-views
-    @auto-insert-fields = {}
     
   create-data-manager: !-> @data-manager = new BP.Detail-data-manager @
 

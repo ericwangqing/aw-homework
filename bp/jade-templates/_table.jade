@@ -6,10 +6,12 @@ include _conditions-and-buttons
 
 mixin table(items, columnNames, attributesNames)
   - var attributesNames = attributesNames ? attributesNames : columnNames
-  - rowLinks = [], tableLinks = []
+  - rowLinks = [], tableLinks = [], removedLinks = []
   block
-  +_if-action('list')
-    +_guarded-link('go-create')
+  +add-addtional-links(tableLinks)
+  if removedLinks.indexOf('go-create') < 0
+    +_if-action('list')
+      +_guarded-link('go-create')
   table
     thead
       +_head-row(columnNames)
@@ -36,7 +38,6 @@ mixin _row(attributesNames)
       +_guarded-cell(cellName)
     +_if-action('list')
       +_guarded-operation-cell
-      +add-addtional-links(tableLinks)
 
 mixin _each-cell(cellNames)
   - colIndex = 0
@@ -57,14 +58,19 @@ mixin _guarded-cell(attr)
 
 mixin _guarded-operation-cell()
   td(cols=colIndex+1) 
-    +_guarded-link('go-update')
-    +_guarded-permission-button('delete')
-    +add-addtional-links(rowLinks)
+    +_mark-current-doc-id()
+      +_guarded-link('go-update')
+      +_guarded-permission-button('delete')
+      +add-addtional-links(rowLinks)
 
 //- --------------- 添加links ---------------------------------------------
 
-mixin add-row-link(link)
+mixin add-item-link(link)
   - rowLinks.push(link)
 
-mixin add-table-link(link)
+mixin add-list-link(link)
   - tableLinks.push(link)
+
+mixin remove-link(link)
+  - removedLinks.push(link)
+  - removedLinks = removedLinks.unique() 

@@ -1,0 +1,43 @@
+include _fields
+
+mixin html(label, attr)
+  - var attr = attr ? attr : label
+  - var editorId = currentViewName + '-' + 'html-editor'
+  - var toolbarId = editorId + '-' + 'toolbar'
+  //- .wysihtml5-html-editor
+  +__html-editor-toolbar(toolbarId)
+  - attributes.isHtml = true; attributes.id=editorId
+  +_text(label, attr, 'textarea')(attributes)
+  | {{bp-add-html-editor "#{editorId}" "#{toolbarId}" "#{attributes.placeholder}"}}
+
+mixin __html-editor-toolbar(id)
+  div(id=id, style='display:none;')
+    a(data-wysihtml5-command='bold', title='CTRL+B')
+    a(data-wysihtml5-command='italic', title='CTRL+I')
+    a(data-wysihtml5-command='createLink')
+    a(data-wysihtml5-command='insertImage') 
+    a(data-wysihtml5-command='formatBlock', data-wysihtml5-command-value='h1')
+    a(data-wysihtml5-command='formatBlock', data-wysihtml5-command-value='h2')
+    a(data-wysihtml5-command='insertUnorderedList')
+    a(data-wysihtml5-command='insertOrderedList')
+    a(data-wysihtml5-command='insertSpeech')
+    a(data-wysihtml5-action='change_view')
+    div(data-wysihtml5-dialog='createLink', style='display: none;')
+      label
+        | Link:
+        input(data-wysihtml5-dialog-field='href', value='http://')
+      a(data-wysihtml5-dialog-action='save') OK
+      a(data-wysihtml5-dialog-action='cancel') Cancel
+    div(data-wysihtml5-dialog='insertImage', style='display: none;')
+      label
+        | Image:
+        input(data-wysihtml5-dialog-field='src', value='http://')
+      label
+        | Align:
+        select(data-wysihtml5-dialog-field='className')
+          option(value='') default
+          option(value='wysiwyg-float-left') left
+          option(value='wysiwyg-float-right') right
+      a(data-wysihtml5-dialog-action='save') OK
+      a(data-wysihtml5-dialog-action='cancel') Cancel
+
