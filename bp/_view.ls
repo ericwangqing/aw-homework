@@ -14,17 +14,14 @@ class @BP.View extends BP._View
     @wire-view-links! if Meteor.is-client
 
   @resume-view = (jade-view)->
-    view = (@create-view-by-type jade-view.custom-class, jade-view.type) <<< jade-view
+    view = (@create-view-by-type jade-view.type) <<< jade-view
+    view = (@create-view-by-type jade-view.type) <<< jade-view
     view.init!
     @registry[view.name] = view
     
-  @create-view-by-type = (customized-view-class-name, type)->
-    # view =  if type is 'list' then new BP.List-view! else new BP.Detail-view!
-    if customized-view-class-name
-      eval "view = new #{customized-view-class-name.camelize()}();"
-    else
-      view =  if type is 'list' then new BP.List-view! else new BP.Detail-view!
-    view
+
+  @create-view-by-type = (type)->
+    if type is 'list' then new BP.List-view! else new BP.Detail-view!
 
   @wire-view-links = !->
     @wire-default-list-detail-views!

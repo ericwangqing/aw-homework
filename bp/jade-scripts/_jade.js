@@ -21,28 +21,25 @@
       return results$;
     },
     value: function(attr, cited){
-      var docName, fields;
+      var docName, cite;
       for (docName in cited) {
-        fields = cited[docName];
-        if (in$(attr, fields)) {
+        cite = cited[docName];
+        if (cite.attributes && in$(attr, cite.attributes)) {
           return "{{#with " + docName + "}} {{bs '" + attr + "'}} {{/with}}";
         }
       }
       return "{{bs '" + attr + "'}}";
     },
     getCitedDoc: function(attr, cited){
-      var docName, fields;
+      var docName, cite;
       console.log("attr: " + attr + ", cited: ", cited);
       for (docName in cited) {
-        fields = cited[docName];
-        if (in$(attr, fields)) {
+        cite = cited[docName];
+        if (cite.attributes && in$(attr, cite.attributes)) {
           return docName;
         }
       }
       return null;
-    },
-    setCustomClassName: function(className){
-      return this.view.customClass = className;
     },
     getRefName: function(ref){
       switch (ref) {

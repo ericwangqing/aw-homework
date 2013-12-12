@@ -15,19 +15,18 @@ module.exports =
       View.registry[name].is-main-nav = true
 
   value: (attr, cited)->
-
-    for doc-name, fields of cited
-      if attr in fields 
+    for doc-name, cite of cited
+      if cite.attributes and attr in cite.attributes 
         return "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
     "{{bs '#attr'}}"
 
   get-cited-doc: (attr, cited)->
     console.log "attr: #attr, cited: ", cited
-    for doc-name, fields of cited
-      return doc-name if attr in fields 
+    for doc-name, cite of cited
+      return doc-name if cite.attributes and attr in cite.attributes 
     null
 
-  set-custom-class-name: (class-name)-> @view.custom-class = class-name
+  # set-custom-class-name: (class-name)-> @view.custom-class = class-name
 
   get-ref-name: (ref)->
     switch ref

@@ -11,7 +11,6 @@ mixin component(_docName, isMainNav)
 mixin list(titles, attrs)
   - attrs = attrs ? attrs : titles // 可以只给属性名（attrs），此时就用属性名作为标题
   +template(docName, names.listTemplateName, 'list')
-    - if(attributes.className){bp.setCustomClassName(attributes.className)}
     - currentViewName = attributes.viewName ? attributes.viewName : names.listTemplateName // 可以给视图（view）以不同于template的名字，通过attributes给出
     .bp-list(bp-view-name=currentViewName)
       +table(names.listDataRetrieverName, titles, attrs)
@@ -24,7 +23,6 @@ mixin list(titles, attrs)
 
 mixin detail()
   +template(docName, names.detailTemplateName, 'detail')
-    - if(attributes.className){bp.setCustomClassName(attributes.className)}
     - currentViewName = attributes.viewName ? attributes.viewName : names.detailTemplateName
     .bp-detail(bp-view-name=currentViewName)
       +form(names.detailDataRetrieverName)

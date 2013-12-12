@@ -7,8 +7,11 @@ class @BP.Abstract-data-manager
   (@view)->
     @state = @view.state
     @collection = BP.Collection.get view.names.meteor-collection-name
-    @cited-data ||= [] # {doc-name, query}, query仅用于在客户端查询数据，publish时不用
+    @set-cited-data! # {doc-name, query}, query仅用于在客户端查询数据，publish时不用
     @create-data-helpers! # {meteor-template-helper-name, helper-fn}
+
+  set-cited-data: !->
+    @cited-data = [{doc-name: doc-name, query: cite.query} for doc-name, cite of @view.cited]
 
   get-transferred-state: (attr)-> @@state-transferred-across-views.get attr
 
@@ -21,7 +24,7 @@ class @BP.Abstract-data-manager
   _get-collection-by-doc-name: (doc-name)->
     BP.Collection.registry[new BP.Names doc-name .meteor-collection-name]
 
-  publish-collections: (config)!->
+  publish-collections: (config)!-> 
     dm = @
     Meteor.publish dm.meteor-pub-name, (id)-> 
       ({collection, query}) <- _.map config
