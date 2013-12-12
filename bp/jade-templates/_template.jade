@@ -2,7 +2,7 @@
 mixin template(docName, templateName, templateType)
   - console.log("************* 1 ***********")
   - currentViewName = templateName // 用于在生成_link-button时，标明所在view
-  - var topView = bp.getView(docName, currentViewName, templateName, templateType); 
+  - topView = bp.getView(docName, currentViewName, templateName, templateType); 
   - if(attributes.query && templateType == 'list'){topView.query = attributes.query} //doc: 只有列表才需要query，详情都是针对一个，不用query. 这里的筛选用于用户体验，业务逻辑的删选在工作流程定义、用户权限定义里，并通过Meteor Method来实施。
   - references = [];
   - console.log("************* 2 ***********: ")

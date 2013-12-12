@@ -57,7 +57,7 @@
     getNames: function(docName){
       return this.names = new Names(docName);
     },
-    saveView: function(view){
+    saveView: function(){
       fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry));
     }
   };

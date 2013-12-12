@@ -85,7 +85,9 @@ mixin _show-reference(ref, query)
   i.fa.fa-info.reference(bp-view-name = 'ref-' + referredViewName)
 
 mixin add-addtional-links(links)
+  - topView.additionalLinks = topView.additionalLinks ? topView.additionalLinks : []
   each link in links
+    - topView.additionalLinks.push(link)
     - var isNegative = link.guard[0] == '!'
     - if(isNegative){link.guard = link.guard.from(1)}
     - console.log("isNegative: ", isNegative, link.guard, link.context)

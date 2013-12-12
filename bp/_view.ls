@@ -11,7 +11,7 @@ class @BP.View extends BP._View
       @registry[view-name] = view = @resume-view jade-view
       @register-in-doc-grouped-views view
     # @create-referred-views!
-    @wire-views-appearances! if Meteor.is-client
+    @wire-view-links! if Meteor.is-client
 
   @resume-view = (jade-view)->
     view = (@create-view-by-type jade-view.custom-class, jade-view.type) <<< jade-view
@@ -26,10 +26,23 @@ class @BP.View extends BP._View
       view =  if type is 'list' then new BP.List-view! else new BP.Detail-view!
     view
 
-  @wire-views-appearances = !->
+  @wire-view-links = !->
+    @wire-default-list-detail-views!
+    @wire-additional-view-links!
+
+  @wire-default-list-detail-views = !->
     for doc-name, {list, detail} of @doc-grouped-views
       list.add-links detail
       detail.add-links list
+
+  @wire-additional-view-links = !->
+    [@wire-addtional-links view for view-name, view of @registry]
+      
+  @wire-addtional-links = (view)!->
+    for link in view.additional-links
+      [doc-name, view-type, face-name] = link.to.split '.'
+      to-view = @doc-grouped-views[doc-name][view-type]
+      view.links[link.path.camelize(false)] = view: to-view, face: to-view.faces[face-name]
 
   init: ->
     @names = new BP.Names @doc-name

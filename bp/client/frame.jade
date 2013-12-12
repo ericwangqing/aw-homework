@@ -11,13 +11,9 @@ template(name='layout')
   .container
     header
       | {{> bp-main-nav}}
-      //- h1#header {{greeting}} 
     aside.left-sidebar
       | {{> bp-second-nav}}
     article.main-content
-      //- | {{> splash}}
-      //- | {{{BP-Composite 'tests-list' 'assignments-list' }}}
-      //- | {{> assignments-list}}
       | {{yield}}      
     aside.right-sidebar
     footer

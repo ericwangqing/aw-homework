@@ -1,28 +1,10 @@
 include ../bp/jade-templates/bp-mixins
-//- ********************************** B+ Component的简洁声明方式 ********************************** 
-//- +component('assignment')
-//-   +list(['题目', '要求', '截止时间']) 
 
-//-   +detail()
-//-     +fieldset('题目基本要求')
-//-       +row()
-//-         //- 所有text控件的接口都是<xxx-text>(label, attr, condition, required, span)，后面的值可缺省
-//-         +text('题目')
-//-         +no-blank-text('要求')(span=HALF_ROW)
-//-         +min-text('中文内容')(min=6)
-//-       +row()
-//-         //- +text('截止时间', 'deadline')(ref='detail', query='{"题目": /工作流/}')
-//-         +text('截止时间')
-//-         +text('发布时间')
-//-         //- 专用控件的接口都是<xxx-text>(label, attr, condition, required)，后面的值可缺省
-//-         +number('截止时间')(optional=true)
-//-         +email('电子邮件', 'email') 
-//-       +row()
-//-         +ahead('自动填充')(candidates=['2012-03-01', '2013-01-01', '日本']) 
 +component('assignment')
   +list(['题目', '要求', '截止时间'])(className='Assignments-list')
-    +add-item-link({label: '开始写作业', path: 'create-homework', guard: "!homework._id", icon: 'go-create'})
-    +add-item-link({label: '更新作业', path: 'update-homework', context: 'homework', guard: "homework._id", icon: 'go-update'})
+    //- to: doc-name.view-type.face-name
+    +add-item-link({label: '开始写作业', path: 'create-homework', to: 'homework.detail.create', guard: "!homework._id", icon: 'go-create'})
+    +add-item-link({label: '更新作业', path: 'update-homework', to: 'homework.detail.update', context: 'homework', guard: "homework._id", icon: 'go-update'})
   //- +list(['题目', '要求', '截止时间'])
   
 +detail()
@@ -35,15 +17,14 @@ include ../bp/jade-templates/bp-mixins
         //- +select('学生')(multiple=true, span=HALF_ROW, candidates=candidates)
       +row()
         +block-text('要求')(optional=true, span=FULL_ROW, placeholder='作业详细要求')
-        //- +html-text('要求')(optional=true, span=FULL_ROW, placeholder='作业详细要求')
 
-    +auto-insert('老师', 'Meteor.user().profile.fullname')
+    +auto-insert('老师', A.currentUserName())
 
 -var cited = {assignment: ['题目', '要求', '截止时间']}
 +component('homework')(cited=cited)
   +list(['题目', '截止时间', '内容', '学生'])(className='Homework-list')
     +remove-link('go-create')
-    +add-list-link({label: '看作业要求列表', path: 'go-assignments-list', guard: true, icon: 'go'})
+    +add-list-link({label: '看作业要求列表', path: 'go-assignments-list', to: 'assignment.list.list', guard: true, icon: 'go'})
 
   +detail()(className='Homework-detail')(className='Homework-detail')
     +fieldset('作业要求')
@@ -56,6 +37,6 @@ include ../bp/jade-templates/bp-mixins
       +row()
         +html('内容')(span=FULL_ROW, placeholder='在这里开始作业吧~')
 
-    +auto-insert('assignment-id', "BP.AbstractDataManager._state.get('assignment')._id")
+    +auto-insert('assignment-id', A.docId('assignment'))
 
 

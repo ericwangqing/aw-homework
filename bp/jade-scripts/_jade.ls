@@ -38,7 +38,7 @@ module.exports =
   get-names: (doc-name)-> 
     @names = new Names doc-name 
 
-  save-view: (view)!->
+  save-view: !->
     fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)
 
 

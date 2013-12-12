@@ -3,7 +3,7 @@
 top = @
 do make-handlebars-understand-chinese-key = !->
   Handlebars.register-helper 'bs', (attr)-> # 克服Meteor Handlebars不能使用中文key，形如{{中文}}会出错的问题。改用{{bs '中文'}}
-    @[attr]
+    new Handlebars.Safe-string @[attr] if @[attr]
 
 /* --------------------- Iron Router的配置和B+ Components之外的Routes --------------- */
 do config-and-static-route = !~>
@@ -34,7 +34,7 @@ do config-and-static-route = !~>
   Router.map ->
     @route 'default', do
       path: '/'
-      template: 'twice'
+      template: 'splash'
       # yield-templates:
 
 /* --------------------- Meteor Account 的配置 --------------- */

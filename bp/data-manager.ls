@@ -7,26 +7,42 @@ class @BP.Abstract-data-manager
   (@view)->
     @state = @view.state
     @collection = BP.Collection.get view.names.meteor-collection-name
+    @cited-data ||= [] # {doc-name, query}, query仅用于在客户端查询数据，publish时不用
+    @create-data-helpers! # {meteor-template-helper-name, helper-fn}
 
   get-transferred-state: (attr)-> @@state-transferred-across-views.get attr
 
   set-transferred-state: (attr, value)-> @@state-transferred-across-views.set attr, value
 
   publish: !->
+    cited-config = [{collection: (@_get-collection-by-doc-name cited.doc-name), query: {}} for cited in @cited-data]
+    @publish-collections cited-config ++ {@collection, @query}
+
+  _get-collection-by-doc-name: (doc-name)->
+    BP.Collection.registry[new BP.Names doc-name .meteor-collection-name]
+
+  publish-collections: (config)!->
     dm = @
     Meteor.publish dm.meteor-pub-name, (id)-> 
-      eval "query = " + dm.query-str
-      cursor = dm.collection.find query
+      ({collection, query}) <- _.map config
+      collection = BP.Collection.registry[collection] if typeof collection is 'string'
+      eval "query = " + query if typeof query is 'string'
+      collection.find query
+
+  create-data-helpers: !->
+    @data-helpers = {}
+    @data-helpers[@main-data-helper-name] = @meteor-template-main-data-helper
 
   subscribe:           (params)->   ABSTRACT-METHOD! # return a (or an array of) Meteor wait object(s) for iron router
   store-data-in-state:        !->   ABSTRACT-METHOD!
-  meteor-template-retreiver:   ->   ABSTRACT-METHOD! 
+  meteor-template-main-data-helper:   ->   ABSTRACT-METHOD! 
 
 
 class @BP.List-data-manager extends BP.Abstract-data-manager
   (view)->
     @meteor-pub-name = view.names.list-data-publish-name
-    @query-str = "{}"
+    @query = "{}"
+    @main-data-helper-name = view.names.list-data-retriever-name
     super ...
 
   subscribe: (params)->
@@ -36,13 +52,21 @@ class @BP.List-data-manager extends BP.Abstract-data-manager
     @doc-ids = @collection.find! .fetch! .map -> it._id # 性能：改进查询，或者用Meteor Method，改进性能。
     @set-transferred-state 'doc-ids', @doc-ids
 
-  meteor-template-retreiver: -> # doc: 不同于detail，list仅仅在state里面存储doc ids，查询直接用Meteor cursor
-    @docs = @collection.find!
+  meteor-template-main-data-helper: ~> # doc: list视图时，将cited的data装配到docs里面，便于用Meteor的each进行遍历
+    @docs = @collection.find!fetch!
+    @docs.map (doc)~>
+      for {doc-name, query} in @cited-data
+        collection = @_get-collection-by-doc-name doc-name
+        eval "query = " + query if typeof query is 'string'
+        doc[doc-name] = collection.findOne query
+      doc
+
 
 class @BP.Detail-data-manager extends BP.Abstract-data-manager
   (view)->
     @meteor-pub-name = view.names.detail-data-publish-name
-    @query-str = "{_id: id}"
+    @query = "{_id: id}"
+    @main-data-helper-name = view.names.detail-data-retriever-name
     @auto-insert-fields = {} # for bp-auto-insert helper
     super ...
 
@@ -53,8 +77,30 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
     @doc = @collection.find-one! or {} # incase doc not founded, show empty fields on page instead of thrown errors.
     @state.set 'doc', @doc 
 
-  meteor-template-retreiver: ~> # doc: detail先将doc查询出，存在state中，然后Meteor的helper从state里面读取。这样方便点击pre、next时，不用经过router。
+  create-data-helpers: !->
+    super!
+    @add-addtional-data-helpers!
+
+  meteor-template-main-data-helper: ~> # doc: detail先将doc查询出，存在state中，然后Meteor的helper从state里面读取。这样方便点击pre、next时，不用经过router。
     @view.ui.doc = @state.get 'doc'
+
+  add-addtional-data-helpers: !->
+    for {doc-name, query} in @cited-data
+      @data-helpers[doc-name] = @create-data-helper doc-name, query
+
+  create-data-helper: (doc-name, query)->
+    self = @
+    ->
+      collection = self._get-collection-by-doc-name doc-name
+      if self.is-main-data-available!
+        doc = self.doc
+        eval "query = " + query if typeof query is 'string'
+        collection.findOne query
+      else
+        self.get-transferred-state doc-name
+
+  is-main-data-available: ->
+    @doc and not _.is-empty @doc
 
   set-previous-and-next-ids: !-> # doc: 从list拿到列表的doc ids并更新pre 和 next
     @doc-ids = @get-transferred-state 'doc-ids'
