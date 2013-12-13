@@ -1,0 +1,13 @@
+include ../bp/jade-templates/bp-mixins
+
++component('assignment')
+  +list(['题目', '要求', '截止时间'])
+
+  +detail()
+    +fieldset('作业要求')
+      +row()
+        +text('题目')
+        +text('截止数据')
+        +text('学生')
+      +row()
+        +text('要求')
