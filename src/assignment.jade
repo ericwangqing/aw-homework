@@ -11,3 +11,5 @@ include ../bp/jade-templates/bp-mixins
         +ahead('学生')(candidates=['沈少伟', '陈伟津', '陈杰文', '林臻南', '曾灏'])
       +row()
         +html('要求')(span=FULL_ROW)
+    +auto-insert('老师', A.currentUserName())
+
