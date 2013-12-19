@@ -17,7 +17,12 @@ module.exports = (grunt)->
       main:
         files: [{expand: true, cwd:'resource/', flatten:true, src: ['**/*.*'], dest: 'bin/public/resource'}]
       lib:
-        files: [{expand: true, cwd:'lib/', src: ['**/*'], dest: 'bin/public/lib'}]
+        files: [{expand: true, cwd:'lib/', src: ['**/*.js'], dest: 'bin/public/lib'}]
+      lib_css:
+        files: [{expand: true, cwd:'lib/', src: ['**/*.css'], dest: 'bin/stylesheets/lib'}]
+      lib_style_resource:
+        files: [{expand: true, cwd:'lib/', src: ['**/*', '!**/*.css', '!**/*.js'], dest: 'bin/public/stylesheets/lib'}]
+
 
     concat: # 将每个测试中都要用的部分抽出来
       prefix_src:

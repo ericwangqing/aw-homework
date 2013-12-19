@@ -10,7 +10,7 @@ include ../bp/jade-templates/bp-mixins
       +row()
         +no-blank-text('题目')(span=HALF_ROW)
         +datetime('截止时间')
-        +ahead('学生')(candidates=['沈少伟', '陈伟津', '陈杰文', '林臻南', '曾灏'])
+        +multi-ahead('学生')(candidates=['沈少伟', '陈伟津', '陈杰文', '林臻南', '曾灏'])
       +row()
         +html('要求')(span=FULL_ROW)
     +auto-insert('老师', A.currentUserName())
@@ -32,5 +32,6 @@ include ../bp/jade-templates/bp-mixins
       +html('内容')(span=FULL_ROW, placeholder='在这里开始作业吧~')
 
     +auto-insert('assignmentId', A.docId('assignment'))
+
 
 

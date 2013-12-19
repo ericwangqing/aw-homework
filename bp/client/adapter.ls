@@ -47,6 +47,7 @@ class Detail-template-adpater extends BP.Template-adapter
       "bp-pre-link"           : @enable-nav-link("previous") 
       "bp-next-link"          : @enable-nav-link("next") 
       "bp-add-typeahead"      : @enable-add-typeahead-to-input-field! 
+      "bp-add-multi-ahead"    : @enable-add-multi-ahead! 
       "bp-add-html-editor"    : @enable-html-editor-field! 
 
   add-auto-insert-field: !(attr, expression)~>
@@ -64,6 +65,10 @@ class Detail-template-adpater extends BP.Template-adapter
         config-name: @view.name + attr #一个页面可能有多个表单，一个表单有多个typeahead的域
         input-name: attr
         candidates: candidates
+
+  enable-add-multi-ahead: ->
+    (attr, config)!~> # 模板中的multi-ahead控件将调用它，以便render后，动态添加multi-ahead功能
+      @renderers.push @view.ui.get-multi-ahead-render attr, config
 
   enable-html-editor-field: ->
     (editor-id, toolbar-id, placeholder)!~>
