@@ -12,27 +12,41 @@ class Permission
 
   add-rule: (unparsed-rule)->
     new-rule = new Rule unparsed-rule
-    @rules[new-rule.doc-name] ++= rule
+    @rules[new-rule.doc-name] ||= []
+    @rules[new-rule.doc-name] ++= _.pick rule, 'query', 'applyOnUsers', 'applyOnRoles', 'collection', 'item', 'attributes'
 
 
-  attribute-permission-checker: (doc, attr, action)~> # Template调用，检查当前用户是否有权限进行相应操作
+  attribute-permission-checker: (doc-name, doc, attr-name, action)~> # Template调用，检查当前用户是否有权限进行相应操作
     #TODO：接入Bp-Permission模块，提供权限功能
     # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, attr, action
     # 下面是暂时的fake
-    auto-generated-fields = <[createdAtTime lastModifiedAt _id state]>
-    attr not in auto-generated-fields
+    # for rule in rules = @rules[doc-name]
+    #   if @satisfy(doc, rule.query)
+    #     action-rules = rule.attributes[attr-name]
+    #     if typeof of action-rules is 'undefined' or typeof action-rules[action] is 'undefined' # doc: 没有规则时，默认为允许
+    #       true
+    #     else
+    #       action-rules[action]
+    #   else
 
-  doc-permission-checker: (doc, action)~>
+
+
+      
+    # auto-generated-fields = <[createdAtTime lastModifiedAt _id state]>
+    # attr not in auto-generated-fields
+
+  doc-permission-checker: (doc-name, doc, action)~>
     #TODO：接入Bp-Permission模块，提供权限功能
     # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, action
     # 下面是暂时的fake
-    true
+    @rules[doc-name].item[action]
+    # true
 
-  collection-permission-checker: (action, collection-name)~>
+  collection-permission-checker: (doc-name, action)~>
     #TODO：接入Bp-Permission模块，提供权限功能
     # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, doc-id, action
     # 下面是暂时的fake
-    true
+    @rules[doc-name].collection[action]
 
 '''
 下面是rule、unparsed-rule的数据结构，其对用户权限的控制方式，详见：http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=251133954
