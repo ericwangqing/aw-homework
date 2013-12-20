@@ -10,7 +10,7 @@ class @BP.Template-adapter
 
   (@view)->
     @template = Template[view.template-name] # Meteor的template实际上是一个加载template html之后，编译成的函数。也就是说只编译一次，因此不会出现变化。
-    @permission = new BP.Permission! # permission与view无关，因此可以共用。
+    @permission = BP.Permission.get-instance! # permission与view无关，因此可以共用。
     @data-retriever-name = if @view.type is 'list' then @view.names.list-data-retriever-name else @view.names.detail-data-retriever-name
     @create-helpers!
     @create-renderers!
