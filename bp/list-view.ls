@@ -38,4 +38,3 @@ class BP.List-view extends BP.View
     for {doc-name, query} in @data-manager.cited-data
       return true if ($ link .attr 'href' .index-of doc-name) >= 0
     false
-

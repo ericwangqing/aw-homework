@@ -3,17 +3,18 @@ mixin _if-action(action)
   block
   | {{/if}}
 
-mixin _if-collection-permit(action)
-  | {{#if bp-collection-permit '#{action}'}}
+mixin _if-bp-permit(action)
+  //- bp-can: go-create | go-update | create | update | delete
+  | {{#if bp-permit this '#{action}'}}
   block
   | {{/if}}
 
-mixin _if-doc-permit(action)
-  | {{#if bp-doc-permit '#{action}'}}
-  block
-  | {{/if}}
+//- mixin _if-doc-permit(action)
+//-   | {{#if bp-doc-permit '#{action}'}}
+//-   block
+//-   | {{/if}}
 
-mixin _if-attribute-permit(attr, action)
+mixin _if-bp-attribute-permit(attr, action)
   - var citedDoc = attributes.citedDoc ? attributes.citedDoc : ''
   | {{#if bp-attribute-permit '#{attr}' '#{action}' '#{citedDoc}'}}
   block
@@ -38,7 +39,7 @@ mixin _guarded-permission-and-action-button(action, label)
     +_guarded-permission-button(action, label)
 
 mixin _guarded-permission-button(action, label)
-  +_if-collection-permit(action)
+  +_if-bp-permit(action)
     +_link-button(action, null, true) 
       if label
         | #{label}
@@ -64,7 +65,7 @@ mixin _link-button(action, href, isLink, label)
       block
 
 mixin _guarded-link(action)
-  +_if-collection-permit(action)
+  +_if-bp-permit(action)
     +_link-button(action, null, true)(attributes)
 
 mixin _previous-link()

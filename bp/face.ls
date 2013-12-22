@@ -11,6 +11,9 @@ class @BP.Abstract-faces-manager
   get-path-name: (face-name)->
     @view.name + '-' + face-name
 
+  get-action-by-face: (face)->
+    _.keys face .0 
+
 # ------------------------ Detail -----------------------------
 class @BP.Detail-faces-manager extends BP.Abstract-faces-manager
   create-faces: ->

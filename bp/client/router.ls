@@ -7,6 +7,13 @@ do config-and-static-route = !~>
     not-found-template: 'not-found'
 
   filters = 
+    is-logged-in: ->
+      if not (Meteor.logging-in! or Meteor.user!)
+        # throw new Meteor.Error "请先登录"
+        alert "请先登录"
+        # @render 'siginin'
+        @redirect 'default'        
+
     n-progress-hook: ->
       if @ready!
         N-progress.done!
@@ -19,6 +26,7 @@ do config-and-static-route = !~>
       $ 'body' .scroll-top scroll-to
       $ 'body' .css 'min-height' 0
 
+  Router.before filters.is-logged-in, except: ['default']
   Router.before filters.n-progress-hook, except: []
       # only: []
 

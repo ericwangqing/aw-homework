@@ -43,6 +43,7 @@ class @BP.View extends BP._View
 
   init: ->
     @names = new BP.Names @doc-name
+    @permission = BP.Permission.get-instance!
     if Meteor.is-client
       @links = {}
       @state = new BP.State @name
@@ -52,7 +53,10 @@ class @BP.View extends BP._View
 
   get-path: (link-name, doc)->
     {view, face} = @links[link-name]
-    view.faces-manager.get-path face, doc
+    if @is-permit doc, face
+      view.faces-manager.get-path face, doc
+    else
+      null
 
   change-to-face: (face-name, params)->
     @data-manager.store-data-in-state!
@@ -71,10 +75,22 @@ class @BP.View extends BP._View
         path: path-pattern
         template: self.template-name
         before: !->
-          self.change-to-face face-name, @params
+          # self.change-to-face face-name, @params
+          if not self.is-permit self.data-manager.doc, face-name
+            alert "你没有权限访问该页面"
+            @redirect 'default'
+          else
+            self.change-to-face face-name, @params
         wait-on: -> # 注意：wait-on实际上在before之前执行！！
           self.data-manager.subscribe @params
-  
+
+  is-permit: (doc, face)~> 
+    action = if typeof face is 'string' then face else @faces-manager.get-action-by-face face
+    if @type is 'detail'
+      @permission.check-detail-action-permission @doc-name, doc, action
+    else
+      @permission.check-list-action-permission @doc-name, doc, action
+
   # ----------------------------- Hooks 留给客户化定制时，在这里插入各种渲染后的逻辑 ---------------
   add-to-template-rendered: (methods)!-> []# ABSTRACT-METHOD
   # add-to-template-row-meteor-rendered: (methods)!-> []# ABSTRACT-METHOD
