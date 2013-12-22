@@ -23,7 +23,7 @@ class @BP.Template-adapter
   create-helpers: !->
     @helpers =
       "bp-permit"            :  @view.is-permit
-      "bp-attribute-permit"  :  @permission.check-attribute-action-permission
+      "bp-attribute-permit"  :  @view.is-attribute-permit
       # "bp-doc-permit"        :  @permission.doc-permission-checker
       "bp-action-is"         :  @view.current-action-checker
       "bp-path-for"          :  ~> @view.get-path.apply @view, &

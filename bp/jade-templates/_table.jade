@@ -50,11 +50,11 @@ mixin _each-cell(cellNames)
 mixin _guarded-cell(attr)
   - var citedDoc = bp.getCitedDoc(attr, cited)
   - var citedClass = citedDoc ? 'cited' : null
-  +_if-else-attribute-permit(attr, 'look')(citedDoc=citedDoc)
-    td(cols=colIndex, class=citedClass) 
-      != bp.value(attr, cited)
-  +_else()
-    td.cant-look(cols=colIndex)
+  //- +_if-else-attribute-permit(this, attr, 'look')(citedDoc=citedDoc) 不能够view的属性，在query中已经过滤掉了。
+  td(cols=colIndex, class=citedClass) 
+    != bp.value(attr, cited)
+  //- +_else()
+  //-   td.cant-look(cols=colIndex)
 
 mixin _guarded-operation-cell()
   td(cols=colIndex+1) 

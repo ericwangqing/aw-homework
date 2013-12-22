@@ -3,9 +3,10 @@ mixin _if-action(action)
   block
   | {{/if}}
 
-mixin _if-bp-permit(action)
+mixin _if-bp-permit(action, citedDoc)
   //- bp-can: go-create | go-update | create | update | delete
-  | {{#if bp-permit this '#{action}'}}
+  - var citedDocStr = citedDoc ? ("'" + citedDoc + "'") : ''
+  | {{#if bp-permit this '#{action}' #{citedDocStr}}}
   block
   | {{/if}}
 
@@ -16,12 +17,12 @@ mixin _if-bp-permit(action)
 
 mixin _if-bp-attribute-permit(attr, action)
   - var citedDoc = attributes.citedDoc ? attributes.citedDoc : ''
-  | {{#if bp-attribute-permit '#{attr}' '#{action}' '#{citedDoc}'}}
+  | {{#if bp-attribute-permit this '#{attr}' '#{action}' '#{citedDoc}'}}
   block
   | {{/if}}
 
 mixin _if-else-attribute-permit(attr, action)
-  | {{#if bp-attribute-permit '#{attr}' '#{action}'}}
+  | {{#if bp-attribute-permit this '#{attr}' '#{action}'}}
   block
 
 mixin _else()
@@ -65,7 +66,7 @@ mixin _link-button(action, href, isLink, label)
       block
 
 mixin _guarded-link(action)
-  +_if-bp-permit(action)
+  +_if-bp-permit(action, attributes.citedDoc, attributes.citedViewType)
     +_link-button(action, null, true)(attributes)
 
 mixin _previous-link()
@@ -102,12 +103,14 @@ mixin add-addtional-links(links)
       | {{/if}}
 
 mixin _with-or-without-context(link)
+  - var citedDoc = link.to.split('.')[0]
+  - var citedViewType = link.to.split('.')[1]
   if link.context
     | {{#with #{link.context}}}
-    +_guarded-link(link.icon)(path=link.path, label=link.label)
+    +_guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
     | {{/with}}
   else
-    +_guarded-link(link.icon)(path=link.path, label=link.label)
+    +_guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
 
 
 

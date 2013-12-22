@@ -1,7 +1,5 @@
 if Meteor? then _ = @_ else _ = require 'underscore' # 为测试用例在Meteor环境外加载underscore
 
-  
-
 class Permission
   @get-instance = ->
     @instance = new @ if not @instance 
@@ -44,21 +42,18 @@ class Permission
     last
 
   # Template调用，检查当前用户是否有权限进行相应操作
-  # view | update 
+  # update 
   check-attribute-action-permission: (doc-name, doc, attr-name, action)~> 
-    true
+    current-active-rules = @get-active-rules-on-attribute-action doc-name, doc, attr-name, action
+    if current-active-rules.length > 0
+      winner-rule = @find-winner-rule current-active-rules 
+      winner-rule.check-attribute-editable attr-name
+    else
+      true
 
-    #TODO：接入Bp-Permission模块，提供权限功能
-    # bp-Permssion.can-user-act-on Meteor.userId, @doc-name, attr, action
-    # 下面是暂时的fake
-    # for rule in rules = @rules[doc-name]
-    #   if @satisfy(doc, rule.query)
-    #     action-rules = rule.attributes[attr-name]
-    #     if typeof of action-rules is 'undefined' or typeof action-rules[action] is 'undefined' # doc: 没有规则时，默认为允许
-    #       true
-    #     else
-    #       action-rules[action]
-    #   else
+  get-active-rules-on-attribute-action: (doc-name, doc, attr-name, action)->
+    return [] if not @rules[doc-name]
+    [rule for rule in @rules[doc-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-attribute-and-action doc, attr-name, action]
 
   add-permission-constrain-on-query: (origin-query)->
     result-query = origin-query
@@ -131,6 +126,11 @@ class Rule
     case 'delete' then @item.delete? and @satisfy-query doc
     default true
 
+  is-apply-on-current-attribute-and-action: (doc, attr-name, action)-> # doc: 目前attribute只支持update，
+    throw new Error "BP only support 'update' action permission checker on attribute, and current action is: #{action}" if action isnt 'update'
+    (@item.update? and @satisfy-query doc) or (@attributes[attr-name]? and @attributes[attr-name].edit?)
+
+
   satisfy-query: (doc)->
     # TODO: 检查doc是否符合rule的query
     true
@@ -160,6 +160,10 @@ class Rule
     case 'delelte' then @item.delete
     default true
 
+  check-attribute-editable: (attr-name)->
+    if @attributes[attr-name]? and  @attributes[attr-name].edit? then @attributes[attr-name].edit else @item.update
+
+
   parse-users-and-roles: ->
     return 'all' if not @rule-content.users # 未指定user时，应用到全体users
     tokens = @rule-content.users.split /\s+/
@@ -180,6 +184,7 @@ class Rule
     @parse-attributes-rule allows.attributes, denies.attributes
 
   gather-rule: (allows-or-denies)->
+    allows-or-denies ||= ''
     tokens = allows-or-denies.split /,\s*/
     result =
       collection: @extract-action tokens, prefix = 'c-'
