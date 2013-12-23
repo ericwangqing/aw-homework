@@ -18,19 +18,19 @@ class @BP.Abstract-data-manager
   set-transferred-state: (attr, value)-> @@state-transferred-across-views.set attr, value
 
   publish: !->
-    cited-config = [{collection: (@_get-collection-by-doc-name cited.doc-name), query: {}} for cited in @cited-data]
-    @publish-collections cited-config ++ {@collection, @query}
-
-  _get-collection-by-doc-name: (doc-name)->
-    BP.Collection.registry[new BP.Names doc-name .meteor-collection-name]
+    cited-config = [{doc-name: cited.doc-name, query: {}} for cited in @cited-data]
+    @publish-collections cited-config ++ {doc-name: @view.doc-name, @query}
 
   publish-collections: (config)!-> 
+    # console.log "config: ", config
     dm = @
+    permission = BP.Permission.get-instance!
     Meteor.publish dm.meteor-pub-name, (id)-> 
-      ({collection, query}) <- _.map config
-      collection = BP.Collection.registry[collection] if typeof collection is 'string'
+      ({doc-name, query}) <~ _.map config
+      collection = BP.Collection.get-by-doc-name doc-name
       eval "query = " + query if typeof query is 'string'
-      collection.find query
+      {query, projection} = permission.add-constrain-on-query @user-id, doc-name, query # 在这里实现权限控制里的view级控制。用户没有权限时，相应的数据（整条，或者某些属性）将不会publish。
+      collection.find query, projection
 
   create-data-helpers: !->
     @data-helpers = {}
@@ -59,7 +59,7 @@ class @BP.List-data-manager extends BP.Abstract-data-manager
     @docs = @collection.find!fetch!
     @docs.map (doc)~>
       for {doc-name, query} in @cited-data
-        collection = @_get-collection-by-doc-name doc-name
+        collection = BP.Collection.get-by-doc-name doc-name
         eval "query = " + query if typeof query is 'string'
         doc[doc-name] = collection.findOne query
       doc
@@ -96,7 +96,7 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
   create-data-helper: (doc-name, query)->
     self = @
     ->
-      collection = self._get-collection-by-doc-name doc-name
+      collection = BP.Collection.get-by-doc-name doc-name
       if self.is-main-data-available!
         doc = self.doc
         eval "query = " + query if typeof query is 'string'

@@ -1,6 +1,4 @@
-require! '../bin/lib/permission'
-Permission = permission.Permission
-Rule = permission.Rule
+require! '../bin/lib/permission/Rule'
 
 describe 'parsing测试', (...)!->
   it '正确parsing', !->

@@ -5,6 +5,10 @@ class @BP.Collection
     @registry[collection-name] ||= new Meteor.Collection collection-name
     top[collection-name] = @registry[collection-name] # 开发时暴露出来，便于插入数据和调试。
 
+  @get-by-doc-name = (doc-name)->
+    collection-name = new BP.Names doc-name .meteor-collection-name
+    @get collection-name
+
 class @BP.Component
   @main-nav-paths = []
 
