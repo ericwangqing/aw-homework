@@ -1,3 +1,9 @@
+test-tooltip-links-list-docs = 
+  * title: 1
+  * title: 2
+  * title: 3
+
+
 Meteor.startup ->
   if Assignments?.find!count! is 0
     console.log "insert data ...."
@@ -12,6 +18,7 @@ Meteor.startup ->
       last-modified-at: '2013-12-12'
       state: 'published'
       'bp-current-action': 'abc'
+      test-ref-list: test-tooltip-links-list-docs
 
     Assignments.insert do
       '中文内容': '中文内容'
@@ -24,10 +31,12 @@ Meteor.startup ->
       last-modified-at: '2013-12-12'
       state: 'published'
       'bp-current-action': 'abc'
+      test-ref-list: test-tooltip-links-list-docs
 
     Assignments.insert do
       '中文内容': '中文内容'
       email: 'eric@g.com'
+      '题目': 'Web程序设计'
       '要求': '了解工作流技术的基本问题、发展历史、目前研究热点...'
       for-students: ['沈少伟', '陈伟津']
       '截止时间': '2014-10-10'
@@ -35,6 +44,7 @@ Meteor.startup ->
       last-modified-at: '2013-12-12'
       state: 'published'
       'bp-current-action': 'abc'
+      test-ref-list: test-tooltip-links-list-docs
 
   if Meteor.users.find!count! is 0
     users =

@@ -30,6 +30,15 @@
       }
       return "{{bs '" + attr + "'}}";
     },
+    getCitedDocName: function(attr, cited){
+      var docName, cite;
+      for (docName in cited) {
+        cite = cited[docName];
+        if (cite.attributes && in$(attr, cite.attributes)) {
+          return docName;
+        }
+      }
+    },
     getCitedDoc: function(attr, cited){
       var docName, cite;
       console.log("attr: " + attr + ", cited: ", cited);

@@ -1,5 +1,7 @@
-include _fields
+include _commons
+include _texts
 
+//- 使用了https://github.com/xing/wysihtml5
 mixin html(label, attr)
   - var attr = attr ? attr : label
   - var editorId = currentViewName + '-' + 'html-editor'

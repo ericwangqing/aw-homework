@@ -1,0 +1,34 @@
+include _commons
+
+mixin ref-text(label, attr)
+  - var attr = attr ? attr : label
+  +__guarded-input-wrapper(label, attr)(attributes)
+
+mixin ref-list(label, attr)
+  - var attr = attr ? attr : label
+  - var span = attributes.span || Field_SPAN
+  +__wrap-filed-with-label-span(label, span)
+    - var citedDocName = bp.getCitedDocName(attr, cited)
+    {{#with #{citedDocName}}}
+    if attributes.isOrdered 
+      ol
+        +_ref-list-items(attr)
+    else
+      ul
+        +_ref-list-items(attr)
+    {{/with}}
+
+
+mixin _ref-list-items(attr)
+  {{#each #{attr}}}
+  li {{this}}
+  {{/each}}
+
+mixin ref-links-list(label, attr, face)
+  - if(!attr){throw new Error("'ref-links-list' requires at least two parameters.")}
+  - if(!face){face = attr; attr = label}
+  - var span = attributes.span || Field_SPAN
+  - var citedDocName = bp.getCitedDocName(attr, cited)
+  {{#with #{citedDocName}}}
+  +__wrap-filed-with-label-span(label, span)(title="{{bp-links '#{face}' '#{attr}'}}")
+  {{/with}}

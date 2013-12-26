@@ -20,6 +20,10 @@ module.exports =
         return "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
     "{{bs '#attr'}}"
 
+  get-cited-doc-name: (attr, cited)->
+    for doc-name, cite of cited
+      return doc-name if cite.attributes and attr in cite.attributes 
+
   get-cited-doc: (attr, cited)->
     console.log "attr: #attr, cited: ", cited
     for doc-name, cite of cited

@@ -22,18 +22,41 @@ class @BP.Template-adapter
 
   create-helpers: !->
     @helpers =
+      "bs"                   :  (attr)-> # 克服Meteor Handlebars不能使用中文key，形如{{中文}}会出错的问题。改用{{bs '中文'}}
+                                  new Handlebars.Safe-string @[attr] if @[attr]
       "bp-permit"            :  @view.is-permit
       "bp-attribute-permit"  :  @view.is-attribute-permit
       # "bp-doc-permit"        :  @permission.doc-permission-checker
       "bp-action-is"         :  @view.current-action-checker
       "bp-path-for"          :  ~> @view.get-path.apply @view, &
+      'bp-links'             :  @enable-get-links-html-str-for-tooltipster! 
 
     @helpers <<< @view.data-manager.data-helpers
       # "#{@data-retriever-name}"       :  ~> @view.data-manager.meteor-template-main-data-helper.apply  @view.data-manager, &
 
-  create-renderers: !-> @renderers = @view.add-to-template-rendered! or []
+  create-renderers: !-> 
+    @renderers = [@enable-tooltips]
+    @renderers ++= template-ui-post-render-methods if template-ui-post-render-methods = @view.add-to-template-rendered!
 
   create-event-handlers: !-> @events-handlers = @view.ui.register-event-handlers!
+
+  enable-tooltips: !-> $ '.tooltip' .tooltipster interactive: true
+
+  enable-get-links-html-str-for-tooltipster: -> 
+    self = @
+    (action, attr, name-attr)->
+      name-attr = if typeof name-attr is 'string' then name-attr else 'title'
+      result = ''
+      if _.is-array docs = @[attr]
+        for doc in docs
+          if action is 'test'
+            url = '#'
+          else
+            url = self.view.get-path action doc
+          result += "<a href='#{url}'> #{doc[nameAttr]} </a>"
+          console.log "************* result: ", doc
+          console.log "************* name-attr: ", doc[nameAttr]
+      new Handlebars.Safe-string result 
     
 # ----------------------- Detail ---------------------------------
 class List-template-adpater extends BP.Template-adapter
@@ -50,14 +73,18 @@ class Detail-template-adpater extends BP.Template-adapter
       "bp-add-multi-ahead"    : @enable-add-multi-ahead! 
       "bp-add-html-editor"    : @enable-html-editor-field! 
 
-  add-auto-insert-field: !(attr, expression)~>
-    console.log "attr: #attr, expression: #expression"
-    @view.data-manager.auto-insert-fields[attr] = attr: attr, expression: expression
-
   create-renderers: !->
     super ...
     @renderers.push @view.ui.show-hide-references # 需要在selector里面写入当前view-name
     @renderers.push @view.ui.add-validation
+
+  add-auto-insert-field: !(attr, expression)~>
+    console.log "attr: #attr, expression: #expression"
+    @view.data-manager.auto-insert-fields[attr] = attr: attr, expression: expression
+
+  enable-nav-link: (nav)->
+    ~>
+      @view.get-path action = nav, if nav is 'previous' then @view.data-manager.previous-id else @view.data-manager.next-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
 
   enable-add-typeahead-to-input-field: -> 
     (attr, candidates)!~> # 模板中的ahead控件将调用它，以便render后，动态添加typeahead功能
@@ -79,10 +106,6 @@ class Detail-template-adpater extends BP.Template-adapter
           stylesheets: '/lib/wysihtml5/wysihtml5.css'
           placeholder-text: placeholder
       # , 2000
-
-  enable-nav-link: (nav)->
-    ~>
-      @view.get-path action = nav, if nav is 'previous' then @view.data-manager.previous-id else @view.data-manager.next-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
 
 
 

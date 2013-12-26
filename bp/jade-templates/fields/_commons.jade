@@ -1,0 +1,59 @@
+//- include ../_form
+include ../_constants-and-utils
+include ../_conditions-and-buttons
+
+//- 可以自由添加Parsely validation条件的text attributes: condition, required, span, ref, query
+- var _addCondition = function(attr, newCon){attr.condition = attr.condition ? attr.condition + ' ' + newCon : newCon}
+- var addCondition = function(attr, newCon){if(!attr.condition || attr.condition.indexOf(newCon) < 0){_addCondition(attr, newCon)}}
+
+//- 调试用
+//- - var _addCondition = function(attr, newCon){attr.condition = attr.condition ? attr.condition + ' ' + newCon : newCon; console.log("condition: ", attr.condition); return attr;}
+//- - var addCondition = function(attr, newCon){if(!attr.condition || attr.condition.indexOf(newCon) < 0){return _addCondition(attr, newCon)}}
+
+//- 重要！！此处实现B+的权限控制和布局
+mixin __guarded-input-wrapper(label, attr)
+  - var span = attributes.span || Field_SPAN
+  - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航。为了在mixin和block之间传递，使用了全局变量。注意：此处不用在结束form的渲染时，将index清零，因为：1）tabindex在一个页面上应该可以在多个表单连续工作；2）jade在渲染两份jade文件时，使用全新的环境，因此不会造成下一个HTML的tabindex被连续排号的问题。
+  - citedDoc = bp.getCitedDoc(attr, cited)
+  if citedDoc
+    //- +_if-bp-attribute-permit(attr, 'view')(citedDoc=citedDoc) 不能够view的attribute，在query中就被滤掉了
+    +__uneditable-content(label, attr, span)(clazz='cited')
+  else      
+    +_if-action('update')
+      +_if-else-attribute-permit(attr, 'update')
+        +__wrap-filed-with-label-span(label, span)(attributes)
+          block 
+      +_else()
+        +__uneditable-content(label, attr, span)
+
+    +_if-action('create')
+      +__wrap-filed-with-label-span(label, span)(attributes)
+        block 
+
+    +_if-action('view')   
+      //- +_if-bp-attribute-permit('view') 不能够view的attribute，在query中就被滤掉了
+      +__uneditable-content(label, attr, span)
+
+
+mixin __wrap-filed-with-label-span(label, span)
+  .controls(data-field-span=span)
+    if attributes.title
+      label.tooltip(title=attributes.title) #{label}:
+        if attributes.ref
+          +_show-reference(attributes.ref, attributes.query)
+    else
+      label #{label}:
+        if attributes.ref
+          +_show-reference(attributes.ref, attributes.query)
+    block
+
+
+
+mixin __uneditable-content(label, attr, span)
+  //- 不可编辑的域只显示值，并且不可tab导航
+  +__wrap-filed-with-label-span(label, span)
+    - var citedClassStr = attributes.clazz ? 'content cited' : 'content'
+
+    span.content 
+      != bp.value(attr, cited)
+
