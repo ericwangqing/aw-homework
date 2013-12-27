@@ -2,8 +2,8 @@ components = # grunt jade过程中解析出来的component定义，然后Meteor�
   component-class-name: 'xxxx' # 当这一属性存在时，b+将使用这个类，而不是默认的List-Component或Detail-Component类来实例化，这是最终极的定制手段
   assignment:
     cited: 
-      homework:
-        fields['_id']
+      homework:                                                 
+        fields['_id']          
         remote-foreign-key: 'assignment-id'
     additonal-views:
       additonal-assignment-list:
@@ -27,7 +27,7 @@ components = # grunt jade过程中解析出来的component定义，然后Meteor�
 links =
   create-homework:
     at: 'row' # doc/view/appearnce/position #list 是 table | row, #detail 是 action | nav
-    label: '写作业'
+    label: '写作业'                                                                                                                                                                                                                     
     'to': 'homework.detail.create'
     guard: "not assignment.homework"
     icon: 'go-create'

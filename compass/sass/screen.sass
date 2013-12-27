@@ -36,15 +36,14 @@ body
         #login-dropdown-list
           left: -110px
 
-    .left-sidebar
-      +span-columns(2)
-      background-color: lighten(green, 72%)
-      height: 70%
 
     .main-content
-      +span-columns(10 omega)
+      +span-columns(12 omega)
+      font-size: 14px
+
       .bp-form
-        +grid-form($field-focus-color: lighten(yellow, 30%), $font-size-large: 16px, $field-padding: 4px, $label-color: #999, $label-font-size: 12px, $grid-border-color: #C4C4C4, $legend-color: #9E9D9D)
+        +grid-form($field-focus-color: lighten(yellow, 30%), $font-size-large: 14px, $field-padding: 4px, $label-color: #999, $label-font-size: 12px, $grid-border-color: #C4C4C4, $legend-color: #9E9D9D)
+
         .buttons
           +span-columns(6)
         .pre-next
@@ -56,15 +55,20 @@ body
 
 
 
-      a.bp-update, a.bp-create, a.bp-go-update, a.bp-go-create, a.bp-delete
-        +sassy-button-structure(2px, 14px, 2px 5px)
+      // a.bp-update, a.bp-create, a.bp-go-update, a.bp-go-create, a.bp-delete
+      a[class*='bp-']
         margin: 10px 2px
-      a.bp-update, a.bp-go-update
-        +sassy-button-gradient("matte", lighten(#4ba3cc, 10%))
-      a.bp-create, a.bp-go-create
-        +sassy-button-gradient("matte", lighten(#e86a43, 10%))
-      a.bp-delete
-        +sassy-button-gradient("matte", lighten(#cc3512, 20%))
+        &:not([class~='ui'])
+          color: rgba(0, 0, 0, 0.3)
+        &:hover
+          color: rgb(70, 131, 234)
+      //   +sassy-button-structure(2px, 14px, 2px 5px)
+      // a.bp-update, a.bp-go-update
+      //   +sassy-button-gradient("matte", lighten(#4ba3cc, 10%))
+      // a.bp-create, a.bp-go-create
+      //   +sassy-button-gradient("matte", lighten(#e86a43, 10%))
+      // a.bp-delete
+      //   +sassy-button-gradient("matte", lighten(#cc3512, 20%))
 
       div.reference
         display: none

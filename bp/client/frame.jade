@@ -11,9 +11,9 @@ head
 
 template(name='layout')
   .container
-    header
+    header.ui.menu.main-nav
       | {{> bp-main-nav}}
-    aside.left-sidebar
+    aside.ui.vertical.sidebar.menu
       | {{> bp-second-nav}}
     article.main-content
       | {{yield}}      
@@ -21,24 +21,26 @@ template(name='layout')
     footer
 
 template(name='bp-banner')
-  i.fa.fa-camera-retro fa-camera-retro
-  a(href='/') BP Banner
+  //- i.fa.fa-camera-retro fa-camera-retro
+  a.item(href='/') 
+    i.home.icon
+    | BP Banner
 
 template(name='bp-main-nav')
-  div.main-nav
-    ul
-      li
-        | {{> bp-banner}}
-      | {{#each main-nav-paths}}
-      li
-        a(href="{{pathFor this.path}}") {{this.name}}
-      | {{/each}}
-      li.pull-right
-        {{loginButtons}}
+  a.launch-second-nav.item
+    i.icon.list.layout
+  | {{> bp-banner}}
+  | {{#each main-nav-paths}}
+  a.item(href="{{pathFor this.path}}") {{this.name}}
+  | {{/each}}
+  .right.menu
+    .item
+      {{loginButtons}}
 
 
 template(name='bp-second-nav')
-  | 2nd Nav
+  a.item
+    | 2nd Nav
 
 
 template(name='splash')

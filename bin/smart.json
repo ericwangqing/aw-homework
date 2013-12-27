@@ -2,6 +2,7 @@
   "packages": {
     "iron-router": {},
     "nprogress": {},
-    "spin": {}
+    "spin": {},
+    "semantic-ui": {}
   }
 }

@@ -30,5 +30,11 @@ mixin ref-links-list(label, attr, face)
   - var span = attributes.span || Field_SPAN
   - var citedDocName = bp.getCitedDocName(attr, cited)
   {{#with #{citedDocName}}}
-  +__wrap-filed-with-label-span(label, span)(title="{{bp-links '#{face}' '#{attr}'}}")
+  //- +__wrap-filed-with-label-span(label, span)(title="{{bp-links '#{face}' '#{attr}'}}")
+  +__wrap-filed-with-label-span(label, span)
+    .ui.text.menu
+      .header.item 选择链接
+      | {{#each #{attr}}}
+      a.item(href='#') {{this.title}}
+      | {{/each}}
   {{/with}}

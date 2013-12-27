@@ -11,10 +11,14 @@ mixin _text(label, attr, htmlTag)
     - var placeholderStr = attributes.placeholder ? " placeholder='" + attributes.placeholder + "' " : ''
     if htmlTag == 'input'
       - var valueStr = attr? ("name='" + attr + "' value='{{bs \"" + attr + "\"}}' ") : '' 
-      != "<input type='text' " + valueStr + validationStr + placeholderStr + " tabindex='" + index +"'/>"
+      .ui.fluid.labeled.input
+        != "<input type='text' " + valueStr + validationStr + placeholderStr + " tabindex='" + index +"'/>"
+        if !attributes.optional
+          .ui.corner.label
+            i.asterisk.icon
     else // 包括了普通textarea和html editor
-      - var nameStr =  attr? ("name='" + attr + "'") : '' 
       - var valueStr = attr? ("{{bs '" + attr + "'}}") : '' 
+      - var nameStr =  attr? ("name='" + attr + "'") : '' 
       if attributes.isHtml
         != "<textarea id='" + attributes.id + "' type='text' " + nameStr + placeholderStr + " tabindex='" + index + "'>" + valueStr + "</textarea>"
       else
@@ -50,7 +54,7 @@ mixin ahead(label, attr)
 mixin multi-ahead(label, attr)
   - var attr = attr ? attr : label 
   +__guarded-input-wrapper(label, attr)(attributes)
-    select(name=attr, multiple='multiple', style='width: 100%; border: 0px', tabindex=index)
+    select(name=attr, multiple='multiple', style='width: 100%; border: 0px', dropdownCssClass='', tabindex=index)
       each candidate in attributes.candidates
         option(value=candidate) #{candidate}
     | {{bp-add-multi-ahead "#{attr}" "#{attributes.config}"}}

@@ -11,3 +11,9 @@ do make-splash-click-fadeout = !->
 do make-loading-spinner = !->
   Template.loading.rendered = !->
     @spinner = new Spinner!spin @find "#loading"
+
+
+do initial-layout-semantic-ui = !->
+  Template.layout.rendered = _.once ->
+    $ '.launch-second-nav.item' .click ->
+      $ '.sidebar.menu' .sidebar 'toggle'

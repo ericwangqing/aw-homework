@@ -11,10 +11,10 @@ mixin form(item)
     block
 
     .buttons
-      +_guarded-permission-and-action-button('update', '提交')
-      +_guarded-permission-and-action-button('create', '提交')
+      +_guarded-permission-and-action-button('update', '提交')(isButton=true, classNames='positive')
+      +_guarded-permission-and-action-button('create', '提交')(isButton=true, classNames='positive')
       +_if-action('update')
-        +_guarded-permission-button('delete', '删除')
+        +_guarded-permission-button('delete', '删除')(isButton=true, classNames='negative')
       +add-addtional-links(mainLinks)
     
     .pre-next

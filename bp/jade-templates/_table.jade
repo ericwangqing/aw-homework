@@ -12,7 +12,7 @@ mixin table(items, columnNames, attributesNames)
   if removedLinks.indexOf('go-create') < 0
     +_if-action('list')
       +_guarded-link('go-create')
-  table
+  table.ui.table.segment
     thead
       +_head-row(columnNames)
     tbody

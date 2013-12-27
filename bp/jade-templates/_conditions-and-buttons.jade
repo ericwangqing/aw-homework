@@ -37,11 +37,11 @@ mixin _mark-current-doc-id()
 //- button和link-button的本质区别在于，link本质是导航，不对数据进行任何操作，button是操作，操作后依据结果导航。
 mixin _guarded-permission-and-action-button(action, label)
   +_if-action(action)
-    +_guarded-permission-button(action, label)
+    +_guarded-permission-button(action, label)(attributes)
 
 mixin _guarded-permission-button(action, label)
   +_if-bp-permit(action)
-    +_link-button(action, null, true) 
+    +_link-button(action, null, true)(attributes) 
       if label
         | #{label}
 
@@ -49,8 +49,10 @@ mixin _link-button(action, href, isLink, label)
   - var path = attributes.path ? attributes.path : action
   - var href = href || (isLink ? ("{{bp-path-for '"+ path.camelize(false) +"' this}}") : '#')
   - var tooltip = attributes.label ? attributes.label : ''
+  - var classNames = 'bp-' + action + ' ' + (attributes.classNames ? attributes.classNames : '')
+  - classNames = attributes.isButton ? "ui icon tiny button " + classNames : classNames
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
-  a(href=href, class="bp-#{action}", title=tooltip, bp-doc-id=bpDocId)
+  a(href=href, class=classNames, title=tooltip, bp-doc-id=bpDocId)
     - if(action == 'next') // next的文字出现在前面，图标在后面，和其它相反
       block
       i.fa.fa-arrow-right.fa-fw
