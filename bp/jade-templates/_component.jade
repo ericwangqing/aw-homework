@@ -1,3 +1,8 @@
+//-# ### Component是BP数据（collection）展示和操作的基本单位。
+
+//-# Component包括list和detail两种视图（view）
+//-# 1. list上用户可以进行go-create、go-update和delete操作，
+//-# 2. detail上用户可以提交（submit）和delete，还可以浏览“上一条”、“下一条”
 
 mixin component(_docName, isMainNav)
   - if(typeof isMainNav == 'undefined'){isMainNav = true} // 默认将component的list加到主导航
@@ -10,25 +15,19 @@ mixin component(_docName, isMainNav)
 
 mixin list(titles, attrs)
   - attrs = attrs ? attrs : titles // 可以只给属性名（attrs），此时就用属性名作为标题
-  +template(docName, names.listTemplateName, 'list')
-    - currentViewName = attributes.viewName ? attributes.viewName : names.listTemplateName // 可以给视图（view）以不同于template的名字，通过attributes给出
-    .bp-list(bp-view-name=currentViewName)
+  +template(docName, viewName = names.listTemplateName, 'list')
+    .bp-list(bp-view-name=viewName)
       +table(names.listDataRetrieverName, titles, attrs)
         block
 
-  //- template(name=names.listRowTemplateName)
-  //-   +_row(rowAttributesNames)
-
-
 
 mixin detail()
-  +template(docName, names.detailTemplateName, 'detail')
-    - currentViewName = attributes.viewName ? attributes.viewName : names.detailTemplateName
-    .bp-detail(bp-view-name=currentViewName)
+  +template(docName, viewName = names.detailTemplateName, 'detail')
+    .bp-detail(bp-view-name=viewName)
       +form(names.detailDataRetrieverName)
         block
 
-    //- +auto-insert('老师', 'Meteor.user().profile.fullname')
+//-# 用法示例： +auto-insert('老师', 'Meteor.user().profile.fullname')
 mixin auto-insert(attr, valueExpression)
   | {{bp-auto-insert '#{attr}' "#{valueExpression}"}}
 

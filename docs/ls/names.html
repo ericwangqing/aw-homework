@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>names.ls</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="_commons.html">
+                _commons.ls
+              </a>
+            
+              
+              <a class="source" href="adapter.html">
+                adapter.ls
+              </a>
+            
+              
+              <a class="source" href="frame.html">
+                frame.ls
+              </a>
+            
+              
+              <a class="source" href="router.html">
+                router.ls
+              </a>
+            
+              
+              <a class="source" href="state.html">
+                state.ls
+              </a>
+            
+              
+              <a class="source" href="ui-helpers.html">
+                ui-helpers.ls
+              </a>
+            
+              
+              <a class="source" href="validation-error-messages.html">
+                validation-error-messages.ls
+              </a>
+            
+              
+              <a class="source" href="_jade.html">
+                _jade.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="names.html">
+                names.ls
+              </a>
+            
+              
+              <a class="source" href="permission.html">
+                permission.ls
+              </a>
+            
+              
+              <a class="source" href="rule-parser.html">
+                rule-parser.ls
+              </a>
+            
+              
+              <a class="source" href="rule.html">
+                rule.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="detail-view.html">
+                detail-view.ls
+              </a>
+            
+              
+              <a class="source" href="face.html">
+                face.ls
+              </a>
+            
+              
+              <a class="source" href="list-view.html">
+                list-view.ls
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>names.ls</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="comment"># used both at developing time by jade and runtime by meteor</span>
+<span class="class"><span class="keyword">class</span> <span class="title">Names</span></span>
+  <span class="function"><span class="params">(doc-name)</span>-&gt;</span> 
+    @ &lt;&lt;&lt; <span class="keyword">do</span>
+      <span class="comment"># -------------- doc和collection名称 ----------------------</span>
+      doc-name                    :   doc-name
+      mongo-collection-name       :   doc-name.pluralize!
+      meteor-collection-name      :   doc-name.pluralize!capitalize!
+
+      <span class="comment"># -------------- Template和其方法名称 ----------------------</span>
+      list-template-name          :   doc-name.pluralize!  + <span class="string">'-list'</span>
+      list-row-template-name      :   doc-name.pluralize!  + <span class="string">'-list-row'</span>
+      list-data-retriever-name    :   doc-name.pluralize!
+      detail-template-name        :   doc-name
+      detail-data-retriever-name  :   doc-name
+
+    <span class="comment"># -------------- Data Publish名称 --------------------------</span>
+      list-data-publish-name      :   doc-name.pluralize!capitalize!
+      detail-data-publish-name    :   doc-name.capitalize!
+
+    <span class="comment"># -------------- Route名称和路径 --------------------------</span>
+    _base-route-name              =   doc-name.pluralize! 
+    _base-route-path              =   <span class="string">'/'</span> + doc-name.pluralize! 
+
+    <span class="comment"># @ &lt;&lt;&lt; do</span>
+    <span class="comment">#   list-path-name              :   _base-route-name</span>
+    <span class="comment">#   list-route-path             :   -&gt; _base-route-path</span>
+    <span class="comment">#   create-path-name            :   _base-route-name    + '-create'</span>
+    <span class="comment">#   create-route-path           :   -&gt; _base-route-path + '/create'</span>
+    <span class="comment">#   delete-path-name            :   _base-route-name    + '-delete'</span>
+    <span class="comment">#   delete-route-path           :   -&gt; _base-route-path + '/delete'</span>
+    <span class="comment">#   update-path-name            :   _base-route-name    + '-update'</span>
+    <span class="comment">#   update-route-path           :   (id) -&gt;</span>
+    <span class="comment">#                                     id ||= ':_id' # 前者用于生成链接（Template），后者用于匹配链接（Router）</span>
+    <span class="comment">#                                     _base-route-path + "/#id/update"</span>
+    <span class="comment">#   view-path-name              :   _base-route-name    + '-view'</span>
+    <span class="comment">#   view-route-path             :   (id) -&gt;</span>
+    <span class="comment">#                                     id ||= ':_id' # 前者用于生成链接（Template），后者用于匹配链接（Router）</span>
+    <span class="comment">#                                     _base-route-path + "/#id/view"</span>
+
+
+<span class="keyword">if</span> <span class="built_in">module</span>? <span class="keyword">then</span> module.<span class="built_in">exports</span> = Names <span class="keyword">else</span> BP.Names = Names <span class="comment"># 让Jade和Meteor都可以使用</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

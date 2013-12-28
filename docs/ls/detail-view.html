@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>detail-view.ls</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="_commons.html">
+                _commons.ls
+              </a>
+            
+              
+              <a class="source" href="adapter.html">
+                adapter.ls
+              </a>
+            
+              
+              <a class="source" href="frame.html">
+                frame.ls
+              </a>
+            
+              
+              <a class="source" href="router.html">
+                router.ls
+              </a>
+            
+              
+              <a class="source" href="state.html">
+                state.ls
+              </a>
+            
+              
+              <a class="source" href="ui-helpers.html">
+                ui-helpers.ls
+              </a>
+            
+              
+              <a class="source" href="validation-error-messages.html">
+                validation-error-messages.ls
+              </a>
+            
+              
+              <a class="source" href="_jade.html">
+                _jade.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="names.html">
+                names.ls
+              </a>
+            
+              
+              <a class="source" href="permission.html">
+                permission.ls
+              </a>
+            
+              
+              <a class="source" href="rule-parser.html">
+                rule-parser.ls
+              </a>
+            
+              
+              <a class="source" href="rule.html">
+                rule.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="detail-view.html">
+                detail-view.ls
+              </a>
+            
+              
+              <a class="source" href="face.html">
+                face.ls
+              </a>
+            
+              
+              <a class="source" href="list-view.html">
+                list-view.ls
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>detail-view.ls</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> @<span class="title">BP</span>.<span class="title">Detail-view</span> <span class="keyword">extends</span> <span class="title">BP</span>.<span class="title">View</span></span>
+    
+  <span class="attribute">create-data-manager</span>: !<span class="function">-&gt;</span> <span class="property">@data-manager</span> = <span class="keyword">new</span> BP.Detail-data-manager @
+
+  <span class="attribute">create-faces</span>: !<span class="function">-&gt;</span> 
+    <span class="property">@faces-manager</span> = <span class="keyword">new</span> BP.Detail-faces-manager @ 
+    <span class="property">@faces</span> = <span class="property">@faces-manager</span>.create-faces!
+
+  <span class="attribute">add-links</span>: (list)!<span class="function">-&gt;</span> <span class="property">@links</span> =
+    create    : <span class="attribute">view</span>: list,   <span class="attribute">face</span>: list.faces.list
+    update    : <span class="attribute">view</span>: list,   <span class="attribute">face</span>: list.faces.list
+    <span class="string">'delete'</span>  : <span class="attribute">view</span>: list,   <span class="attribute">face</span>: list.faces.list
+    <span class="string">'next'</span>    : <span class="attribute">view</span>: @,      <span class="attribute">face</span>: ~&gt; <span class="property">@faces</span>[<span class="property">@current-face-name</span>] <span class="comment"># 保持当前的face，仅仅更换id</span>
+    <span class="string">'previous'</span>: <span class="attribute">view</span>: @,      <span class="attribute">face</span>: ~&gt; <span class="property">@faces</span>[<span class="property">@current-face-name</span>]
+
+  <span class="attribute">change-to-face</span>: <span class="function"><span class="params">(face-name, params)</span>-&gt;</span>
+    <span class="keyword">super</span> ...
+    <span class="property">@data-manager</span>.set-previous-<span class="keyword">and</span>-next-ids!
+
+  <span class="attribute">create-ui</span>: !<span class="function">-&gt;</span>
+    <span class="property">@ui</span> = <span class="keyword">new</span> BP.Form @</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

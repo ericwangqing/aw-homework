@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>rule-parser.ls</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="_commons.html">
+                _commons.ls
+              </a>
+            
+              
+              <a class="source" href="adapter.html">
+                adapter.ls
+              </a>
+            
+              
+              <a class="source" href="frame.html">
+                frame.ls
+              </a>
+            
+              
+              <a class="source" href="router.html">
+                router.ls
+              </a>
+            
+              
+              <a class="source" href="state.html">
+                state.ls
+              </a>
+            
+              
+              <a class="source" href="ui-helpers.html">
+                ui-helpers.ls
+              </a>
+            
+              
+              <a class="source" href="validation-error-messages.html">
+                validation-error-messages.ls
+              </a>
+            
+              
+              <a class="source" href="_jade.html">
+                _jade.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="names.html">
+                names.ls
+              </a>
+            
+              
+              <a class="source" href="permission.html">
+                permission.ls
+              </a>
+            
+              
+              <a class="source" href="rule-parser.html">
+                rule-parser.ls
+              </a>
+            
+              
+              <a class="source" href="rule.html">
+                rule.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="detail-view.html">
+                detail-view.ls
+              </a>
+            
+              
+              <a class="source" href="face.html">
+                face.ls
+              </a>
+            
+              
+              <a class="source" href="list-view.html">
+                list-view.ls
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>rule-parser.ls</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">if</span> Meteor? <span class="keyword">then</span> _ = <span class="property">@_</span> <span class="keyword">else</span> _ = <span class="built_in">require</span> <span class="string">'underscore'</span> <span class="comment"># 为测试用例在Meteor环境外加载underscore</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">Rule-parser</span></span>
+  <span class="attribute">parse-users-and-roles</span>: <span class="function"><span class="params">(rule)</span>-&gt;</span>
+    <span class="property">@rule</span> = rule
+    <span class="keyword">return</span> <span class="string">'all'</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@rule</span>.rule-content.users <span class="comment"># 未指定user时，应用到全体users</span>
+    tokens = <span class="property">@rule</span>.rule-content.users.split <span class="regexp">/\s+/</span>
+    <span class="property">@rule</span>.applied-<span class="literal">on</span>-users = tokens.filter ~&gt; <span class="keyword">not</span> (<span class="property">@is-role-token</span> <span class="keyword">it</span>)
+    <span class="property">@rule</span>.applied-<span class="literal">on</span>-roles = tokens.filter <span class="property">@is-role-token</span> .map <span class="property">@cut-off-prefix</span>
+
+  <span class="attribute">is-role-token</span>: <span class="function"><span class="params">(token)</span>-&gt;</span>
+    (token.index-<span class="keyword">of</span> <span class="string">'R-'</span>) == <span class="number">0</span> <span class="keyword">or</span> (token.index-<span class="keyword">of</span> <span class="string">'r-'</span>) == <span class="number">0</span>
+
+  <span class="attribute">cut-off-prefix</span>: <span class="function"><span class="params">(token)</span>-&gt;</span>
+    token.substr <span class="number">2</span>, token.length
+
+  <span class="attribute">parse-rule</span>: <span class="function"><span class="params">(rule)</span>-&gt;</span>
+    <span class="property">@rule</span> = rule
+    allows = {collection, item, attributes} = <span class="property">@gather-rule</span> <span class="property">@rule</span>.rule-content.allows
+    denies = {collection, item, attributes} = <span class="property">@gather-rule</span> <span class="property">@rule</span>.rule-content.denies
+    <span class="property">@parse-collection-rule</span> allows.collection, denies.collection
+    <span class="property">@parse-item-rule</span> allows.item, denies.item
+    <span class="property">@parse-attributes-rule</span> allows.attributes, denies.attributes
+
+  <span class="attribute">gather-rule</span>: <span class="function"><span class="params">(allows-<span class="keyword">or</span>-denies)</span>-&gt;</span>
+    allows-<span class="keyword">or</span>-denies ||= <span class="string">''</span>
+    tokens = allows-<span class="keyword">or</span>-denies.split <span class="regexp">/,\s*/</span>
+    result =
+      <span class="attribute">collection</span>: <span class="property">@extract-action</span> tokens, prefix = <span class="string">'c-'</span>
+      <span class="attribute">item</span>: <span class="property">@extract-action</span> tokens, prefix = <span class="string">'i-'</span>
+      <span class="attribute">attributes</span>: <span class="property">@extract-attributes-action</span> tokens
+
+  <span class="attribute">extract-action</span>: <span class="function"><span class="params">(tokens, prefix)</span>-&gt;</span>
+    (tokens.filter<span class="function"> -&gt;</span> (it.index-<span class="keyword">of</span> prefix) == <span class="number">0</span>).map <span class="property">@cut-off-prefix</span>
+
+  <span class="attribute">extract-attributes-action</span>: <span class="function"><span class="params">(tokens)</span>-&gt;</span>
+    result = {}
+    attribute-rules = <span class="property">@extract-action</span> tokens, prefix = <span class="string">'a-'</span>
+    <span class="keyword">for</span> attr-action <span class="keyword">in</span> attribute-rules
+      [attr, action] = attr-action.split <span class="string">'-'</span>
+      result[attr] ||= []
+      result[attr].push action
+    result
+
+  <span class="attribute">parse-collection-rule</span>: (allow, deny)!<span class="function">-&gt;</span>
+    <span class="property">@rule</span>.collection = {}
+    <span class="property">@add-allow-deny</span> <span class="property">@rule</span>.collection, allow, deny
+
+  <span class="attribute">parse-item-rule</span>: (allow, deny)!<span class="function">-&gt;</span>
+    <span class="property">@rule</span>.item = {}
+    <span class="property">@add-allow-deny</span> <span class="property">@rule</span>.item, allow, deny
+
+  <span class="attribute">parse-attributes-rule</span>: (allow, deny)!<span class="function">-&gt;</span>
+    <span class="property">@rule</span>.attributes = {}
+    attributes = (_.keys allow) ++ (_.keys deny)
+    <span class="keyword">for</span> attr <span class="keyword">in</span> attributes
+      <span class="comment"># @attributes[attr] = _.clone @@default-rule.attribute</span>
+      <span class="property">@rule</span>.attributes[attr] = {}
+      <span class="property">@add-allow-deny</span> <span class="property">@rule</span>.attributes[attr], (allow[attr] <span class="keyword">or</span> []), (deny[attr] <span class="keyword">or</span> [])
+
+  <span class="attribute">add-allow-deny</span>: (sub-rule, allow, deny)!<span class="function">-&gt;</span>
+    [sub-rule[action] = <span class="literal">true</span> <span class="keyword">for</span> action <span class="keyword">in</span> allow]
+    [sub-rule[action] = <span class="literal">false</span> <span class="keyword">for</span> action <span class="keyword">in</span> deny]
+    <span class="comment"># doc: 这里显然deny高于allow</span>
+
+<span class="property">@BP</span> ||= {}
+<span class="keyword">if</span> <span class="built_in">module</span>? <span class="keyword">then</span> module.<span class="built_in">exports</span> = Rule-parser <span class="keyword">else</span> <span class="property">@BP</span>.Rule-parser = Rule-parser <span class="comment"># 让Jade和Meteor都可以使用</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

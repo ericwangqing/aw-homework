@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>_table.jade</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="frame.html">
+                frame.jade
+              </a>
+            
+              
+              <a class="source" href="_component.html">
+                _component.jade
+              </a>
+            
+              
+              <a class="source" href="_conditions-and-buttons.html">
+                _conditions-and-buttons.jade
+              </a>
+            
+              
+              <a class="source" href="_constants-and-utils.html">
+                _constants-and-utils.jade
+              </a>
+            
+              
+              <a class="source" href="_form.html">
+                _form.jade
+              </a>
+            
+              
+              <a class="source" href="_table.html">
+                _table.jade
+              </a>
+            
+              
+              <a class="source" href="_template.html">
+                _template.jade
+              </a>
+            
+              
+              <a class="source" href="bp-mixins.html">
+                bp-mixins.jade
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>_table.jade</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="regexp">//- ==========  以下为表格，常用于列表（删除、（去）添加、（去）修改）   ==========
+
+//</span>- 用于展示的列表
+include _constants-<span class="keyword">and</span>-utils
+include _conditions-<span class="keyword">and</span>-buttons
+
+mixin table(items, columnNames, attributesNames)
+  - <span class="reserved">var</span> attributesNames = attributesNames ? attributesNames : columnNames
+  - rowLinks = [], tableLinks = [], removedLinks = []
+  block
+  +add-addtional-links(tableLinks)
+  <span class="keyword">if</span> removedLinks.indexOf(<span class="string">'go-create'</span>) &lt; <span class="number">0</span>
+    +_<span class="keyword">if</span>-action(<span class="string">'list'</span>)
+      +_guarded-link(<span class="string">'go-create'</span>)
+  table.ui.table.segment
+    thead
+      +_head-row(columnNames)
+    tbody
+      +_rows(items, columnNames, attributesNames)
+
+
+mixin _rows(items, columnNames, attributesNames)
+  | {{<span class="comment">#each #{items}}}</span>
+  +_row(attributesNames)
+  | {{/each}}  
+
+
+mixin _head-row(columnNames)
+  tr
+    +_each-cell(columnNames)
+      th(cols=colIndex) <span class="comment">#{cellName}</span>
+    +_<span class="keyword">if</span>-action(<span class="string">'list'</span>)
+      th(cols=colIndex+<span class="number">1</span>) 操作
+
+mixin _row(attributesNames)
+  tr
+    +_each-cell(attributesNames)
+      +_guarded-cell(cellName)
+    +_<span class="keyword">if</span>-action(<span class="string">'list'</span>)
+      +_guarded-operation-cell
+
+mixin _each-cell(cellNames)
+  - colIndex = <span class="number">0</span>
+  - cellName = <span class="string">''</span>
+  each cn, i <span class="keyword">in</span> cellNames
+    - colIndex = i
+    - cellName = cn
+    block
+
+mixin _guarded-cell(attr)
+  - <span class="reserved">var</span> citedDoc = bp.getCitedDoc(attr, cited)
+  - <span class="reserved">var</span> citedClass = citedDoc ? <span class="string">'cited'</span> : <span class="literal">null</span>
+  <span class="regexp">//- +_if-else-attribute-permit(this, attr, 'look')(citedDoc=citedDoc) 不能够view的属性，在query中已经过滤掉了。
+  td(cols=colIndex, class=citedClass) 
+    != bp.value(attr, cited)
+  //</span>- +_<span class="keyword">else</span>()
+  <span class="regexp">//-   td.cant-look(cols=colIndex)
+
+mixin _guarded-operation-cell()
+  td(cols=colIndex+1) 
+    +_mark-current-doc-id()
+      +_guarded-link('go-update')
+      +_guarded-permission-button('delete')
+      +add-addtional-links(rowLinks)
+
+//</span>- --------------- 添加links ---------------------------------------------
+
+mixin add-item-link(link)
+  - rowLinks.push(link)
+
+mixin add-list-link(link)
+  - tableLinks.push(link)
+
+mixin remove-link(link)
+  - removedLinks.push(link)
+  - removedLinks = removedLinks.unique()</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

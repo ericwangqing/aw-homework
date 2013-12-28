@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>_jade.ls</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="_commons.html">
+                _commons.ls
+              </a>
+            
+              
+              <a class="source" href="adapter.html">
+                adapter.ls
+              </a>
+            
+              
+              <a class="source" href="frame.html">
+                frame.ls
+              </a>
+            
+              
+              <a class="source" href="router.html">
+                router.ls
+              </a>
+            
+              
+              <a class="source" href="state.html">
+                state.ls
+              </a>
+            
+              
+              <a class="source" href="ui-helpers.html">
+                ui-helpers.ls
+              </a>
+            
+              
+              <a class="source" href="validation-error-messages.html">
+                validation-error-messages.ls
+              </a>
+            
+              
+              <a class="source" href="_jade.html">
+                _jade.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="names.html">
+                names.ls
+              </a>
+            
+              
+              <a class="source" href="permission.html">
+                permission.ls
+              </a>
+            
+              
+              <a class="source" href="rule-parser.html">
+                rule-parser.ls
+              </a>
+            
+              
+              <a class="source" href="rule.html">
+                rule.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="detail-view.html">
+                detail-view.ls
+              </a>
+            
+              
+              <a class="source" href="face.html">
+                face.ls
+              </a>
+            
+              
+              <a class="source" href="list-view.html">
+                list-view.ls
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>_jade.ls</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="comment"># !!! 注意，此文件不是运行时代码，是开发时代码。</span>
+<span class="comment"># 给Jade用，根据template中的定义，动态编译出Views，以便BP Router加载。</span>
+
+<span class="built_in">require</span>! [fs, <span class="string">'./_view'</span>.View, <span class="string">'./Names'</span>]
+
+module.<span class="built_in">exports</span> =
+
+  <span class="attribute">get-view</span>: <span class="function"><span class="params">(doc-name, view-name, template-name, template-type)</span>-&gt;</span>
+    <span class="property">@view</span> = View.get-view.apply View, &amp;
+
+  <span class="attribute">set-main-nav</span>: <span class="function"><span class="params">(template-names)</span>-&gt;</span>
+    template-names = template-names.split <span class="string">','</span> <span class="keyword">if</span> <span class="keyword">typeof</span> template-names <span class="keyword">is</span> <span class="string">'string'</span>
+    <span class="keyword">for</span> name <span class="keyword">in</span> template-names
+      name = name.trim!
+      View.registry[name].<span class="keyword">is</span>-main-nav = <span class="literal">true</span>
+
+  <span class="attribute">value</span>: <span class="function"><span class="params">(attr, cited)</span>-&gt;</span>
+    <span class="keyword">for</span> doc-name, cite <span class="keyword">of</span> cited
+      <span class="keyword">if</span> cite.attributes <span class="keyword">and</span> attr <span class="keyword">in</span> cite.attributes 
+        <span class="keyword">return</span> <span class="string">"{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"</span>
+    <span class="string">"{{bs '#attr'}}"</span>
+
+  <span class="attribute">get-cited-doc-name</span>: <span class="function"><span class="params">(attr, cited)</span>-&gt;</span>
+    <span class="keyword">for</span> doc-name, cite <span class="keyword">of</span> cited
+      <span class="keyword">return</span> doc-name <span class="keyword">if</span> cite.attributes <span class="keyword">and</span> attr <span class="keyword">in</span> cite.attributes 
+
+  <span class="attribute">get-cited-doc</span>: <span class="function"><span class="params">(attr, cited)</span>-&gt;</span>
+    console.log <span class="string">"attr: #attr, cited: "</span>, cited
+    <span class="keyword">for</span> doc-name, cite <span class="keyword">of</span> cited
+      <span class="keyword">return</span> doc-name <span class="keyword">if</span> cite.attributes <span class="keyword">and</span> attr <span class="keyword">in</span> cite.attributes 
+    <span class="literal">null</span>
+
+  <span class="comment"># set-custom-class-name: (class-name)-&gt; @view.custom-class = class-name</span>
+
+  <span class="attribute">get-ref-name</span>: <span class="function"><span class="params">(ref)</span>-&gt;</span>
+    <span class="keyword">switch</span> ref
+    <span class="reserved">case</span> <span class="string">'detail'</span> <span class="keyword">then</span> <span class="property">@names</span>.detail-template-name
+    <span class="reserved">case</span> <span class="string">'list'</span> <span class="keyword">then</span> <span class="property">@names</span>.list-template-name
+    <span class="reserved">default</span> ref
+
+  <span class="attribute">get-names</span>: <span class="function"><span class="params">(doc-name)</span>-&gt;</span> 
+    <span class="property">@names</span> = <span class="keyword">new</span> Names doc-name 
+
+  <span class="attribute">save-view</span>: !<span class="function">-&gt;</span>
+    fs.write-file-sync <span class="string">'bp/main.ls'</span>, code + (JSON.stringify View.registry)
+
+
+
+code = <span class="string">''' 
+# ********************************************************
+# *                                                      *
+# *        IT IS AUTO GENERATED DON'T EDIT               *
+# *                                                      *
+# ********************************************************
+
+# if module?
+#   require! [fs, sugar, './Component'] 
+
+# BP ||= {}
+# BP.Component ||= Component
+
+# debugger
+BP.Component.create-components-from-jade-views jade-views = 
+'''</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>rule.ls</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="_commons.html">
+                _commons.ls
+              </a>
+            
+              
+              <a class="source" href="adapter.html">
+                adapter.ls
+              </a>
+            
+              
+              <a class="source" href="frame.html">
+                frame.ls
+              </a>
+            
+              
+              <a class="source" href="router.html">
+                router.ls
+              </a>
+            
+              
+              <a class="source" href="state.html">
+                state.ls
+              </a>
+            
+              
+              <a class="source" href="ui-helpers.html">
+                ui-helpers.ls
+              </a>
+            
+              
+              <a class="source" href="validation-error-messages.html">
+                validation-error-messages.ls
+              </a>
+            
+              
+              <a class="source" href="_jade.html">
+                _jade.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="names.html">
+                names.ls
+              </a>
+            
+              
+              <a class="source" href="permission.html">
+                permission.ls
+              </a>
+            
+              
+              <a class="source" href="rule-parser.html">
+                rule-parser.ls
+              </a>
+            
+              
+              <a class="source" href="rule.html">
+                rule.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="detail-view.html">
+                detail-view.ls
+              </a>
+            
+              
+              <a class="source" href="face.html">
+                face.ls
+              </a>
+            
+              
+              <a class="source" href="list-view.html">
+                list-view.ls
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>rule.ls</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">if</span> Meteor? <span class="keyword">then</span> _ = <span class="property">@_</span> <span class="keyword">else</span> _ = <span class="built_in">require</span> <span class="string">'underscore'</span> <span class="comment"># 为测试用例在Meteor环境外加载underscore</span>
+
+<span class="string">'''
+下面是rule、unparsed-rule的数据结构，其对用户权限的控制方式，详见：http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=251133954
+'''</span>
+rule = 
+  <span class="attribute">doc-name</span>:
+    <span class="attribute">applied-on-users</span>: []
+    <span class="attribute">collection</span>: <span class="attribute">view</span>: <span class="literal">true</span>, <span class="attribute">edit</span>: <span class="literal">true</span>
+    <span class="attribute">item</span>: <span class="attribute">view</span>: <span class="literal">true</span>, <span class="attribute">create</span>: <span class="literal">true</span>, <span class="attribute">update</span>: <span class="literal">true</span>, <span class="attribute">delete</span>: <span class="literal">true</span>
+    <span class="attribute">attribute</span>:
+      <span class="string">'要求'</span>: <span class="attribute">view</span>: <span class="literal">true</span>, <span class="attribute">edit</span>: <span class="literal">true</span>
+
+unparsed-rule =
+  <span class="attribute">assignment</span>:
+    <span class="attribute">users</span>: <span class="string">'沈少伟 陈伟津 R-老师'</span>
+    <span class="attribute">allows</span>: <span class="string">'c-view, a-要求-edit'</span>
+    <span class="attribute">denies</span>: <span class="string">'i-create, a-截止时间-edit'</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">Rule</span></span>
+  <span class="function"><span class="params">(<span class="property">@unparsed-rule</span>)</span>-&gt;</span>
+    <span class="keyword">return</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@unparsed-rule</span>
+    <span class="property">@doc-name</span> = _.keys unparsed-rule <span class="number">.0</span>
+    <span class="property">@rule-content</span> = <span class="property">@unparsed-rule</span>[<span class="property">@doc-name</span>]
+    <span class="property">@query</span> = unparsed-rule.query <span class="keyword">or</span> {}
+
+    Rule-parser = <span class="keyword">if</span> Meteor? <span class="keyword">then</span> BP.Rule-parser <span class="keyword">else</span> <span class="built_in">require</span> <span class="string">'./rule-parser'</span>
+    <span class="property">@parser</span> = <span class="keyword">new</span> Rule-parser!
+    <span class="property">@parser</span>.parse-users-<span class="keyword">and</span>-roles @
+    <span class="property">@parser</span>.parse-rule @
+
+  <span class="attribute">is-apply-on-current-user</span>: <span class="function"><span class="params">(current-user-id)</span>-&gt;</span>
+    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> Meteor.<span class="keyword">is</span>-server <span class="keyword">and</span> <span class="keyword">not</span> current-user-id  <span class="comment"># 未登录</span>
+    current-user = <span class="keyword">if</span> current-user-id <span class="keyword">then</span> Meteor.users.find-one current-user-id <span class="keyword">else</span> Meteor.user! <span class="comment"># Meteor的publish中不能用Meteor.user!，只能用查询。</span>
+    (current-user.profile.fullname <span class="keyword">in</span> <span class="property">@applied-on-users</span>) <span class="keyword">or</span> <span class="property">@is-apply-on-current-user-by-role</span> current-user
+
+  <span class="attribute">is-apply-on-current-user-by-role</span>: <span class="function"><span class="params">(current-user)</span>-&gt;</span>
+    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> <span class="keyword">not</span> roles = current-user.profile.roles
+    roles = roles.split <span class="regexp">/,\s*/</span> <span class="keyword">if</span> <span class="keyword">typeof</span> roles <span class="keyword">is</span> <span class="string">'string'</span>
+    <span class="keyword">for</span> role <span class="keyword">in</span> roles
+      <span class="keyword">return</span> <span class="literal">true</span> <span class="keyword">if</span> role <span class="keyword">in</span> <span class="property">@applied-on-roles</span>
+    <span class="literal">false</span>
+
+  <span class="attribute">is-apply-on-current-action</span>: <span class="function"><span class="params">(view-type, doc, action)</span>-&gt;</span>
+    @[(<span class="string">'is-apply-on-current-'</span> + view-type + <span class="string">'-action'</span>).camelize(<span class="literal">false</span>)] doc, action
+
+  <span class="comment"># view | go-create | go-update | delete </span>
+  <span class="attribute">is-apply-on-current-list-action</span>: <span class="function"><span class="params">(doc, action)</span>-&gt;</span>
+    <span class="keyword">switch</span> action
+    <span class="reserved">case</span> <span class="string">'view'</span> <span class="keyword">then</span> <span class="property">@collection</span>.view?
+    <span class="reserved">case</span> <span class="string">'go-create'</span> <span class="keyword">then</span> <span class="property">@collection</span>.edit? <span class="keyword">or</span> <span class="property">@item</span>.create?
+    <span class="reserved">case</span> <span class="string">'go-update'</span> <span class="keyword">then</span> <span class="property">@collection</span>.edit? <span class="keyword">or</span> (<span class="property">@item</span>.update? <span class="keyword">and</span> <span class="property">@satisfy-query</span> doc)
+    <span class="reserved">case</span> <span class="string">'delete'</span> <span class="keyword">then</span> <span class="property">@collection</span>.edit? <span class="keyword">or</span> (<span class="property">@item</span>.<span class="keyword">delete</span>? <span class="keyword">and</span> <span class="property">@satisfy-query</span> doc)
+    <span class="reserved">default</span> <span class="literal">false</span>
+
+  <span class="comment"># view | create | update | delete </span>
+  <span class="attribute">is-apply-on-current-detail-action</span>: <span class="function"><span class="params">(doc, action)</span>-&gt;</span>
+    <span class="keyword">switch</span> action
+    <span class="reserved">case</span> <span class="string">'view'</span> <span class="keyword">then</span> <span class="property">@collection</span>.view? <span class="keyword">or</span> (<span class="property">@item</span>.view? <span class="keyword">and</span> <span class="property">@satisfy-query</span> doc)
+    <span class="reserved">case</span> <span class="string">'create'</span> <span class="keyword">then</span> <span class="property">@item</span>.create?
+    <span class="reserved">case</span> <span class="string">'update'</span> <span class="keyword">then</span> <span class="property">@item</span>.update? <span class="keyword">and</span> <span class="property">@satisfy-query</span> doc
+    <span class="reserved">case</span> <span class="string">'delete'</span> <span class="keyword">then</span> <span class="property">@item</span>.<span class="keyword">delete</span>? <span class="keyword">and</span> <span class="property">@satisfy-query</span> doc
+    <span class="reserved">default</span> <span class="literal">true</span>
+
+  <span class="attribute">is-apply-on-current-attribute-and-action</span>: <span class="function"><span class="params">(doc, attr-name, action)</span>-&gt;</span> <span class="comment"># doc: 目前attribute只支持update，</span>
+    <span class="keyword">throw</span> <span class="keyword">new</span> Error <span class="string">"BP only support 'update' action permission checker on attribute, and current action is: <span class="subst">#{action}</span>"</span> <span class="keyword">if</span> action <span class="keyword">isnt</span> <span class="string">'update'</span>
+    (<span class="property">@item</span>.update? <span class="keyword">and</span> <span class="property">@satisfy-query</span> doc) <span class="keyword">or</span> (<span class="property">@attributes</span>[attr-name]? <span class="keyword">and</span> (<span class="property">@attributes</span>[attr-name].edit? <span class="keyword">or</span> <span class="property">@attributes</span>[attr-name].view?))
+
+  <span class="attribute">satisfy-query</span>: <span class="function"><span class="params">(doc)</span>-&gt;</span>
+    collection = BP.Collection.get-<span class="keyword">by</span>-doc-name <span class="property">@doc-name</span>
+    collection.find {<span class="attribute">$and</span>: [<span class="property">@query</span>, {<span class="attribute">_id</span>: <span class="keyword">do</span>c._id}]} .count! <span class="keyword">is</span> <span class="number">1</span>
+
+  <span class="attribute">check</span>: <span class="function"><span class="params">(action, view-type)</span>-&gt;</span>
+    @[(<span class="string">'check-on-'</span> + view-type + <span class="string">'-view'</span>).camelize(<span class="literal">false</span>)] action
+
+  <span class="attribute">check-on-list-view</span>: <span class="function"><span class="params">(action)</span>-&gt;</span>
+    <span class="keyword">switch</span> action
+    <span class="reserved">case</span> <span class="string">'view'</span> <span class="keyword">then</span> <span class="property">@collection</span>.view
+    <span class="reserved">case</span> <span class="string">'go-create'</span> 
+      <span class="keyword">if</span> <span class="property">@item</span>.create? <span class="keyword">then</span>  <span class="property">@item</span>.create <span class="keyword">else</span> <span class="property">@collection</span>.edit
+    <span class="reserved">case</span> <span class="string">'go-update'</span> 
+      <span class="keyword">if</span> <span class="property">@item</span>.update? <span class="keyword">then</span>  <span class="property">@item</span>.update <span class="keyword">else</span> <span class="property">@collection</span>.edit
+    <span class="reserved">case</span> <span class="string">'delete'</span>   
+      <span class="keyword">if</span> <span class="property">@item</span>.<span class="keyword">delete</span>? <span class="keyword">then</span>  <span class="property">@item</span>.<span class="keyword">delete</span> <span class="keyword">else</span> <span class="property">@collection</span>.edit
+    <span class="reserved">default</span> <span class="literal">true</span>
+
+  <span class="attribute">check-on-detail-view</span>: <span class="function"><span class="params">(action)</span>-&gt;</span>
+    <span class="keyword">switch</span> action
+    <span class="reserved">case</span> <span class="string">'view'</span>
+      <span class="keyword">if</span> <span class="property">@item</span>.view? <span class="keyword">then</span> <span class="property">@item</span>.view <span class="keyword">else</span> <span class="property">@collection</span>.view
+    <span class="reserved">case</span> <span class="string">'create'</span> <span class="keyword">then</span> <span class="property">@item</span>.create
+    <span class="reserved">case</span> <span class="string">'update'</span> <span class="keyword">then</span> <span class="property">@item</span>.update
+    <span class="reserved">case</span> <span class="string">'delelte'</span> <span class="keyword">then</span> <span class="property">@item</span>.<span class="keyword">delete</span>
+    <span class="reserved">default</span> <span class="literal">true</span>
+
+  <span class="attribute">check-attribute-editable</span>: <span class="function"><span class="params">(attr-name)</span>-&gt;</span>
+    rule = <span class="property">@attributes</span>[attr-name]
+    <span class="keyword">if</span> rule? <span class="keyword">and</span>  (rule.edit? <span class="keyword">or</span> rule.view?) 
+      <span class="keyword">if</span> rule.edit <span class="keyword">is</span> <span class="literal">false</span> <span class="keyword">or</span> rule.view <span class="keyword">is</span> <span class="literal">false</span>
+        <span class="literal">false</span>
+      <span class="keyword">else</span>
+        <span class="literal">true</span>  
+    <span class="keyword">else</span> 
+      <span class="property">@item</span>.update
+
+
+<span class="property">@BP</span> ||= {}
+<span class="keyword">if</span> <span class="built_in">module</span>? <span class="keyword">then</span> module.<span class="built_in">exports</span> = Rule <span class="keyword">else</span> <span class="property">@BP</span>.Rule = Rule <span class="comment"># 让Jade和Meteor都可以使用</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

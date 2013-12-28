@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>permission.ls</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="_commons.html">
+                _commons.ls
+              </a>
+            
+              
+              <a class="source" href="adapter.html">
+                adapter.ls
+              </a>
+            
+              
+              <a class="source" href="frame.html">
+                frame.ls
+              </a>
+            
+              
+              <a class="source" href="router.html">
+                router.ls
+              </a>
+            
+              
+              <a class="source" href="state.html">
+                state.ls
+              </a>
+            
+              
+              <a class="source" href="ui-helpers.html">
+                ui-helpers.ls
+              </a>
+            
+              
+              <a class="source" href="validation-error-messages.html">
+                validation-error-messages.ls
+              </a>
+            
+              
+              <a class="source" href="_jade.html">
+                _jade.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="names.html">
+                names.ls
+              </a>
+            
+              
+              <a class="source" href="permission.html">
+                permission.ls
+              </a>
+            
+              
+              <a class="source" href="rule-parser.html">
+                rule-parser.ls
+              </a>
+            
+              
+              <a class="source" href="rule.html">
+                rule.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="detail-view.html">
+                detail-view.ls
+              </a>
+            
+              
+              <a class="source" href="face.html">
+                face.ls
+              </a>
+            
+              
+              <a class="source" href="list-view.html">
+                list-view.ls
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>permission.ls</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">if</span> Meteor? <span class="keyword">then</span> _ = <span class="property">@_</span> <span class="keyword">else</span> _ = <span class="built_in">require</span> <span class="string">'underscore'</span> <span class="comment"># 为测试用例在Meteor环境外加载underscore</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">Permission</span></span>
+  <span class="property">@get-instance</span> =<span class="function"> -&gt;</span>
+    <span class="property">@instance</span> = <span class="keyword">new</span> @ <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@instance</span> 
+    <span class="property">@instance</span><span class="function">
+
+  -&gt;</span>
+    <span class="comment">#形如：homework: [], assignment: []</span>
+    <span class="property">@rules</span> = {}
+
+  <span class="attribute">add-rule</span>: <span class="function"><span class="params">(unparsed-rule)</span>-&gt;</span>
+    Rule = <span class="keyword">if</span> Meteor? <span class="keyword">then</span> BP.Rule <span class="keyword">else</span> <span class="built_in">require</span> <span class="string">'./rule'</span>
+    <span class="keyword">new</span>-rule = <span class="keyword">new</span> Rule unparsed-rule
+    <span class="property">@rules</span>[<span class="keyword">new</span>-rule.doc-name] ||= []
+    <span class="property">@rules</span>[<span class="keyword">new</span>-rule.doc-name].push <span class="keyword">new</span>-rule
+
+  <span class="comment"># Template和Router调用，检查当前用户是否有权限进行相应操作</span>
+  <span class="comment"># view | go-create | go-update | delete </span>
+  <span class="attribute">check-list-action-permission</span>: (doc-name, doc, action)~&gt;
+    <span class="property">@check-action-permission</span> doc-name, doc, action, <span class="string">'list'</span>
+
+  <span class="comment"># Template和Router调用，检查当前用户是否有权限进行相应操作</span>
+  <span class="comment"># view | create | update | delete </span>
+  <span class="attribute">check-detail-action-permission</span>: (doc-name, doc, action)~&gt; <span class="comment"># 注意：这里为了便于helpers里通过同check-list-action-permission一样</span>
+    <span class="property">@check-action-permission</span> doc-name, doc, action, <span class="string">'detail'</span>
+
+  <span class="attribute">check-action-permission</span>: <span class="function"><span class="params">(doc-name, doc, action, view-type)</span>-&gt;</span>
+    current-active-rules = <span class="property">@get-active-rules-on-action</span> doc-name, doc, action, view-type
+    <span class="keyword">if</span> current-active-rules.length &gt; <span class="number">0</span>
+      combined-rule = <span class="property">@combined-rules</span> current-active-rules 
+      combined-rule.check action, view-type
+    <span class="keyword">else</span>
+      <span class="literal">true</span>
+
+  <span class="attribute">get-active-rules-on-action</span>: <span class="function"><span class="params">(doc-name, doc, action, view-type)</span>-&gt;</span>
+    <span class="keyword">return</span> [] <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@rules</span>[doc-name]
+    [rule <span class="keyword">for</span> rule <span class="keyword">in</span> <span class="property">@rules</span>[doc-name] <span class="keyword">when</span> rule.<span class="keyword">is</span>-apply-<span class="literal">on</span>-current-user! <span class="keyword">and</span> rule.<span class="keyword">is</span>-apply-<span class="literal">on</span>-current-action view-type, doc, action]
+
+  <span class="attribute">combined-rules</span>: <span class="function"><span class="params">(rules)</span>-&gt;</span>
+    <span class="comment"># TODO: 设计实现类似CSS selector的机制。</span>
+    [..., last] = rules
+    last
+
+  <span class="comment"># Template调用，检查当前用户是否有权限进行相应操作</span>
+  <span class="comment"># update </span>
+  <span class="attribute">check-attribute-action-permission</span>: (doc-name, doc, attr-name, action)~&gt; 
+    current-active-rules = <span class="property">@get-active-rules-on-attribute-action</span> doc-name, doc, attr-name, action
+    <span class="keyword">if</span> current-active-rules.length &gt; <span class="number">0</span>
+      combined-rule = <span class="property">@combined-rules</span> current-active-rules 
+      combined-rule.check-attribute-editable attr-name
+    <span class="keyword">else</span>
+      <span class="literal">true</span>
+
+  <span class="attribute">get-active-rules-on-attribute-action</span>: <span class="function"><span class="params">(doc-name, doc, attr-name, action)</span>-&gt;</span>
+    <span class="keyword">return</span> [] <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@rules</span>[doc-name]
+    [rule <span class="keyword">for</span> rule <span class="keyword">in</span> <span class="property">@rules</span>[doc-name] <span class="keyword">when</span> rule.<span class="keyword">is</span>-apply-<span class="literal">on</span>-current-user! <span class="keyword">and</span> rule.<span class="keyword">is</span>-apply-<span class="literal">on</span>-current-attribute-<span class="keyword">and</span>-action doc, attr-name, action]
+
+  <span class="attribute">add-constrain-on-query</span>: <span class="function"><span class="params">(current-user-id, doc-name, origin-query)</span>-&gt;</span>
+    <span class="comment"># debugger</span>
+    current-active-rules = <span class="property">@get-active-rules-for-publish-data</span> current-user-id, doc-name
+    <span class="keyword">if</span> current-active-rules.length &gt; <span class="number">0</span>
+      combined-rule = <span class="property">@combined-rules</span> current-active-rules
+      query = <span class="property">@get-query-from-rule</span> origin-query, combined-rule
+      projection = <span class="property">@get-projection-from-rule</span> combined-rule
+    <span class="keyword">else</span>
+      query = origin-query
+      projection = {}
+
+    result = {query, projection}
+    <span class="comment"># console.log "********************** constrained-query is: ", result</span>
+    <span class="comment"># result</span>
+
+  <span class="attribute">get-active-rules-for-publish-data</span>: <span class="function"><span class="params">(current-user-id, doc-name)</span>-&gt;</span>
+    <span class="keyword">return</span> [] <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@rules</span>[doc-name]
+    [rule <span class="keyword">for</span> rule <span class="keyword">in</span> <span class="property">@rules</span>[doc-name] <span class="keyword">when</span> rule.<span class="keyword">is</span>-apply-<span class="literal">on</span>-current-user current-user-id]
+
+  <span class="attribute">get-query-from-rule</span>: <span class="function"><span class="params">(origin-query, rule)</span>-&gt;</span>
+    <span class="attribute">$and</span>: [origin-query, (rule.query <span class="keyword">or</span> {})]
+
+  <span class="attribute">get-projection-from-rule</span>: <span class="function"><span class="params">(rule)</span>-&gt;</span>
+    projection = <span class="attribute">fields</span>: {}
+    <span class="keyword">for</span> attr-name, constrain <span class="keyword">of</span> rule.attributes
+      projection.fields[attr-name] = <span class="number">0</span> <span class="keyword">if</span> constrain.view <span class="keyword">is</span> <span class="literal">false</span>
+    projection
+
+
+<span class="property">@BP</span> ||= {}
+<span class="keyword">if</span> <span class="built_in">module</span>? <span class="keyword">then</span> module.<span class="built_in">exports</span> = Permission <span class="keyword">else</span> <span class="property">@BP</span>.Permission = Permission <span class="comment"># 让Jade和Meteor都可以使用</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

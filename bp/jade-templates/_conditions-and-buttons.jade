@@ -10,10 +10,6 @@ mixin _if-bp-permit(action, citedDoc)
   block
   | {{/if}}
 
-//- mixin _if-doc-permit(action)
-//-   | {{#if bp-doc-permit '#{action}'}}
-//-   block
-//-   | {{/if}}
 
 mixin _if-bp-attribute-permit(attr, action)
   - var citedDoc = attributes.citedDoc ? attributes.citedDoc : ''

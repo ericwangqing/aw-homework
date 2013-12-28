@@ -1,6 +1,6 @@
 ABSTRACT-METHOD = !-> throw new Meteor.Error "This is a abstract method, you should implemented it first."
 
-# doc: 业务逻辑中，由用户权限和流程权限决定的筛选在服务端完成（Meteor Method），而由用户体验形成的筛选在客户端完成，也即是在template中声明的query，用在这里。
+# 业务逻辑中，由用户权限和流程权限决定的筛选在服务端完成（Meteor Method），而由用户体验形成的筛选在客户端完成，也即是在template中声明的query，用在这里。
 class @BP.Abstract-data-manager
   @_state = @state-transferred-across-views = new BP.State '_transfer-state' if Meteor.is-client
   
@@ -22,21 +22,22 @@ class @BP.Abstract-data-manager
     @publish-collections cited-config ++ {doc-name: @view.doc-name, @query}
 
   publish-collections: (config)!-> 
-    # console.log "config: ", config
     dm = @
     permission = BP.Permission.get-instance!
     Meteor.publish dm.meteor-pub-name, (id)-> 
       ({doc-name, query}) <~ _.map config
       collection = BP.Collection.get-by-doc-name doc-name
       eval "query = " + query if typeof query is 'string'
-      {query, projection} = permission.add-constrain-on-query @user-id, doc-name, query # 在这里实现权限控制里的view级控制。用户没有权限时，相应的数据（整条，或者某些属性）将不会publish。
+      # 在这里实现权限控制里的view级控制。用户没有权限时，相应的数据（整条，或者某些属性）将不会publish。
+      {query, projection} = permission.add-constrain-on-query @user-id, doc-name, query 
       collection.find query, projection
 
   create-data-helpers: !->
     @data-helpers = {}
     @data-helpers[@main-data-helper-name] = @meteor-template-main-data-helper
 
-  subscribe:           (params)->   ABSTRACT-METHOD! # return a (or an array of) Meteor wait object(s) for iron router
+  #### return a (or an array of) Meteor wait object(s) for iron router
+  subscribe:           (params)->   ABSTRACT-METHOD! 
   store-data-in-state:        !->   ABSTRACT-METHOD!
   meteor-template-main-data-helper:   ->   ABSTRACT-METHOD! 
 

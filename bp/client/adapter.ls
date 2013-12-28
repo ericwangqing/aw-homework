@@ -1,5 +1,5 @@
 @BP ||= {}
-# Adpater 本身没有状态，因此可以被多个有相同template的view共用：
+## Adpater 本身没有状态，因此可以被多个有相同template的view共用：
 # 1）状态保存在view的state里，通过view操作
 class @BP.Template-adapter
   @get = (view)->
