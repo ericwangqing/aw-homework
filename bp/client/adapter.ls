@@ -26,7 +26,6 @@ class @BP.Template-adapter
       "bs"                   :  @enable-bs!
       "bp-permit"            :  @view.is-permit
       "bp-attribute-permit"  :  @view.is-attribute-permit
-      # "bp-doc-permit"        :  @permission.doc-permission-checker
       "bp-face-is"           :  @view.current-face-checker
       "bp-path-for"          :  ~> @view.get-path.apply @view, &
       'bp-links'             :  @enable-get-links-html-str-for-tooltipster! 
@@ -51,7 +50,7 @@ class @BP.Template-adapter
       else
         ''
 
-  enable-tooltips: -> $ '.tooltip' .tooltipster interactive: true
+  enable-tooltips: -> $ '.tooltip' .tooltipster interactive: true, theme: '.tooltipster-shadow'
 
   enable-get-links-html-str-for-tooltipster: -> 
     self = @
