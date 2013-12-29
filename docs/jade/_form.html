@@ -94,15 +94,18 @@ mixin form(item)
     block
 
     .buttons
-      +_guarded-permission-<span class="keyword">and</span>-action-button(<span class="string">'update'</span>, <span class="string">'提交'</span>)(isButton=<span class="literal">true</span>, classNames=<span class="string">'positive'</span>)
-      +_guarded-permission-<span class="keyword">and</span>-action-button(<span class="string">'create'</span>, <span class="string">'提交'</span>)(isButton=<span class="literal">true</span>, classNames=<span class="string">'positive'</span>)
-      +_<span class="keyword">if</span>-action(<span class="string">'update'</span>)
-        +_guarded-permission-button(<span class="string">'delete'</span>, <span class="string">'删除'</span>)(isButton=<span class="literal">true</span>, classNames=<span class="string">'negative'</span>)
+      +<span class="keyword">if</span>-face(<span class="string">'create'</span>)
+        +guarded-button(<span class="string">'create'</span>, <span class="string">'提交'</span>)(classNames=<span class="string">'positive'</span>)
+
+      +<span class="keyword">if</span>-face(<span class="string">'update'</span>)
+        +guarded-button(<span class="string">'update'</span>, <span class="string">'提交'</span>)(classNames=<span class="string">'positive'</span>)
+        +guarded-button(<span class="string">'delete'</span>, <span class="string">'删除'</span>)(classNames=<span class="string">'negative'</span>)
+
       +add-addtional-links(mainLinks)
     
     .pre-next
-      +_previous-link()
-      +_next-link()
+      +previous-link()
+      +next-link()
       +add-addtional-links(navLinks)
   | {{/<span class="reserved">with</span>}}  
 

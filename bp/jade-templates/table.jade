@@ -1,25 +1,25 @@
-//- ==========  以下为表格，常用于列表（删除、（去）添加、（去）修改）   ==========
+include constants-and-utils
+include conditions-and-buttons
 
-//- 用于展示的列表
-include _constants-and-utils
-include _conditions-and-buttons
-
+//-# BP表格，用于list视图
 mixin table(items, columnNames, attributesNames)
   - var attributesNames = attributesNames ? attributesNames : columnNames
   - rowLinks = [], tableLinks = [], removedLinks = []
   block
+  //- 用户自定义的links
   +add-addtional-links(tableLinks)
-  if removedLinks.indexOf('go-create') < 0
-    +_if-action('list')
-      +_guarded-link('go-create')
+  //- 可配置，可动态移除go-create按钮
+  if removedLinks.indexOf('go-create') < 0 
+    //- 只有list时，才有go-create按钮，view时没有
+    +if-face('list')
+      +guarded-link('go-create')
   table.ui.table.segment
     thead
       +_head-row(columnNames)
     tbody
-      +_rows(items, columnNames, attributesNames)
+      +_rows(items, attributesNames)
 
-
-mixin _rows(items, columnNames, attributesNames)
+mixin _rows(items, attributesNames)
   | {{#each #{items}}}
   +_row(attributesNames)
   | {{/each}}  
@@ -29,14 +29,16 @@ mixin _head-row(columnNames)
   tr
     +_each-cell(columnNames)
       th(cols=colIndex) #{cellName}
-    +_if-action('list')
+    //- 只有list时，才有操作栏，view时没有
+    +if-face('list')
       th(cols=colIndex+1) 操作
 
 mixin _row(attributesNames)
   tr
     +_each-cell(attributesNames)
       +_guarded-cell(cellName)
-    +_if-action('list')
+    //- 只有list时，才有操作栏，view时没有
+    +if-face('list')
       +_guarded-operation-cell
 
 mixin _each-cell(cellNames)
@@ -48,22 +50,20 @@ mixin _each-cell(cellNames)
     block
 
 mixin _guarded-cell(attr)
-  - var citedDoc = bp.getCitedDoc(attr, cited)
+  - var citedDoc = bp.getCitedDoc(attr, cited) // 得到被引用属性（attr）的出处（doc）。如果是当前doc的属性，为undefined。
   - var citedClass = citedDoc ? 'cited' : null
-  //- +_if-else-attribute-permit(this, attr, 'look')(citedDoc=citedDoc) 不能够view的属性，在query中已经过滤掉了。
   td(cols=colIndex, class=citedClass) 
     != bp.value(attr, cited)
-  //- +_else()
-  //-   td.cant-look(cols=colIndex)
 
 mixin _guarded-operation-cell()
   td(cols=colIndex+1) 
-    +_mark-current-doc-id()
-      +_guarded-link('go-update')
-      +_guarded-permission-button('delete')
+    //- 将对应行的doc id记录下来，以便操作进行时，能够找回该doc
+    +mark-current-doc-id()
+      +guarded-link('go-update')
+      +guarded-link('delete')
       +add-addtional-links(rowLinks)
 
-//- --------------- 添加links ---------------------------------------------
+//-# --------------- 添加links -------------
 
 mixin add-item-link(link)
   - rowLinks.push(link)

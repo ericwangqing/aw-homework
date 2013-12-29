@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>validation-error-messages.ls</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="_commons.html">
+                _commons.ls
+              </a>
+            
+              
+              <a class="source" href="adapter.html">
+                adapter.ls
+              </a>
+            
+              
+              <a class="source" href="frame.html">
+                frame.ls
+              </a>
+            
+              
+              <a class="source" href="router.html">
+                router.ls
+              </a>
+            
+              
+              <a class="source" href="state.html">
+                state.ls
+              </a>
+            
+              
+              <a class="source" href="ui-helpers.html">
+                ui-helpers.ls
+              </a>
+            
+              
+              <a class="source" href="validation-error-messages.html">
+                validation-error-messages.ls
+              </a>
+            
+              
+              <a class="source" href="_jade.html">
+                _jade.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="names.html">
+                names.ls
+              </a>
+            
+              
+              <a class="source" href="permission.html">
+                permission.ls
+              </a>
+            
+              
+              <a class="source" href="rule-parser.html">
+                rule-parser.ls
+              </a>
+            
+              
+              <a class="source" href="rule.html">
+                rule.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="detail-view.html">
+                detail-view.ls
+              </a>
+            
+              
+              <a class="source" href="face.html">
+                face.ls
+              </a>
+            
+              
+              <a class="source" href="list-view.html">
+                list-view.ls
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>validation-error-messages.ls</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="comment"># 表单校验出错时，显示的信息。默认由lib/parsley.messages.zh_cn.js提供，可在这里改写和添加。</span>
+<span class="function"><span class="title">config-error-messages</span> = -&gt;</span>
+  <span class="comment"># BP.until-obj-available 'window.ParsleyConfig', -&gt;</span>
+  <span class="keyword">if</span> window.Parsley-config 
+    <span class="comment"># console.log "get Parsley-config", window.Parsley-config</span>
+    window.Parsley-config.messages.type.email = \输入email哦，亲
+    window.Parsley-config.messages.minlength = <span class="string">"太短，至少要 %s 个字"</span>
+  <span class="keyword">else</span>
+    console.log <span class="string">"default error message not loaded yet!"</span>
+
+Meteor.startup<span class="function"> -&gt;</span>
+    config-error-messages!
+
+
+<span class="comment"># =================== 以下为Parsley原设置 ==============================</span>
+<span class="comment"># window.ParsleyConfig = window.ParsleyConfig || {};</span>
+
+<span class="comment"># (function ($) {</span>
+<span class="comment">#   window.ParsleyConfig = $.extend( true, {}, window.ParsleyConfig, {</span>
+<span class="comment">#     messages: {</span>
+<span class="comment">#       // parsley //////////////////////////////////////</span>
+<span class="comment">#         defaultMessage: "不正确的值"</span>
+<span class="comment">#         , type: {</span>
+<span class="comment">#             email:      "字段值应该是一个正确的电子邮件地址"</span>
+<span class="comment">#           , url:        "字段值应该是一个正确的URL地址"</span>
+<span class="comment">#           , urlstrict:  "字段值应该是一个正确的URL地址"</span>
+<span class="comment">#           , number:     "字段值应该是一个合法的数字"</span>
+<span class="comment">#           , digits:     "字段值应该是一个单独的数字"</span>
+<span class="comment">#           , dateIso:    "字段值应该是一个正确的日期描述(YYYY-MM-DD)."</span>
+<span class="comment">#           , alphanum:   "字段值应该是只包含字母和数字"</span>
+<span class="comment">#         }</span>
+<span class="comment">#       , notnull:        "字段值不可为null"</span>
+<span class="comment">#       , notblank:       "字段值不可为空"</span>
+<span class="comment">#       , required:       "字段值是必填的"</span>
+<span class="comment">#       , regexp:         "字段值不合法"</span>
+<span class="comment">#       , min:            "字段值应该大于 %s"</span>
+<span class="comment">#       , max:            "字段值应该小于 %s."</span>
+<span class="comment">#       , range:          "字段值应该大于 %s 并小于 %s."</span>
+<span class="comment">#       , minlength:      "字段值太短了，长度应该大于等于 %s 个字符"</span>
+<span class="comment">#       , maxlength:      "字段值太长了，长度应该小于等于 %s 个字符"</span>
+<span class="comment">#       , rangelength:    "字段值长度错了，长度应该在 %s 和 %s 个字符之间"</span>
+<span class="comment">#       , mincheck:       "你至少要选择 %s 个选项"</span>
+<span class="comment">#       , maxcheck:       "你最多只能选择 %s 个选项"</span>
+<span class="comment">#       , rangecheck:     "你只能选择 %s 到 %s 个选项"</span>
+<span class="comment">#       , equalto:        "字段值应该和给定的值一样"</span>
+
+<span class="comment">#       // parsley.extend ///////////////////////////////</span>
+<span class="comment">#       , minwords:       "字段值应该至少有 %s 个词"</span>
+<span class="comment">#       , maxwords:       "字段值最多只能有 %s 个词"</span>
+<span class="comment">#       , rangewords:     "字段值应该有 %s 到 %s 个词"</span>
+<span class="comment">#       , greaterthan:    "字段值应该大于 %s"</span>
+<span class="comment">#       , lessthan:       "字段值应该小于 %s"</span>
+<span class="comment">#       , beforedate:     "字段值所表示的日期应该早于 %s."</span>
+<span class="comment">#       , afterdate:      "字段值所表示的日期应该晚于 %s."</span>
+<span class="comment">#     }</span>
+<span class="comment">#   });</span>
+<span class="comment"># }(window.jQuery || window.Zepto));</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

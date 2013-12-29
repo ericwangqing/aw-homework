@@ -78,36 +78,18 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>生成Meteor所需要的template （Handlebars）</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>mixin template(docName, templateName, templateType)
-  - console.log(<span class="string">"************* 1 ***********"</span>)
-  - topView = bp.getView(docName, templateName, templateName, templateType); 
-  - topView.cited = cited
-  - <span class="keyword">if</span>(attributes.query &amp;&amp; templateType == <span class="string">'list'</span>){topView.query = attributes.query} <span class="regexp">//doc: 只有列表才需要query，详情都是针对一个，不用query. 这里的筛选用于用户体验，业务逻辑的删选在工作流程定义、用户权限定义里，并通过Meteor Method来实施。
+  - view = bp.getView(docName, templateName, templateType); 
+  - view.cited = cited
+  - <span class="keyword">if</span>(attributes.query &amp;&amp; templateType == <span class="string">'list'</span>){view.query = attributes.query} <span class="regexp">//doc: 只有列表才需要query，详情都是针对一个，不用query. 这里的筛选用于用户体验，业务逻辑的删选在工作流程定义、用户权限定义里，并通过Meteor Method来实施。
   - references = [];
-  - console.log("************* 2 ***********: ")
   template(name=templateName)
     block
-    each ref in references
-      +_reference(topView, ref)
-    - console.log("************* 3 ***********")
-
-
-
-
-mixin _reference(topView, ref)
-  - console.log("call reference, ref: ", ref)
-  - currentViewName = 'ref-' + ref.referredViewName
-  - topView.addReferredView(currentViewName, ref)
-  //</span>- | {{bp-load-view <span class="string">'#{currentViewName}'</span>}}
-  .reference(bp-view-name=currentViewName)
-    | {{&gt; <span class="comment">#{ref.referredViewName}}}</span>
-
-mixin main-nav(templateNames)
-  - bp.setMainNav(templateNames)
-  - bp.saveView()</pre></div></div>
+  - console.log("************* generated template: " + templateName + " ***********")</pre></div></div>
             
         </li>
         

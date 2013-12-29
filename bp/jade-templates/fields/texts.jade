@@ -1,11 +1,11 @@
-include _commons
+include commons
 
 //- --------------- 各种文本域，都是 input type = 'text' --------------------
 
 
 mixin _text(label, attr, htmlTag)
   - var attr = attr ? attr : label
-  +__guarded-input-wrapper(label, attr)(attributes)
+  +guarded-input-wrapper(label, attr)(attributes)
     - addCondition(attributes, P.trigger('change'))
     - var validationStr = attributes.optional ?  attributes.condition : (attributes.condition + " required='required'")
     - var placeholderStr = attributes.placeholder ? " placeholder='" + attributes.placeholder + "' " : ''
@@ -45,19 +45,6 @@ mixin max-text(label, attr)
   - addCondition(attributes, P.maxlength(attributes.max))
   +text(label, attr)(attributes)
 
-mixin ahead(label, attr)
-  //- // console.log("candidates are: ", JSON.stringify(candidates));
-  - var attr = attr ? attr : label 
-  +text(label, attr)(attributes) 
-  | {{bp-add-typeahead "#{attr}" "#{attributes.candidates}"}}
-
-mixin multi-ahead(label, attr)
-  - var attr = attr ? attr : label 
-  +__guarded-input-wrapper(label, attr)(attributes)
-    select(name=attr, multiple='multiple', style='width: 100%; border: 0px', dropdownCssClass='', tabindex=index)
-      each candidate in attributes.candidates
-        option(value=candidate) #{candidate}
-    | {{bp-add-multi-ahead "#{attr}" "#{attributes.config}"}}
 
 //- 这个是纯文字版的，便于手工输入
 mixin datetime(label, attr)

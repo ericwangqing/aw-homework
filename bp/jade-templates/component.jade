@@ -11,7 +11,9 @@ mixin component(_docName, isMainNav)
   - cited = attributes.cited
   block
   if isMainNav
-    +main-nav(names.listTemplateName)
+    - bp.setMainNav(names.listTemplateName)
+  - bp.saveView()
+
 
 mixin list(titles, attrs)
   - attrs = attrs ? attrs : titles // 可以只给属性名（attrs），此时就用属性名作为标题
@@ -27,8 +29,5 @@ mixin detail()
       +form(names.detailDataRetrieverName)
         block
 
-//-# 用法示例： +auto-insert('老师', 'Meteor.user().profile.fullname')
-mixin auto-insert(attr, valueExpression)
-  | {{bp-auto-insert '#{attr}' "#{valueExpression}"}}
 
 

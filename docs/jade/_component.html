@@ -94,7 +94,9 @@
   - cited = attributes.cited
   block
   if isMainNav
-    +main-nav(names.listTemplateName)
+    - bp.setMainNav(names.listTemplateName)
+  - bp.saveView()
+
 
 mixin list(titles, attrs)
   - attrs = attrs ? attrs : titles //</span> 可以只给属性名（attrs），此时就用属性名作为标题
@@ -109,22 +111,6 @@ mixin detail()
     .bp-detail(bp-view-name=viewName)
       +form(names.detailDataRetrieverName)
         block</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>用法示例： +auto-insert(&#39;老师&#39;, &#39;Meteor.user().profile.fullname&#39;)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>mixin auto-insert(attr, valueExpression)
-  | {{bp-auto-insert <span class="string">'#{attr}'</span> <span class="string">"<span class="subst">#{valueExpression}</span>"</span>}}</pre></div></div>
             
         </li>
         

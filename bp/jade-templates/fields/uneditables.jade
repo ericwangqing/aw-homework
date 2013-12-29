@@ -1,13 +1,13 @@
-include _commons
+include commons
 
 mixin ref-text(label, attr)
   - var attr = attr ? attr : label
-  +__guarded-input-wrapper(label, attr)(attributes)
+  +guarded-input-wrapper(label, attr)(attributes)
 
 mixin ref-list(label, attr)
   - var attr = attr ? attr : label
   - var span = attributes.span || Field_SPAN
-  +__wrap-filed-with-label-span(label, span)
+  +wrap-filed-with-label-span(label, span)
     - var citedDocName = bp.getCitedDocName(attr, cited)
     {{#with #{citedDocName}}}
     if attributes.isOrdered 
@@ -30,11 +30,17 @@ mixin ref-links-list(label, attr, face)
   - var span = attributes.span || Field_SPAN
   - var citedDocName = bp.getCitedDocName(attr, cited)
   {{#with #{citedDocName}}}
-  //- +__wrap-filed-with-label-span(label, span)(title="{{bp-links '#{face}' '#{attr}'}}")
-  +__wrap-filed-with-label-span(label, span)
+  //- +wrap-filed-with-label-span(label, span)(title="{{bp-links '#{face}' '#{attr}'}}")
+  +wrap-filed-with-label-span(label, span)
     .ui.text.menu
       .header.item 选择链接
       | {{#each #{attr}}}
       a.item(href='#') {{this.title}}
       | {{/each}}
   {{/with}}
+
+
+//-# 用法示例： +auto-insert('老师', 'Meteor.user().profile.fullname')
+mixin auto-insert(attr, valueExpression)
+  | {{bp-auto-insert '#{attr}' "#{valueExpression}"}}
+

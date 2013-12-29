@@ -1,0 +1,27 @@
+include commons
+
+mixin ahead(label, attr)
+  //- // console.log("candidates are: ", JSON.stringify(candidates));
+  - var attr = attr ? attr : label 
+  +text(label, attr)(attributes) 
+  | {{bp-add-typeahead "#{attr}" "#{attributes.candidates}"}}
+
+mixin multi-ahead(label, attr)
+  - var attr = attr ? attr : label 
+  +guarded-input-wrapper(label, attr)(attributes)
+    select(name=attr, multiple='multiple', style='width: 100%; border: 0px', dropdownCssClass='', tabindex=index)
+      each candidate in attributes.candidates
+        option(value=candidate) #{candidate}
+    - var configStr = attributes.config ? "'" + attributes.config + "'" : ''
+    | {{bp-add-multi-ahead "#{attr}" this #{configStr}}}
+
+//- --------------- 各种选择域 ------------------------------------------
+//- ------ 待实现 ------
+  radio
+  dropdown
+  checkbox
+  on|off button
+  grid button
+  select
+  file
+

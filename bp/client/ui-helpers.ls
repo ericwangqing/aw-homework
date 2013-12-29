@@ -53,11 +53,13 @@ class @BP.Form extends Abstract-Form
         name:  config-name
         local: [str.trim! for str in candidates.split ',']
 
-  get-multi-ahead-render: (select-name, config)->
+  get-multi-ahead-render: (attr-name, doc, config)->
     ~>
       # Meteor.defer ~>
-      multi-ahead = $ @rv "select[name='#{select-name}']"
-      $ @rv "select[name='#{select-name}']" .select2 (config or {})
+      multi-ahead = $ @rv "select[name='#{attr-name}']"
+      multi-ahead .select2 (config or {})
+      multi-ahead = $ @rv "select[name='#{attr-name}']"
+      multi-ahead .select2 'val', doc[attr-name]
 
   add-validation: !~> 
     try

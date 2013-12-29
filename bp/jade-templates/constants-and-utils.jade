@@ -1,0 +1,29 @@
+//-# ---------- 辅助常数与函数 -----------------------------------------------
+- FORM_SPAN = 12 // 默认表单分为12栏布局
+- Field_SPAN = FORM_SPAN / 4 // 域宽默认为每行4个
+
+- FULL_ROW = 12
+- HALF_ROW = FULL_ROW / 2
+
+//-# Parsely 校验属性
+- P = {}  
+- P.type = function(t){ return "parsley-type='" + t + "' "; }
+- P.trigger = function(event){ return "parsley-trigger='" + event + "' "; }
+- P.notblank = function(){ return "parsley-notblank='true' "; } 
+- P.minlength = function(min){ return "parsley-minlength='" + min + "' "; }
+- P.maxlength = function(max){ return "parsley-maxlength='" + max + "' "; } 
+- P.dateIso = function(){ return "parsley-type='dateIso'"; } 
+
+//-# 可以自由添加Parsely validation条件的text attributes: condition, required, span, ref, query
+- var _addCondition = function(attr, newCon){attr.condition = attr.condition ? attr.condition + ' ' + newCon : newCon}
+- var addCondition = function(attr, newCon){if(!attr.condition || attr.condition.indexOf(newCon) < 0){_addCondition(attr, newCon)}}
+
+//- 调试用
+//- - var _addCondition = function(attr, newCon){attr.condition = attr.condition ? attr.condition + ' ' + newCon : newCon; console.log("condition: ", attr.condition); return attr;}
+//- - var addCondition = function(attr, newCon){if(!attr.condition || attr.condition.indexOf(newCon) < 0){return _addCondition(attr, newCon)}}
+
+
+//-# auto-insert 表达式计算器
+- A = {} 
+- A.currentUserName = function(){return 'Meteor.user().profile.fullname'}
+- A.docId = function(docName){return "this.view.dataManager.doc." + docName + "Id || BP.AbstractDataManager._state.get('" + docName + "')._id"}

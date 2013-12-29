@@ -78,120 +78,144 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p> 条件wrappers。帮助BP插入权限控制helpers， 参考：<a href="../ls/adapter.html">adpater.ls</a>, <a href="../ls/permission.html">permission.ls</a></p>
+<p>控制仅在某个face中显示</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre>mixin _<span class="keyword">if</span>-action(action)
-  | {{<span class="comment">#if bp-action-is '#{action}'}}</span>
+            <div class="content"><div class='highlight'><pre>mixin <span class="keyword">if</span>-face(face)
+  | {{<span class="comment">#if bp-face-is '#{face}'}}</span>
+  block
+  | {{/<span class="keyword">if</span>}}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>是否允许当前用户对数据（默认为当前，除非给出citedDoc），进行某种操作（go-create, go-update, create, update, view; 以及其它用户通过add-links增加的action）</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>mixin <span class="keyword">if</span>-bp-permit(action, citedDoc)
+  - <span class="reserved">var</span> citedDocStr = attributes.citedDoc ? <span class="string">"'"</span> + attributes.citedDoc + <span class="string">"'"</span> : <span class="string">''</span>
+  | {{<span class="comment">#if bp-permit this '#{action}' #{citedDocStr}}}</span>
+  block
+  | {{/<span class="keyword">if</span>}}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>是否允许当前用户对当前（默认为当前，除非给出citedDoc）的某个属性（attr），进行某种操作</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>mixin <span class="keyword">if</span>-bp-attribute-permit(attr, action)
+  - <span class="reserved">var</span> citedDoc = attributes.citedDoc ? attributes.citedDoc : <span class="string">''</span>
+  | {{<span class="comment">#if bp-attribute-permit this '#{attr}' '#{action}' '#{citedDoc}'}}</span>
   block
   | {{/<span class="keyword">if</span>}}
 
-mixin _<span class="keyword">if</span>-bp-permit(action, citedDoc)
-  <span class="regexp">//- bp-can: go-create | go-update | create | update | delete
-  - var citedDocStr = citedDoc ? ("'" + citedDoc + "'") : ''
-  | {{<span class="comment">#if bp-permit this '#{action}' #{citedDocStr}}}</span>
-  block
-  | {{/if}}
 
-
-mixin _if-bp-attribute-permit(attr, action)
-  - var citedDoc = attributes.citedDoc ? attributes.citedDoc : ''
-  | {{<span class="comment">#if bp-attribute-permit this '#{attr}' '#{action}' '#{citedDoc}'}}</span>
-  block
-  | {{/if}}
-
-mixin _if-else-attribute-permit(attr, action)
+mixin <span class="keyword">if</span>-<span class="keyword">else</span>-attribute-permit(attr, action)
   | {{<span class="comment">#if bp-attribute-permit this '#{attr}' '#{action}'}}</span>
   block
-
-mixin _else()
+    
+<span class="regexp">//- 和上面的if-else-attribute-permit配合一同使用
+mixin else()
   | {{else}}
   block
   | {{/if}}
 
-mixin _mark-current-doc-id()
+mixin mark-current-doc-id()
   .current-doc-id(bp-doc-id='{{_id}}')
     block
 
-//</span>- button和link-button的本质区别在于，link本质是导航，不对数据进行任何操作，button是操作，操作后依据结果导航。
-mixin _guarded-permission-<span class="keyword">and</span>-action-button(action, label)
-  +_<span class="keyword">if</span>-action(action)
-    +_guarded-permission-button(action, label)(attributes)
-
-mixin _guarded-permission-button(action, label)
-  +_<span class="keyword">if</span>-bp-permit(action)
-    +_link-button(action, <span class="literal">null</span>, <span class="literal">true</span>)(attributes) 
-      <span class="keyword">if</span> label
+mixin guarded-button(action, label)
+  +if-bp-permit(action)(attributes)
+    - attributes.isButton = true
+    +link-button(action, null, true)(attributes) 
+      if label
         | <span class="comment">#{label}</span>
 
-mixin _link-button(action, href, isLink, label)
-  - <span class="reserved">var</span> path = attributes.path ? attributes.path : action
-  - <span class="reserved">var</span> href = href || (isLink ? (<span class="string">"{{bp-path-for '"</span>+ path.camelize(<span class="literal">false</span>) +<span class="string">"' this}}"</span>) : <span class="string">'#'</span>)
-  - <span class="reserved">var</span> tooltip = attributes.label ? attributes.label : <span class="string">''</span>
+mixin link-button(action, href, isLink, label)
+  - var path = attributes.path ? attributes.path : action
+  - var href = href || (isLink ? ("{{bp-path-for '"+ path.camelize(false) +"' this}}") : '<span class="comment">#')</span>
+  - var tooltip = attributes.label ? attributes.label : '' //</span> 将label作为tooltip显示
   - <span class="reserved">var</span> classNames = <span class="string">'bp-'</span> + action + <span class="string">' '</span> + (attributes.classNames ? attributes.classNames : <span class="string">''</span>)
-  - classNames = attributes.isButton ? <span class="string">"ui icon tiny button "</span> + classNames : classNames
-  - <span class="keyword">if</span>(action == <span class="string">'delete'</span>){<span class="reserved">var</span> bpDocId =<span class="string">"{{_id}}"</span>} <span class="regexp">// 列表中出现delete按钮时，需要分清是哪个doc
-  a(href=href, class=classNames, title=tooltip, bp-doc-id=bpDocId)
-    - if(action == 'next') //</span> next的文字出现在前面，图标在后面，和其它相反
+  - classNames = attributes.isButton ? <span class="string">"ui icon tiny button "</span> + classNames : classNames <span class="regexp">// Semantic UI button
+  - if(action == 'delete'){var bpDocId ="{{_id}}"} //</span> 列表中出现<span class="keyword">delete</span>按钮时，需要分清是哪个doc
+  a(href=href, <span class="class"><span class="keyword">class</span>=<span class="title">classNames</span>, <span class="title">title</span>=<span class="title">tooltip</span>, <span class="title">bp-doc-id</span>=<span class="title">bpDocId</span>)</span>
+    - <span class="keyword">if</span>(action == <span class="string">'next'</span>) <span class="regexp">// next的文字出现在前面，图标在后面，和其它相反
       block
       i.fa.fa-arrow-right.fa-fw
-    - <span class="keyword">else</span>
-      <span class="reserved">case</span> action
-        <span class="keyword">when</span> <span class="string">'go'</span>         :   i.fa.fa-reply.fa-fw 
-        <span class="keyword">when</span> <span class="string">'create'</span>     :   i.fa.fa-plus.fa-fw 
-        <span class="keyword">when</span> <span class="string">'go-create'</span>  :   i.fa.fa-plus.fa-fw 
-        <span class="keyword">when</span> <span class="string">'go-update'</span>  :   i.fa.fa-pencil.fa-fw 
-        <span class="keyword">when</span> <span class="string">'delete'</span>     :   i.fa.fa-trash-o.fa-fw 
-        <span class="keyword">when</span> <span class="string">'previous'</span>   :   i.fa.fa-arrow-left.fa-fw
-        <span class="attribute">defaule</span>: i
+    - else
+      case action
+        when 'go'         :   i.fa.fa-reply.fa-fw 
+        when 'create'     :   i.fa.fa-plus.fa-fw 
+        when 'go-create'  :   i.fa.fa-plus.fa-fw 
+        when 'go-update'  :   i.fa.fa-pencil.fa-fw 
+        when 'delete'     :   i.fa.fa-trash-o.fa-fw 
+        when 'previous'   :   i.fa.fa-arrow-left.fa-fw
+        defaule: i
       block
 
-mixin _guarded-link(action)
-  +_<span class="keyword">if</span>-bp-permit(action, attributes.citedDoc, attributes.citedViewType)
-    +_link-button(action, <span class="literal">null</span>, <span class="literal">true</span>)(attributes)
+mixin guarded-link(action)
+  +if-bp-permit(action)(attributes)
+    +link-button(action, null, true)(attributes)
 
-mixin _previous-link()
+mixin previous-link()
   | {{<span class="comment">#if bp-pre-link}}</span>
-  +_link-button(<span class="string">'previous'</span>, <span class="string">'{{bp-pre-link}}'</span>)
+  +link-button('previous', '{{bp-pre-link}}')
     | 上一条
-  | {{/<span class="keyword">if</span>}} 
+  | {{/if}} 
 
-mixin _next-link()
+mixin next-link()
   | {{<span class="comment">#if bp-next-link}}</span>
-  +_link-button(<span class="string">'next'</span>, <span class="string">'{{bp-next-link}}'</span>)
+  +link-button('next', '{{bp-next-link}}')
     | 下一条
-  | {{/<span class="keyword">if</span>}}
+  | {{/if}}
 
-mixin _show-reference(ref, query)
-  - <span class="reserved">var</span> referredViewName = bp.getRefName(ref)
-  - <span class="keyword">if</span>(references.none(referredViewName)){references.push({<span class="attribute">referredViewName</span>: <span class="string">'homework'</span>, <span class="attribute">query</span>: query});} <span class="regexp">// 一个reference可在多个域标注
-  i.fa.fa-info.reference(bp-view-name = 'ref-' + referredViewName)
+//</span>- mixin show-reference(ref, query)
+<span class="regexp">//-   - var referredViewName = bp.getRefName(ref)
+//</span>-   - <span class="keyword">if</span>(references.none(referredViewName)){references.push({<span class="attribute">referredViewName</span>: <span class="string">'homework'</span>, <span class="attribute">query</span>: query});} <span class="regexp">// 一个reference可在多个域标注
+//</span>-   i.fa.fa-info.reference(bp-view-name = <span class="string">'ref-'</span> + referredViewName)
 
 mixin add-addtional-links(links)
-  - topView.additionalLinks = topView.additionalLinks ? topView.additionalLinks : []
-  each link in links
-    - topView.additionalLinks.push(link)
-    - var isNegative = link.guard[0] == '!'
-    - if(isNegative){link.guard = link.guard.from(1)}
-    - console.log("isNegative: ", isNegative, link.guard, link.context)
-    if isNegative
+  - view.additionalLinks = view.additionalLinks ? view.additionalLinks : []
+  each link <span class="keyword">in</span> links
+    - view.additionalLinks.push(link)
+    - <span class="reserved">var</span> isNegative = link.guard[<span class="number">0</span>] == <span class="string">'!'</span>
+    - <span class="keyword">if</span>(isNegative){link.guard = link.guard.from(<span class="number">1</span>)}
+    - console.log(<span class="string">"isNegative: "</span>, isNegative, link.guard, link.context)
+    <span class="keyword">if</span> isNegative
       | {{<span class="comment">#unless #{link.guard}}}</span>
-      +_with-or-without-context(link)
-      | {{/unless}}
-    else
+      +_<span class="reserved">with</span>-<span class="keyword">or</span>-without-context(link)
+      | {{/<span class="keyword">unless</span>}}
+    <span class="keyword">else</span>
       | {{<span class="comment">#if #{link.guard}}}</span>
-      +_with-or-without-context(link)
-      | {{/if}}
+      +_<span class="reserved">with</span>-<span class="keyword">or</span>-without-context(link)
+      | {{/<span class="keyword">if</span>}}
 
-mixin _with-or-without-context(link)
-  - var citedDoc = link.to.split('.')[0]
-  - var citedViewType = link.to.split('.')[1]
-  if link.context
+mixin _<span class="reserved">with</span>-<span class="keyword">or</span>-without-context(link)
+  - <span class="reserved">var</span> citedDoc = link.to.split(<span class="string">'.'</span>)[<span class="number">0</span>]
+  - <span class="reserved">var</span> citedViewType = link.to.split(<span class="string">'.'</span>)[<span class="number">1</span>]
+  <span class="keyword">if</span> link.context
     | {{<span class="comment">#with #{link.context}}}</span>
-    +_guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
-    | {{/with}}
-  else
-    +_guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)</pre></div></div>
+    +guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
+    | {{/<span class="reserved">with</span>}}
+  <span class="keyword">else</span>
+    +guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)</pre></div></div>
             
         </li>
         

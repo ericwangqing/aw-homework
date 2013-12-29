@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ui-helpers.ls</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="_commons.html">
+                _commons.ls
+              </a>
+            
+              
+              <a class="source" href="adapter.html">
+                adapter.ls
+              </a>
+            
+              
+              <a class="source" href="frame.html">
+                frame.ls
+              </a>
+            
+              
+              <a class="source" href="router.html">
+                router.ls
+              </a>
+            
+              
+              <a class="source" href="state.html">
+                state.ls
+              </a>
+            
+              
+              <a class="source" href="ui-helpers.html">
+                ui-helpers.ls
+              </a>
+            
+              
+              <a class="source" href="validation-error-messages.html">
+                validation-error-messages.ls
+              </a>
+            
+              
+              <a class="source" href="_jade.html">
+                _jade.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="names.html">
+                names.ls
+              </a>
+            
+              
+              <a class="source" href="permission.html">
+                permission.ls
+              </a>
+            
+              
+              <a class="source" href="rule-parser.html">
+                rule-parser.ls
+              </a>
+            
+              
+              <a class="source" href="rule.html">
+                rule.ls
+              </a>
+            
+              
+              <a class="source" href="_view.html">
+                _view.ls
+              </a>
+            
+              
+              <a class="source" href="detail-view.html">
+                detail-view.ls
+              </a>
+            
+              
+              <a class="source" href="face.html">
+                face.ls
+              </a>
+            
+              
+              <a class="source" href="list-view.html">
+                list-view.ls
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ui-helpers.ls</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="property">@BP</span> ||= {}
+all-input-field-selector = <span class="string">'input, select, textarea'</span>
+
+<span class="function"><span class="title">restrict-selector-to-view</span> = <span class="params">(selector, view-selector)</span>-&gt;</span>
+  (selector.split <span class="string">','</span> .map<span class="function"> -&gt;</span> it.trim! |&gt; (<span class="string">"<span class="subst">#{view-selector}</span> "</span> +) ).join <span class="string">', '</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">Abstract-Form</span></span>
+  <span class="function"><span class="params">(view)</span>-&gt;</span>
+    <span class="property">@view</span> = view
+    <span class="property">@collection</span> = BP.Collection.get view.names.meteor-collection-name
+    <span class="property">@view-selector</span> = <span class="string">"div[bp-view-name='<span class="subst">#{<span class="property">@view</span>.name}</span>']"</span>
+    <span class="property">@events-handlers</span> = {}
+    <span class="property">@rv</span> = restrict-selector-to-view _, <span class="property">@view-selector</span>
+
+  <span class="attribute">register-event-handlers</span>:<span class="function"> -&gt;</span>
+    <span class="property">@events-handlers</span>[<span class="string">'click '</span> + <span class="property">@rv</span> <span class="string">'a.bp-delete'</span>] = <span class="property">@delete-submit</span>
+    <span class="property">@events-handlers</span>
+    
+  <span class="attribute">delete-submit</span>: (e)!~&gt;
+    e.prevent-<span class="reserved">default</span>
+    <span class="keyword">if</span> confirm <span class="string">"真的要删除吗？"</span>
+      doc-id = $ e.current-target .attr <span class="string">'bp-doc-id'</span>
+      <span class="property">@collection</span>.remove {<span class="attribute">_id</span>: doc-id} <span class="comment"># 对collection的操作是否应该移回到component中？</span>
+      alert <span class="string">'remove successful!'</span>
+      window.location.href = e.current-target.href
+
+  <span class="attribute">show-hide-references</span>: !~&gt;
+    $ <span class="property">@rv</span> <span class="string">'i.reference'</span> .click (e)!<span class="function">-&gt;</span> <span class="comment"># 可否考虑为全页面就设定一次呢？</span>
+      ref = $ e.current-target .attr <span class="string">'bp-view-name'</span>
+      $ <span class="string">"div.reference[bp-view-name='#ref']"</span> .toggle!
+
+<span class="class"><span class="keyword">class</span> @<span class="title">BP</span>.<span class="title">Form</span> <span class="keyword">extends</span> <span class="title">Abstract-Form</span></span>
+  
+  <span class="attribute">register-event-handlers</span>:<span class="function"> -&gt;</span>
+    <span class="keyword">super</span> ...
+    <span class="property">@events-handlers</span>[<span class="string">'focus '</span> + <span class="property">@rv</span> <span class="string">'div.controls input, div.controls textarea'</span>] = <span class="property">@tab-focuse-with-div-control-highlight</span>
+    <span class="property">@events-handlers</span>[<span class="string">'blur '</span>  + <span class="property">@rv</span> <span class="string">'div.controls input, div.controls textarea'</span>] = <span class="property">@tab-blur-with-div-control-highlight</span>
+    <span class="property">@events-handlers</span>[<span class="string">'click '</span> + <span class="property">@rv</span> <span class="string">'a.bp-create'</span>] = <span class="property">@events-handlers</span>[<span class="string">'click '</span> + <span class="property">@rv</span> <span class="string">'a.bp-update'</span>] = <span class="property">@create-and-update-submit</span>
+    <span class="property">@events-handlers</span>
+
+  <span class="attribute">tab-focuse-with-div-control-highlight</span>: (e)!<span class="function">-&gt;</span>
+    control = $ e.current-target 
+    control.parents!add-<span class="class"><span class="keyword">class</span> '<span class="title">focus</span>'</span>
+
+  <span class="attribute">tab-blur-with-div-control-highlight</span>: (e)!<span class="function">-&gt;</span>
+    control = $ e.current-target 
+    control.parents!remove-<span class="class"><span class="keyword">class</span> '<span class="title">focus</span>'</span>
+    <span class="comment"># control.find 'input, textarea' .focus! </span>
+
+  <span class="attribute">get-typeahead-render</span>: <span class="function"><span class="params">({config-name, input-name, candidates})</span>-&gt;</span>
+    ~&gt;
+      $ <span class="property">@rv</span> <span class="string">"input[name='<span class="subst">#{input-name}</span>']"</span> .typeahead <span class="keyword">do</span>
+        <span class="attribute">name</span>:  config-name
+        <span class="attribute">local</span>: [str.trim! <span class="keyword">for</span> str <span class="keyword">in</span> candidates.split <span class="string">','</span>]
+
+  <span class="attribute">get-multi-ahead-render</span>: <span class="function"><span class="params">(select-name, config)</span>-&gt;</span>
+    ~&gt;
+      <span class="comment"># Meteor.defer ~&gt;</span>
+      multi-ahead = $ <span class="property">@rv</span> <span class="string">"select[name='<span class="subst">#{select-name}</span>']"</span>
+      $ <span class="property">@rv</span> <span class="string">"select[name='<span class="subst">#{select-name}</span>']"</span> .select2 (config <span class="keyword">or</span> {})
+
+  <span class="attribute">add-validation</span>: !~&gt; 
+    <span class="keyword">try</span>
+      form = $ <span class="property">@rv</span> <span class="string">'form'</span> .first!
+      <span class="comment"># console.log "form.context is: ", form.context</span>
+      <span class="keyword">for</span>m.parsley() <span class="comment"># if form.context # Meteor会在这里执行两次，第一次时Parsley还没有完成form初始化</span>
+    <span class="keyword">catch</span> error
+      console.log error
+
+  <span class="attribute">create-and-update-submit</span>: (e)!~&gt; 
+    e.prevent-<span class="reserved">default</span>!
+    <span class="keyword">if</span> $ <span class="property">@rv</span> <span class="string">'form'</span> .parsley <span class="string">'validate'</span>
+      <span class="property">@update-doc-value</span>!
+      <span class="property">@collection</span>.upsert {<span class="attribute">_id</span>: <span class="property">@doc</span>._id}, <span class="property">@doc</span>
+      alert <span class="string">'submit successful!'</span>
+      window.location.href = e.current-target.href
+
+  <span class="attribute">update-doc-value</span>: !~&gt;
+    $ <span class="property">@rv</span> <span class="string">'form'</span> .find all-input-field-selector .each (index, input)!~&gt;
+      <span class="property">@update-by-json-path</span> ($ input .attr <span class="string">'name'</span>), ($ input .val!)
+    <span class="property">@insert-auto-fields</span>!
+
+  <span class="attribute">update-by-json-path</span>: !<span class="function"><span class="params">(json-path, value)</span>-&gt;</span> <span class="comment"># TODO: 改为JSON Path实现，应对复杂表单</span>
+      <span class="comment"># 目前仅仅是简单表单，input的name直接对应doc的attribute</span>
+      <span class="property">@doc</span>[json-path] = value
+
+  <span class="attribute">insert-auto-fields</span>: !<span class="function">-&gt;</span>
+    <span class="keyword">for</span> attr, auto-config <span class="keyword">of</span> <span class="property">@view</span>.data-manager.auto-insert-fields
+      eval (<span class="string">"value = "</span> + auto-config.expression)
+      <span class="property">@doc</span>[attr.camelize(<span class="literal">false</span>)] = value
+
+
+<span class="class"><span class="keyword">class</span> @<span class="title">BP</span>.<span class="title">Table</span> <span class="keyword">extends</span> <span class="title">Abstract-Form</span></span>
+  <span class="comment"># ------------- 下面改用Router的Before 来实现了 ----------------------</span>
+  <span class="comment"># register-event-handlers: (events-handlers)!-&gt;</span>
+  <span class="comment">#   super ...</span>
+  <span class="comment">#   events-handlers['click a.bp-update'] = @record-previous-and-next-link-in-session # 去到detail时，需要渲染“上一条”、“下一条”</span>
+
+  <span class="comment"># record-previous-and-next-link-in-session: (e)!-&gt;</span>
+  <span class="comment">#   current-tr = $ e.current-target .closest 'tr'</span>
+  <span class="comment">#   pre = current-tr.prev().find('a.bp-update').attr 'href'</span>
+  <span class="comment">#   next = current-tr.next().find('a.bp-update').attr 'href'</span>
+  <span class="comment">#   BP.State.set {pre-href: pre, next-href: next}</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

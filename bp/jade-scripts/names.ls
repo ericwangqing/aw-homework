@@ -1,4 +1,4 @@
-# used both at developing time by jade and runtime by meteor
+## used both at developing time by jade and runtime by meteor
 class Names
   (doc-name)-> 
     @ <<< do

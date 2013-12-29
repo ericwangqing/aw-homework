@@ -1,3 +1,5 @@
+## View是Component在Web page上的呈现。View使用Data-mananger获取数据。每个View有几种不同的face，face上有一些action（以button和link形式存在）。
+
 # 本文件命名加下划线，因为需要让Meteor在list-view.ls和detail-view.ls之前加载。
 class @BP.View extends BP._View
   @doc-grouped-views = @_dgv = {}
@@ -65,7 +67,7 @@ class @BP.View extends BP._View
 
   get-current-action: ~> action = @current-face-name
 
-  current-action-checker: (action-name)~> action-name is @current-face-name
+  current-face-checker: (action-name)~> action-name is @current-face-name
 
   route: !->
     self = @

@@ -63,8 +63,11 @@ class Rule
     default true
 
   is-apply-on-current-attribute-and-action: (doc, attr-name, action)-> # doc: 目前attribute只支持update，
-    throw new Error "BP only support 'update' action permission checker on attribute, and current action is: #{action}" if action isnt 'update'
-    (@item.update? and @satisfy-query doc) or (@attributes[attr-name]? and (@attributes[attr-name].edit? or @attributes[attr-name].view?))
+    if action is 'update'
+      (@item.update? and @satisfy-query doc) or (@attributes[attr-name]? and (@attributes[attr-name].edit? or @attributes[attr-name].view?))
+    else if action is 'view'
+      (@item.view? and @satisfy-query doc) or (@attributes[attr-name]? and @attributes[attr-name].view?)
+
 
   satisfy-query: (doc)->
     collection = BP.Collection.get-by-doc-name @doc-name
@@ -103,6 +106,9 @@ class Rule
     else 
       @item.update
 
+  check-attribute-viewable: (attr-name)->
+    rule = @attributes[attr-name]
+    if rule? and rule.view? then rule.view else @item.view
 
 @BP ||= {}
 if module? then module.exports = Rule else @BP.Rule = Rule # 让Jade和Meteor都可以使用

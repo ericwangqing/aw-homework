@@ -5,7 +5,7 @@
   View = require('./_view').View;
   Names = require('./Names');
   module.exports = {
-    getView: function(docName, viewName, templateName, templateType){
+    getView: function(docName, templateName, templateType){
       return this.view = View.getView.apply(View, arguments);
     },
     setMainNav: function(templateNames){
@@ -41,7 +41,6 @@
     },
     getCitedDoc: function(attr, cited){
       var docName, cite;
-      console.log("attr: " + attr + ", cited: ", cited);
       for (docName in cited) {
         cite = cited[docName];
         if (cite.attributes && in$(attr, cite.attributes)) {

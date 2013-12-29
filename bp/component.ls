@@ -1,3 +1,5 @@
+## Component是BP数据（collection）展示和操作的基本单位。Component有list和detail两种view，对一种数据（doc）进行展示和操作。
+
 top = @
 class @BP.Collection
   @registry = {}

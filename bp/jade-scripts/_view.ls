@@ -1,16 +1,14 @@
-# used both at developing time by jade and runtime by meteor
+## used both at developing time by jade and runtime by meteor
 class View
   @registry = {}
-  @get-view = (doc-name, view-name, template-name, type)->
-    throw new Error "view: '#view-name' already exists" if @registry[view-name]
-    @registry[view-name] = new View doc-name, view-name, template-name, type 
+  @get-view = (doc-name, template-name, type)->
+    throw new Error "view: '#template-name' already exists" if @registry[template-name]
+    @registry[template-name] = new View doc-name, template-name, type 
 
-  (@doc-name, @name, @template-name, @type)->
+  (@doc-name, @template-name, @type)->
+    @name = @template-name
     @is-main-nav = false
     @referred-views = {}
-
-  add-referred-view: (view-name, referred-as)!-> #defer to resolve
-    @referred-views[view-name] = referred-as 
 
 @BP ||= {}
 if module? then module.exports = {View} else @BP._View = View # 让Jade和Meteor都可以使用

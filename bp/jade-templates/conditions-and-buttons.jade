@@ -1,42 +1,43 @@
-mixin _if-action(action)
-  | {{#if bp-action-is '#{action}'}}
+//-#  条件wrappers。帮助BP插入权限控制helpers， 参考：[adpater.ls](../ls/adapter.html), [permission.ls](../ls/permission.html)
+
+//-# 控制仅在某个face中显示
+mixin if-face(face)
+  | {{#if bp-face-is '#{face}'}}
   block
   | {{/if}}
 
-mixin _if-bp-permit(action, citedDoc)
-  //- bp-can: go-create | go-update | create | update | delete
-  - var citedDocStr = citedDoc ? ("'" + citedDoc + "'") : ''
+//-# 是否允许当前用户对数据（默认为当前，除非给出citedDoc），进行某种操作（go-create, go-update, create, update, view; 以及其它用户通过add-links增加的action）
+mixin if-bp-permit(action, citedDoc)
+  - var citedDocStr = attributes.citedDoc ? "'" + attributes.citedDoc + "'" : ''
   | {{#if bp-permit this '#{action}' #{citedDocStr}}}
   block
   | {{/if}}
 
-
-mixin _if-bp-attribute-permit(attr, action)
+//-# 是否允许当前用户对当前（默认为当前，除非给出citedDoc）的某个属性（attr），进行某种操作
+mixin if-bp-attribute-permit(attr, action)
   - var citedDoc = attributes.citedDoc ? attributes.citedDoc : ''
   | {{#if bp-attribute-permit this '#{attr}' '#{action}' '#{citedDoc}'}}
   block
   | {{/if}}
 
-mixin _if-else-attribute-permit(attr, action)
+
+mixin if-else-attribute-permit(attr, action)
   | {{#if bp-attribute-permit this '#{attr}' '#{action}'}}
   block
-
-mixin _else()
+    
+//- 和上面的if-else-attribute-permit配合一同使用
+mixin else()
   | {{else}}
   block
   | {{/if}}
 
-mixin _mark-current-doc-id()
+mixin mark-current-doc-id()
   .current-doc-id(bp-doc-id='{{_id}}')
     block
 
-//- button和link-button的本质区别在于，link本质是导航，不对数据进行任何操作，button是操作，操作后依据结果导航。
-mixin _guarded-permission-and-action-button(action, label)
-  +_if-action(action)
-    +_guarded-permission-button(action, label)(attributes)
-
-mixin _guarded-permission-button(action, label)
-  +_if-bp-permit(action)
+mixin guarded-button(action, label)
+  +if-bp-permit(action)(attributes)
+    - attributes.isButton = true
     +_link-button(action, null, true)(attributes) 
       if label
         | #{label}
@@ -44,9 +45,9 @@ mixin _guarded-permission-button(action, label)
 mixin _link-button(action, href, isLink, label)
   - var path = attributes.path ? attributes.path : action
   - var href = href || (isLink ? ("{{bp-path-for '"+ path.camelize(false) +"' this}}") : '#')
-  - var tooltip = attributes.label ? attributes.label : ''
+  - var tooltip = attributes.label ? attributes.label : '' // 将label作为tooltip显示
   - var classNames = 'bp-' + action + ' ' + (attributes.classNames ? attributes.classNames : '')
-  - classNames = attributes.isButton ? "ui icon tiny button " + classNames : classNames
+  - classNames = attributes.isButton ? "ui icon tiny button " + classNames : classNames // Semantic UI button
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
   a(href=href, class=classNames, title=tooltip, bp-doc-id=bpDocId)
     - if(action == 'next') // next的文字出现在前面，图标在后面，和其它相反
@@ -63,34 +64,34 @@ mixin _link-button(action, href, isLink, label)
         defaule: i
       block
 
-mixin _guarded-link(action)
-  +_if-bp-permit(action, attributes.citedDoc, attributes.citedViewType)
+mixin guarded-link(action)
+  +if-bp-permit(action)(attributes)
     +_link-button(action, null, true)(attributes)
 
-mixin _previous-link()
+mixin previous-link()
   | {{#if bp-pre-link}}
   +_link-button('previous', '{{bp-pre-link}}')
     | 上一条
   | {{/if}} 
 
-mixin _next-link()
+mixin next-link()
   | {{#if bp-next-link}}
   +_link-button('next', '{{bp-next-link}}')
     | 下一条
   | {{/if}}
 
-mixin _show-reference(ref, query)
-  - var referredViewName = bp.getRefName(ref)
-  - if(references.none(referredViewName)){references.push({referredViewName: 'homework', query: query});} // 一个reference可在多个域标注
-  i.fa.fa-info.reference(bp-view-name = 'ref-' + referredViewName)
+//- mixin show-reference(ref, query)
+//-   - var referredViewName = bp.getRefName(ref)
+//-   - if(references.none(referredViewName)){references.push({referredViewName: 'homework', query: query});} // 一个reference可在多个域标注
+//-   i.fa.fa-info.reference(bp-view-name = 'ref-' + referredViewName)
 
+//- TODO：用relation声明数据关系后，进一步改善。
 mixin add-addtional-links(links)
-  - topView.additionalLinks = topView.additionalLinks ? topView.additionalLinks : []
+  - view.additionalLinks = view.additionalLinks ? view.additionalLinks : []
   each link in links
-    - topView.additionalLinks.push(link)
+    - view.additionalLinks.push(link)
     - var isNegative = link.guard[0] == '!'
     - if(isNegative){link.guard = link.guard.from(1)}
-    - console.log("isNegative: ", isNegative, link.guard, link.context)
     if isNegative
       | {{#unless #{link.guard}}}
       +_with-or-without-context(link)
@@ -105,10 +106,10 @@ mixin _with-or-without-context(link)
   - var citedViewType = link.to.split('.')[1]
   if link.context
     | {{#with #{link.context}}}
-    +_guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
+    +guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
     | {{/with}}
   else
-    +_guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
+    +guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
 
 
 

@@ -21,13 +21,13 @@ class @BP.Template-adapter
       [method.call @ for method in @renderers]
 
   create-helpers: !->
+    self = @
     @helpers =
-      "bs"                   :  (attr)-> # 克服Meteor Handlebars不能使用中文key，形如{{中文}}会出错的问题。改用{{bs '中文'}}
-                                  new Handlebars.Safe-string @[attr] if @[attr]
+      "bs"                   :  @enable-bs!
       "bp-permit"            :  @view.is-permit
       "bp-attribute-permit"  :  @view.is-attribute-permit
       # "bp-doc-permit"        :  @permission.doc-permission-checker
-      "bp-action-is"         :  @view.current-action-checker
+      "bp-face-is"           :  @view.current-face-checker
       "bp-path-for"          :  ~> @view.get-path.apply @view, &
       'bp-links'             :  @enable-get-links-html-str-for-tooltipster! 
 
@@ -40,7 +40,18 @@ class @BP.Template-adapter
 
   create-event-handlers: !-> @events-handlers = @view.ui.register-event-handlers!
 
-  enable-tooltips: !-> $ '.tooltip' .tooltipster interactive: true
+  ## 克服Meteor Handlebars不能使用中文key，形如{{中文}}会出错的问题。改用{{bs '中文'}}
+  enable-bs: ->
+    self = @
+    (attr)-> 
+      if value = @[attr]
+        new Handlebars.Safe-string @[attr]
+      else if not self.view.is-attribute-permit @, attr, 'view' # 注意！！还要考虑citedDoc的情况
+        new Handlebars.Safe-string '<i class="bp-icon fa fa-eye-slash tooltip" title="没有权限查看"> </i>'
+      else
+        ''
+
+  enable-tooltips: -> $ '.tooltip' .tooltipster interactive: true
 
   enable-get-links-html-str-for-tooltipster: -> 
     self = @
@@ -100,12 +111,12 @@ class Detail-template-adpater extends BP.Template-adapter
   enable-html-editor-field: ->
     (editor-id, toolbar-id, placeholder)!~>
       Meteor.defer -> # 这里需要等parentNode就位，如果不defer，parentNode会undefined
-        new wysihtml5.Editor editor-id, 
-          toolbar: toolbar-id
-          parser-rules: wysihtml5-parser-rules
-          stylesheets: '/lib/wysihtml5/wysihtml5.css'
-          placeholder-text: placeholder
-      # , 2000
+        if $ "#" + editor-id .length
+          new wysihtml5.Editor editor-id, 
+            toolbar: toolbar-id
+            parser-rules: wysihtml5-parser-rules
+            stylesheets: '/lib/wysihtml5/wysihtml5.css'
+            placeholder-text: placeholder
 
 
 

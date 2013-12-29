@@ -5,23 +5,20 @@
     View.displayName = 'View';
     var prototype = View.prototype, constructor = View;
     View.registry = {};
-    View.getView = function(docName, viewName, templateName, type){
-      if (this.registry[viewName]) {
-        throw new Error("view: '" + viewName + "' already exists");
+    View.getView = function(docName, templateName, type){
+      if (this.registry[templateName]) {
+        throw new Error("view: '" + templateName + "' already exists");
       }
-      return this.registry[viewName] = new View(docName, viewName, templateName, type);
+      return this.registry[templateName] = new View(docName, templateName, type);
     };
-    function View(docName, name, templateName, type){
+    function View(docName, templateName, type){
       this.docName = docName;
-      this.name = name;
       this.templateName = templateName;
       this.type = type;
+      this.name = this.templateName;
       this.isMainNav = false;
       this.referredViews = {};
     }
-    prototype.addReferredView = function(viewName, referredAs){
-      this.referredViews[viewName] = referredAs;
-    };
     return View;
   }());
   this.BP || (this.BP = {});

@@ -48,7 +48,8 @@ class Permission
     current-active-rules = @get-active-rules-on-attribute-action doc-name, doc, attr-name, action
     if current-active-rules.length > 0
       combined-rule = @combined-rules current-active-rules 
-      combined-rule.check-attribute-editable attr-name
+      combined-rule.check-attribute-editable attr-name if action is 'update'
+      combined-rule.check-attribute-viewable attr-name if action is 'view'
     else
       true
 

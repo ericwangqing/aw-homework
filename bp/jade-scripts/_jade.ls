@@ -1,11 +1,11 @@
 # !!! 注意，此文件不是运行时代码，是开发时代码。
-# 给Jade用，根据template中的定义，动态编译出Views，以便BP Router加载。
+## 给Jade用，根据template中的定义，动态编译出Views，以便BP Router加载。
 
 require! [fs, './_view'.View, './Names']
 
 module.exports =
 
-  get-view: (doc-name, view-name, template-name, template-type)->
+  get-view: (doc-name, template-name, template-type)->
     @view = View.get-view.apply View, &
 
   set-main-nav: (template-names)->
@@ -25,7 +25,7 @@ module.exports =
       return doc-name if cite.attributes and attr in cite.attributes 
 
   get-cited-doc: (attr, cited)->
-    console.log "attr: #attr, cited: ", cited
+    # console.log "attr: #attr, cited: ", cited
     for doc-name, cite of cited
       return doc-name if cite.attributes and attr in cite.attributes 
     null

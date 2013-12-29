@@ -93,8 +93,8 @@ mixin table(items, columnNames, attributesNames)
   block
   +add-addtional-links(tableLinks)
   <span class="keyword">if</span> removedLinks.indexOf(<span class="string">'go-create'</span>) &lt; <span class="number">0</span>
-    +_<span class="keyword">if</span>-action(<span class="string">'list'</span>)
-      +_guarded-link(<span class="string">'go-create'</span>)
+    +<span class="keyword">if</span>-face(<span class="string">'list'</span>)
+      +guarded-link(<span class="string">'go-create'</span>)
   table.ui.table.segment
     thead
       +_head-row(columnNames)
@@ -112,14 +112,14 @@ mixin _head-row(columnNames)
   tr
     +_each-cell(columnNames)
       th(cols=colIndex) <span class="comment">#{cellName}</span>
-    +_<span class="keyword">if</span>-action(<span class="string">'list'</span>)
+    +<span class="keyword">if</span>-face(<span class="string">'list'</span>)
       th(cols=colIndex+<span class="number">1</span>) 操作
 
 mixin _row(attributesNames)
   tr
     +_each-cell(attributesNames)
       +_guarded-cell(cellName)
-    +_<span class="keyword">if</span>-action(<span class="string">'list'</span>)
+    +<span class="keyword">if</span>-face(<span class="string">'list'</span>)
       +_guarded-operation-cell
 
 mixin _each-cell(cellNames)
@@ -141,9 +141,9 @@ mixin _guarded-cell(attr)
 
 mixin _guarded-operation-cell()
   td(cols=colIndex+1) 
-    +_mark-current-doc-id()
-      +_guarded-link('go-update')
-      +_guarded-permission-button('delete')
+    +mark-current-doc-id()
+      +guarded-link('go-update')
+      +guarded-link('delete')
       +add-addtional-links(rowLinks)
 
 //</span>- --------------- 添加links ---------------------------------------------

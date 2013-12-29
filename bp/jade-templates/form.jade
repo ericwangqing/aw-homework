@@ -1,0 +1,50 @@
+include constants-and-utils
+include conditions-and-buttons
+
+//-# BP表单，用于detail视图
+mixin form(item)
+  - mainLinks = [], navLinks = []
+  | {{#with #{item}}}
+  //- 给form加novalidate属性，是为了避免浏览器使用html5的validate。那样会和parsley的校验重复，造成混乱。
+  form.bp-form(parsley-validate, novalidate) 
+    block
+
+    .buttons
+      +if-face('create')
+        +guarded-button('create', '提交')(classNames='positive')
+
+      +if-face('update')
+        +guarded-button('update', '提交')(classNames='positive')
+        +guarded-button('delete', '删除')(classNames='negative')
+
+      +add-addtional-links(mainLinks)
+    
+    .pre-next
+      +previous-link()
+      +next-link()
+      +add-addtional-links(navLinks)
+  | {{/with}}  
+
+
+//-# --------------- 布局用控件 -------------
+mixin row(span)
+  //- 默认为整行布局，划为12栏
+  - var span = span || FORM_SPAN
+  div(data-row-span=span)
+    block
+
+//- TODO: 这里要实现元素的可自动增加、减少的功能
+mixin fieldset(title)
+  fieldset 
+    legend #{title}
+    block
+
+//-# --------------- 添加links --------------
+
+mixin add-main-link(link)
+  - mainLinks.push(link)
+
+
+mixin add-nav-link(link)
+  - navLinks.push(link)
+

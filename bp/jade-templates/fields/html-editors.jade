@@ -1,10 +1,10 @@
-include _commons
-include _texts
+include commons
+include texts
 
 //- 使用了https://github.com/xing/wysihtml5
 mixin html(label, attr)
   - var attr = attr ? attr : label
-  - var editorId = currentViewName + '-' + 'html-editor'
+  - var editorId = viewName + '-' + 'html-editor'
   - var toolbarId = editorId + '-' + 'toolbar'
   //- .wysihtml5-html-editor
   +__html-editor-toolbar(toolbarId)
