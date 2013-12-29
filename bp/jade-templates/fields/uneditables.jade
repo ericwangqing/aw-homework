@@ -8,7 +8,7 @@ mixin ref-text(label, attr)
 mixin ref-list(label, attr)
   - var attr = attr ? attr : label
   - var span = attributes.span || Field_SPAN
-  +wrap-filed-with-label-span(label, span)
+  +wrap-filed-with-label(label, span)
     - var citedDocName = bp.getCitedDocName(attr, cited)
     {{#with #{citedDocName}}}
     if attributes.isOrdered 
@@ -26,21 +26,55 @@ mixin _ref-list-items(attr)
   {{/each}}
 
 mixin ref-links-list(label, attr, face)
+  +_ref-links-list-wrapper(label, attr, face)(attributes)
+    .ui.text.menu.content
+      .header.item 选择链接
+      | {{#each #{_attr}}}
+      a.item(href='#') {{this.title}}
+      | {{/each}}
+
+mixin _ref-links-list-wrapper(label, attr, face)
   - if(!attr){throw new Error("'ref-links-list' requires at least two parameters.")}
   - if(!face){face = attr; attr = label}
   - var span = attributes.span || Field_SPAN
   - var citedDocName = bp.getCitedDocName(attr, cited)
+  - _attr = attr
   {{#with #{citedDocName}}}
-  +wrap-filed-with-label-span(label, span)
-    .ui.text.menu
-      .header.item 选择链接
-      | {{#each #{attr}}}
-      a.item(href='#') {{this.title}}
-      | {{/each}}
+  +wrap-filed-with-label(label, span)
+    block
   {{/with}}
+
+mixin ref-dimmable-links-list(label, attr, face)
+  +_ref-links-list-wrapper(label, attr, face)(attributes)
+    span.content(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');") 查看链接列表
+      i.unordered.list.icon
+    if attributes.isWholePage
+      .ui.page.dimmer
+        .content
+          .center
+            h3 #{_attr}: 
+            | {{#each #{_attr}}}
+            a.item(href='#') {{this.title}}
+            | {{/each}}
+    else
+      .ui.dimmer
+        .content
+          .center
+            span #{_attr}: 
+            | {{#each #{_attr}}}
+            a.item(href='#') {{this.title}}
+            | {{/each}}
+
+
 
 
 //-# 在表单中，自动插入属性。用法示例： +auto-insert('老师', A.currentUserName())
 mixin auto-insert(attr, valueExpression)
   | {{bp-auto-insert '#{attr}' "#{valueExpression}"}}
 
+
+//- ------ 待实现 ------
+  用Semantic UI
+  image
+  step
+  message

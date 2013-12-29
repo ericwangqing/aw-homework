@@ -27,7 +27,7 @@ include ../bp/jade-templates/bp-mixins
         +ref-text('题目')(span=HALF_ROW)
         +ref-text('截止时间')(span=HALF_ROW)
       +row()
-        +ref-links-list('testRefList', 'test')
+        +ref-dimmable-links-list('testRefList', 'test')(isWholePage=true)
       +row()
         +ref-text('要求')(span=HALF_ROW)
     +fieldset('作业内容')

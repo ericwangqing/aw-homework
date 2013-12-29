@@ -75,9 +75,12 @@
         &:focus
             outline: none
 
-    span.content
+    span.content, div.ui.text.menu.content div.header.item, div.ui.text.menu.content a.item
         display: inline-block
         color: lighten($label-color, 15%)
+        &:hover
+            color: darken($label-color, 15%)
+
 
     fieldset
         border: none

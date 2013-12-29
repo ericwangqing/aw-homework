@@ -11,21 +11,21 @@ mixin guarded-input-wrapper(label, attr)
   else      
     +if-face('update')
       +if-else-attribute-permit(attr, 'update')
-        +wrap-filed-with-label-span(label, span)(attributes)
+        +wrap-filed-with-label(label, span)(attributes)
           block 
       +else()
         +_uneditable-content(label, attr, span)
 
     +if-face('create')
       //- 空内容
-      +wrap-filed-with-label-span(label, span)(attributes)
+      +wrap-filed-with-label(label, span)(attributes)
         block 
 
     +if-face('view')   
       +_uneditable-content(label, attr, span)
 
 
-mixin wrap-filed-with-label-span(label, span)
+mixin wrap-filed-with-label(label, span)
   .controls(data-field-span=span)
     if attributes.title
       //- tooltipster的tooltip
@@ -42,7 +42,7 @@ mixin wrap-filed-with-label-span(label, span)
 
 mixin _uneditable-content(label, attr, span)
   //- 不可编辑的域只显示值，并且不可tab导航
-  +wrap-filed-with-label-span(label, span)
+  +wrap-filed-with-label(label, span)
     - var citedClassStr = attributes.clazz ? 'content cited' : 'content'
 
     span.content 

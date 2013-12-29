@@ -45,8 +45,8 @@ mixin guarded-button(action, label)
 mixin _link-button(action, href, isLink, label)
   - var path = attributes.path ? attributes.path : action
   - var href = href || (isLink ? ("{{bp-path-for '"+ path.camelize(false) +"' this}}") : '#')
-  - var tooltip = attributes.label ? attributes.label : '' // 将label作为tooltip显示
-  - var classNames = 'bp-' + action + ' ' + (attributes.classNames ? attributes.classNames : '')
+  - var tooltip = attributes.label ? attributes.label : null // 将label作为tooltip显示
+  - var classNames = 'bp-' + action + (tooltip ? ' tooltip ' : ' ' )+ (attributes.classNames ? attributes.classNames : '')
   - classNames = attributes.isButton ? "ui icon tiny button " + classNames : classNames // Semantic UI button
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
   a(href=href, class=classNames, title=tooltip, bp-doc-id=bpDocId)
