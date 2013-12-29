@@ -73,13 +73,16 @@ class @BP.Form extends Abstract-Form
     e.prevent-default!
     if $ @rv 'form' .parsley 'validate'
       @update-doc-value!
-      @collection.upsert {_id: @doc._id}, @doc
+      # @collection.upsert {_id: @doc._id}, @doc # 注意！！，此处要改进，只
+      console.log "collection-name: #{@view.names.meteor-collection-name}, doc: ", @doc
+      Meteor.call 'bp-update-doc', @view.names.meteor-collection-name, @doc, -> # 此处不能直接在客户端用@collection.upsert，否则用户那些无权限查看的域，upsert后就消失了。
       alert 'submit successful!'
       window.location.href = e.current-target.href
 
   update-doc-value: !~>
     $ @rv 'form' .find all-input-field-selector .each (index, input)!~>
-      @update-by-json-path ($ input .attr 'name'), ($ input .val!)
+      attr-path-name = $ input .attr 'name'
+      @update-by-json-path attr-path-name, ($ input .val!) 
     @insert-auto-fields!
 
   update-by-json-path: !(json-path, value)-> # TODO: 改为JSON Path实现，应对复杂表单
