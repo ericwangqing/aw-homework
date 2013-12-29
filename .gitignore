@@ -2,6 +2,7 @@ node_modules/
 test-bin/
 test-temp/
 src-temp/
+docs/
 !bin/
 bin/*
 !bin/smart.json
