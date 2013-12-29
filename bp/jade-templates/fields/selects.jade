@@ -1,5 +1,6 @@
 include commons
 
+//-# 各种选择域 
 mixin ahead(label, attr)
   //- // console.log("candidates are: ", JSON.stringify(candidates));
   - var attr = attr ? attr : label 
@@ -15,7 +16,6 @@ mixin multi-ahead(label, attr)
     - var configStr = attributes.config ? "'" + attributes.config + "'" : ''
     | {{bp-add-multi-ahead "#{attr}" this #{configStr}}}
 
-//- --------------- 各种选择域 ------------------------------------------
 //- ------ 待实现 ------
   radio
   dropdown

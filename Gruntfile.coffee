@@ -106,7 +106,7 @@ module.exports = (grunt)->
           pretty: true
           data:
             bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
-       all:
+      app:
         files: [
           expand: true
           cwd: 'src'
@@ -131,7 +131,17 @@ module.exports = (grunt)->
         reporter: 'spec'
         slow: 100
         timeout: 3000
-
+    docco:
+      jade:
+        src: ['bp/jade-templates/**/*.jade']
+        options:
+          structured: "$(find bp -name '*.jade')"
+          output: 'docs/jade'
+      livescript:
+        src: ['bp/**/*.ls']
+        options:
+          structured: "$(find bp -name '*.ls')"
+          output: 'docs/ls'
     watch:
       app:
         files: ["bp/**/*.ls", "!bp/main.ls", "src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "bp/**/*.jade", "compass/**/*.sass"]
@@ -139,6 +149,12 @@ module.exports = (grunt)->
         tasks: ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha"]
         options:
           spawn: true
+      bp_jade_doc:
+        files: ["bp/jade-templates/**/*.jade"]
+        tasks: ["docco:jade"]
+      bp_ls_doc:
+        files: ["bp/**/*.ls"]
+        tasks: ["docco:livescript"]
 
 
   grunt.loadNpmTasks "grunt-livescript"
@@ -153,5 +169,6 @@ module.exports = (grunt)->
   # grunt.loadNpmTasks "grunt-concurrent"
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-concat"
+  grunt.loadNpmTasks "grunt-docco"
 
   grunt.registerTask "default", ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha", "watch"]

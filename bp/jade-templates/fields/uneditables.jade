@@ -1,5 +1,6 @@
 include commons
 
+//-# 不可编辑域
 mixin ref-text(label, attr)
   - var attr = attr ? attr : label
   +guarded-input-wrapper(label, attr)(attributes)
@@ -30,7 +31,6 @@ mixin ref-links-list(label, attr, face)
   - var span = attributes.span || Field_SPAN
   - var citedDocName = bp.getCitedDocName(attr, cited)
   {{#with #{citedDocName}}}
-  //- +wrap-filed-with-label-span(label, span)(title="{{bp-links '#{face}' '#{attr}'}}")
   +wrap-filed-with-label-span(label, span)
     .ui.text.menu
       .header.item 选择链接
@@ -40,7 +40,7 @@ mixin ref-links-list(label, attr, face)
   {{/with}}
 
 
-//-# 用法示例： +auto-insert('老师', 'Meteor.user().profile.fullname')
+//-# 在表单中，自动插入属性。用法示例： +auto-insert('老师', A.currentUserName())
 mixin auto-insert(attr, valueExpression)
   | {{bp-auto-insert '#{attr}' "#{valueExpression}"}}
 

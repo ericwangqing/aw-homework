@@ -1,13 +1,8 @@
 include commons
 include texts
 
-//- --------------- 各种普通专用域，很多都有HMTL5的专用type --------------------
-//- TODO: 重构，和text合并
+//-# 各种普通专用域，很多都有HMTL5的专用type 
 mixin __control(type, label, attr)
-  //- +guarded-input-wrapper(label, attr)
-    //- input(type='text', name=attr,  parsley-type=type, value!="{{bs '#{attr}'}}", parsley-trigger="change", required=required, tabindex=index) 
-    //- 这里的type目前都用的是text，因为parsley中，有时候其它类型会触发不了校验。
-    //- 所以，现在这里直接用text
   - addCondition(attributes, P.type(type))
   - var label = label ? label : type // control类型可以不给label、attr，默认都为其type
   +text(label, attr)(attributes)

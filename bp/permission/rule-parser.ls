@@ -35,7 +35,7 @@ class Rule-parser
 
   extract-attributes-action: (tokens)->
     result = {}
-    attribute-rules = @extract-action tokens, prefix = 'a-'
+    attribute-rules = @extract-action tokens, prefix = 'a-' 
     for attr-action in attribute-rules
       [attr, action] = attr-action.split '-'
       result[attr] ||= []
