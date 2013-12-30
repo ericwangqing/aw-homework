@@ -7,9 +7,11 @@
 mixin component(_docName, isMainNav)
   - if(typeof isMainNav == 'undefined'){isMainNav = true} // 默认将component的list加到主导航
   - docName = _docName
-  - names = bp.getNames(docName)
+  - componentName = attributes.name || 'default' // 一个doc有一个必须实现的默认component，包括一个list和一个detaill，还可以任意多个其它component
+  - names = bp.getNames(docName, componentName)
   - cited = attributes.cited
-  - componentName = attributes.name || ''
+  - console.log("********************** names: ", names)
+  - console.log('component: ' + componentName + ', isMainNav: ' + isMainNav) 
   block
   if isMainNav
     - bp.setMainNav(names.listTemplateName)
@@ -19,26 +21,24 @@ mixin component(_docName, isMainNav)
 mixin list(titles, attrs)
   - attrs = attrs || titles // 可以只给属性名（attrs），此时就用属性名作为标题
   - titles = titles
-  - viewName = componentName + names.listTemplateName
-  +register-bp-component(viewName)
-    +template(docName, viewName, 'list')
+  +register-bp-view(viewName)
+    +template(docName, componentName, viewName = names.listTemplateName, 'list')
       .bp-list(bp-view-name=viewName)
         +table(names.listDataRetrieverName, titles, attrs)
           block 
 
 
 mixin detail()
-  - viewName = componentName + names.detailTemplateName
-  +register-bp-component(viewName)
-    +template(docName, viewName, 'detail')
+  +register-bp-view(viewName)
+    +template(docName, componentName, viewName = names.detailTemplateName, 'detail')
       .bp-detail(bp-view-name=viewName)
         +form(names.detailDataRetrieverName)
           block
 
 
-mixin register-bp-component(templateName)
+mixin register-bp-view(templateName)
   - var bufferStart = buf.length
   block
   - var templateStr = buf.slice(bufferStart, buf.length - 1).join("")
   - bp.registerTemplate(templateName, templateStr)
-  - bp.showTemplate(templateStr)  
+  //- - bp.showTemplate(templateStr)  

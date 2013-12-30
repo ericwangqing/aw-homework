@@ -75,7 +75,7 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
     super ...
 
   subscribe: (params)->
-    ready = Meteor.subscribe @meteor-pub-name, @doc-id = params[@view.name + '_id'] # 注意：wait-on实际上在before之前执行！！，所以在这里给@dod-id赋值，而不是在change-to-face里。
+    ready = Meteor.subscribe @meteor-pub-name, @doc-id = params[@view.doc-name + '_id'] # 注意：wait-on实际上在before之前执行！！，所以在这里给@dod-id赋值，而不是在change-to-face里。
     # 这里拿回要渲染的doc，供router的before里，进行is-permit检查
     @doc = @collection.find-one! or {} # incase doc not founded, show empty fields on page instead of thrown errors.
     ready

@@ -17,7 +17,7 @@ class @BP.Abstract-faces-manager
 # ------------------------ Detail -----------------------------
 class @BP.Detail-faces-manager extends BP.Abstract-faces-manager
   create-faces: ->
-    @id-place-holder = ':' + @view.name + '_id'
+    @id-place-holder = ':' + @view.doc-name + '_id'
     faces = 
       create  : "/#{@view.name}/create"
       update  : "/#{@view.name}/#{@id-place-holder}/update"   

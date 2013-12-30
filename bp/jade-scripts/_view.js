@@ -5,14 +5,15 @@
     View.displayName = 'View';
     var prototype = View.prototype, constructor = View;
     View.registry = {};
-    View.getView = function(docName, templateName, type){
+    View.getView = function(docName, componentName, templateName, type){
       if (this.registry[templateName]) {
         throw new Error("view: '" + templateName + "' already exists");
       }
-      return this.registry[templateName] = new View(docName, templateName, type);
+      return this.registry[templateName] = new View(docName, componentName, templateName, type);
     };
-    function View(docName, templateName, type){
+    function View(docName, componentName, templateName, type){
       this.docName = docName;
+      this.componentName = componentName;
       this.templateName = templateName;
       this.type = type;
       this.name = this.templateName;

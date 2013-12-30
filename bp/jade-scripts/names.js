@@ -4,22 +4,20 @@
   Names = (function(){
     Names.displayName = 'Names';
     var prototype = Names.prototype, constructor = Names;
-    function Names(docName){
-      var _baseRouteName, _baseRoutePath;
-      import$(this, {
-        docName: docName,
-        mongoCollectionName: docName.pluralize(),
-        meteorCollectionName: docName.pluralize().capitalize(),
-        listTemplateName: docName.pluralize() + '-list',
-        listRowTemplateName: docName.pluralize() + '-list-row',
-        listDataRetrieverName: docName.pluralize(),
-        detailTemplateName: docName,
-        detailDataRetrieverName: docName,
-        listDataPublishName: docName.pluralize().capitalize(),
-        detailDataPublishName: docName.capitalize()
-      });
-      _baseRouteName = docName.pluralize();
-      _baseRoutePath = '/' + docName.pluralize();
+    function Names(docName, componentName){
+      this.componentPrefix = componentName === 'default'
+        ? ''
+        : componentName + '-';
+      this.docName = docName;
+      this.mongoCollectionName = docName.pluralize();
+      this.meteorCollectionName = docName.pluralize().capitalize();
+      this.listTemplateName = this.componentPrefix + docName.pluralize() + '-list';
+      this.listRowTemplateName = this.componentPrefix + docName.pluralize() + '-list-row';
+      this.listDataRetrieverName = this.componentPrefix + docName.pluralize();
+      this.detailTemplateName = this.componentPrefix + docName;
+      this.detailDataRetrieverName = this.componentPrefix + docName;
+      this.listDataPublishName = this.componentPrefix + docName.pluralize().capitalize();
+      this.detailDataPublishName = this.componentPrefix + docName.capitalize();
     }
     return Names;
   }());
@@ -27,10 +25,5 @@
     module.exports = Names;
   } else {
     BP.Names = Names;
-  }
-  function import$(obj, src){
-    var own = {}.hasOwnProperty;
-    for (var key in src) if (own.call(src, key)) obj[key] = src[key];
-    return obj;
   }
 }).call(this);

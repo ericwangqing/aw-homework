@@ -5,7 +5,7 @@
   View = require('./_view').View;
   Names = require('./Names');
   module.exports = {
-    getView: function(docName, templateName, templateType){
+    getView: function(docName, componentName, templateName, templateType){
       return this.view = View.getView.apply(View, arguments);
     },
     setMainNav: function(templateNames){
@@ -59,8 +59,8 @@
         return ref;
       }
     },
-    getNames: function(docName){
-      return this.names = new Names(docName);
+    getNames: function(docName, componentName){
+      return this.names = new Names(docName, componentName);
     },
     saveView: function(){
       fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry));

@@ -1,6 +1,6 @@
 //-# 生成Meteor所需要的template （Handlebars）
-mixin template(docName, templateName, templateType)
-  - view = bp.getView(docName, templateName, templateType); 
+mixin template(docName, componentName, templateName, templateType)
+  - view = bp.getView(docName, componentName, templateName, templateType); 
   - view.cited = cited
   - if(attributes.query && templateType == 'list'){view.query = attributes.query} //doc: 只有列表才需要query，详情都是针对一个，不用query. 这里的筛选用于用户体验，业务逻辑的删选在工作流程定义、用户权限定义里，并通过Meteor Method来实施。
   - references = [];

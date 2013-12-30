@@ -5,7 +5,7 @@ require! [fs, './_view'.View, './Names']
 
 module.exports =
 
-  get-view: (doc-name, template-name, template-type)->
+  get-view: (doc-name, component-name, template-name, template-type)->
     @view = View.get-view.apply View, &
 
   set-main-nav: (template-names)->
@@ -38,8 +38,8 @@ module.exports =
     case 'list' then @names.list-template-name
     default ref
 
-  get-names: (doc-name)-> 
-    @names = new Names doc-name 
+  get-names: (doc-name, component-name)-> 
+    @names = new Names doc-name, component-name 
 
   save-view: !->
     fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)

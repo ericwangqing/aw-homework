@@ -6,7 +6,8 @@ class @BP.View extends BP._View
 
   @register-in-doc-grouped-views = (view)!->
     @_dgv[view.doc-name] ||= {}
-    @_dgv[view.doc-name][view.type] = view
+    @_dgv[view.doc-name][view.component-name] ||= {}
+    @_dgv[view.doc-name][view.component-name][view.type] = view
 
   @resume-views = !(jade-views)->
     for view-name, jade-view of jade-views
@@ -30,9 +31,12 @@ class @BP.View extends BP._View
     @wire-additional-view-links!
 
   @wire-default-list-detail-views = !->
-    for doc-name, {list, detail} of @doc-grouped-views
-      list.add-links detail
-      detail.add-links list
+    for doc-name, grouped-views of @doc-grouped-views
+      default-list = @doc-grouped-views[doc-name].default.list
+      default-detail = @doc-grouped-views[doc-name].default.detail
+      for component-name, {list, detail} of grouped-views
+        list.add-links (detail or default-detail)
+        detail.add-links (list or default-list)
 
   @wire-additional-view-links = !->
     [@wire-addtional-links view for view-name, view of @registry]
@@ -40,11 +44,11 @@ class @BP.View extends BP._View
   @wire-addtional-links = (view)!->
     for link in view.additional-links
       [doc-name, view-type, face-name] = link.to.split '.'
-      to-view = @doc-grouped-views[doc-name][view-type]
+      to-view = @doc-grouped-views[doc-name].default[view-type]
       view.links[link.path.camelize(false)] = view: to-view, face: to-view.faces[face-name]
 
   init: ->
-    @names = new BP.Names @doc-name
+    @names = new BP.Names @doc-name, @component-name
     @permission = BP.Permission.get-instance!
     if Meteor.is-client
       @links = {}
