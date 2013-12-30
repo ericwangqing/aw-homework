@@ -64,6 +64,13 @@
     },
     saveView: function(){
       fs.writeFileSync('bp/main.ls', code + JSON.stringify(View.registry));
+    },
+    registerTemplate: function(templateName, templateStr){
+      this.templateRegistry || (this.templateRegistry = {});
+      this.templateRegistry[templateName] = templateStr;
+    },
+    showTemplate: function(templateStr){
+      console.log(templateStr);
     }
   };
   code = ' \n# ********************************************************\n# *                                                      *\n# *        IT IS AUTO GENERATED DON\'T EDIT               *\n# *                                                      *\n# ********************************************************\n\n# if module?\n#   require! [fs, sugar, \'./Component\'] \n\n# BP ||= {}\n# BP.Component ||= Component\n\n# debugger\nBP.Component.create-components-from-jade-views jade-views = ';

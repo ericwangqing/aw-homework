@@ -44,6 +44,14 @@ module.exports =
   save-view: !->
     fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)
 
+  ## 将jade渲染之后的template保存起来，以便在引用的时候，更名使用。避免直接用Handlebars的include {{> }}时，同名的template，实际上使用的是相同的helpers，拥有同样的状态。
+  register-template: (templateName, templateStr)!->
+    @template-registry ||= {}
+    @template-registry[templateName] = templateStr
+
+  show-template: (template-str)!->
+    console.log template-str
+
 
 
 code = ''' 

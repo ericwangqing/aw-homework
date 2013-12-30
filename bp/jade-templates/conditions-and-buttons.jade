@@ -43,7 +43,7 @@ mixin guarded-button(action, label)
         | #{label}
 
 mixin _link-button(action, href, isLink, label)
-  - var path = attributes.path ? attributes.path : action
+  - var path = attributes.path || action
   - var href = href || (isLink ? ("{{bp-path-for '"+ path.camelize(false) +"' this}}") : '#')
   - var tooltip = attributes.label ? attributes.label : null // 将label作为tooltip显示
   - var classNames = 'bp-' + action + (tooltip ? ' tooltip ' : ' ' )+ (attributes.classNames ? attributes.classNames : '')
