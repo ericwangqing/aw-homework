@@ -10,8 +10,6 @@ mixin component(_docName, isMainNav)
   - componentName = attributes.name || 'default' // 一个doc有一个必须实现的默认component，包括一个list和一个detaill，还可以任意多个其它component
   - names = bp.getNames(docName, componentName)
   - cited = attributes.cited
-  - console.log("********************** names: ", names)
-  - console.log('component: ' + componentName + ', isMainNav: ' + isMainNav) 
   block
   if isMainNav
     - bp.setMainNav(names.listTemplateName)
@@ -26,7 +24,6 @@ mixin list(titles, attrs)
       .bp-list(bp-view-name=viewName)
         +table(names.listDataRetrieverName, titles, attrs)
           block
-          - console.log("********************** after block ") 
 
 
 
