@@ -27,7 +27,7 @@
     "grunt-simple-mocha": "~0.4",
     "grunt-env": "~0.4.0",
     "grunt-contrib-compass": "~0.6.0",
-    "grunt-contrib-jade": "~0.8.0",
+    "grunt-contrib-jade": "git://github.com/gruntjs/grunt-contrib-jade",
     "grunt-docco": "~0.3.0"
   },
   "scripts": {

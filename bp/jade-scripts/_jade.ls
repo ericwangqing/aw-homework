@@ -1,7 +1,9 @@
 # !!! 注意，此文件不是运行时代码，是开发时代码。
 ## 给Jade用，根据template中的定义，动态编译出Views，以便BP Router加载。
 
-require! [fs, './_view'.View, './Names']
+require! [fs, 'jade', './_view'.View, './Names']
+
+jade.filters <<< filters = require './_jade-filters'
 
 module.exports =
 

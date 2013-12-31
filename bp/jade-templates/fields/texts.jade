@@ -14,7 +14,8 @@ mixin _text(label, attr, htmlTag)
         if !attributes.optional
           .ui.corner.label
             i.asterisk.icon
-    else // 包括了普通textarea和html editor
+    else 
+      //- 包括了普通textarea和html editor
       - var valueStr = attr? ("{{bs '" + attr + "'}}") : '' 
       - var nameStr =  attr? ("name='" + attr + "'") : '' 
       if attributes.isHtml

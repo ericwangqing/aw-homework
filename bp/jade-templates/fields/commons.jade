@@ -28,14 +28,9 @@ mixin guarded-input-wrapper(label, attr)
 mixin wrap-filed-with-label(label, span)
   .controls(data-field-span=span)
     if attributes.title
-      //- tooltipster的tooltip
       label.tooltip(title=attributes.title) #{label}:
-        //- if attributes.ref
-        //-   +_show-reference(attributes.ref, attributes.query)
     else
       label #{label}:
-        //- if attributes.ref
-        //-   +_show-reference(attributes.ref, attributes.query)
     block
 
 

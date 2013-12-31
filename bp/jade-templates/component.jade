@@ -25,7 +25,9 @@ mixin list(titles, attrs)
     +template(docName, componentName, viewName = names.listTemplateName, 'list')
       .bp-list(bp-view-name=viewName)
         +table(names.listDataRetrieverName, titles, attrs)
-          block 
+          block
+          - console.log("********************** after block ") 
+
 
 
 mixin detail()

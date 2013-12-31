@@ -59,7 +59,7 @@ module.exports = (grunt)->
         files: [
           expand: true
           cwd: 'bp'
-          src: ['**/*.ls', '!main.ls', '!jade-scripts/_jade.ls']
+          src: ['**/*.ls', '!main.ls', '!jade-scripts/_jade*.ls']
           dest: 'bin/lib'
           ext: '.js'
         ]
@@ -104,6 +104,7 @@ module.exports = (grunt)->
         options:
           debug: false
           pretty: true
+          filters: require './bp/jade-scripts/_jade-filters'
           data:
             bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
       app:
@@ -117,6 +118,7 @@ module.exports = (grunt)->
         options:
           debug: false
           pretty: true
+          filters: require './bp/jade-scripts/_jade-filters'
           data:
             bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
           #   grunt: ()-> grunt

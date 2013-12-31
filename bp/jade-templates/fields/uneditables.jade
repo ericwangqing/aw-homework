@@ -10,20 +10,20 @@ mixin ref-list(label, attr)
   - var span = attributes.span || Field_SPAN
   +wrap-filed-with-label(label, span)
     - var citedDocName = bp.getCitedDocName(attr, cited)
-    {{#with #{citedDocName}}}
+    | {{#with #{citedDocName}}}
     if attributes.isOrdered 
       ol
         +_ref-list-items(attr)
     else
       ul
         +_ref-list-items(attr)
-    {{/with}}
+    | {{/with}}
 
 
 mixin _ref-list-items(attr)
-  {{#each #{attr}}}
+  | {{#each #{attr}}}
   li {{this}}
-  {{/each}}
+  | {{/each}}
 
 mixin ref-links-list(label, attr, face)
   +_ref-links-list-wrapper(label, attr, face)(attributes)
@@ -39,10 +39,10 @@ mixin _ref-links-list-wrapper(label, attr, face)
   - var span = attributes.span || Field_SPAN
   - var citedDocName = bp.getCitedDocName(attr, cited)
   - _attr = attr
-  {{#with #{citedDocName}}}
+  | {{#with #{citedDocName}}}
   +wrap-filed-with-label(label, span)
     block
-  {{/with}}
+  | {{/with}}
 
 mixin ref-dimmable-links-list(label, attr, face)
   +_ref-links-list-wrapper(label, attr, face)(attributes)
@@ -70,7 +70,7 @@ mixin ref-dimmable-links-list(label, attr, face)
 
 //-# 在表单中，自动插入属性。用法示例： +auto-insert('老师', A.currentUserName())
 mixin auto-insert(attr, valueExpression)
-  | {{bp-auto-insert '#{attr}' "#{valueExpression}"}}
+  | {{bp-auto-insert '#{attr}' "#{valueExpression}"}} 
 
 
 //- ------ 待实现 ------
