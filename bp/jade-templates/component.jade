@@ -23,16 +23,36 @@ mixin list(titles, attrs)
     +template(docName, componentName, viewName = names.listTemplateName, 'list')
       .bp-list(bp-view-name=viewName)
         +table(names.listDataRetrieverName, titles, attrs)
-          block
+          +alter-list()
+            block
 
+mixin alter-list()
+  //- each relatedData in bp.getRelationData(docName)
+  //-   if relatedData.relation.type == 'composite' && docName == relatedData.relation.endPoint
+  //-     +remove-create-link()
+  //-   +add-link-go-create-or-update-relation-data(relationData.docName, labelForCreate, labelForUpdate)(relation=relatedData.relation)
+  block
 
 
 mixin detail()
   +register-bp-view(viewName)
     +template(docName, componentName, viewName = names.detailTemplateName, 'detail')
       .bp-detail(bp-view-name=viewName)
-        +form(names.detailDataRetrieverName)
-          block
+        +alter-detail()
+          +form(names.detailDataRetrieverName)
+            block
+
+mixin alter-detail()
+  //- each relatedData in bp.getRelationData(docName)
+  //-   .related-docs
+  //-     if docName == relatedData.relation.endPoint
+  //-       +add-related-from-links(relatedData)
+  block
+  //- each relatedData in bp.getRelationData(docName)
+  //-   .related-docs
+  //-     if docName == relatedData.relation.startPoint
+  //-       +add-related-to-links(relatedData)
+
 
 
 mixin register-bp-view(templateName)
@@ -41,3 +61,6 @@ mixin register-bp-view(templateName)
   - var templateStr = buf.slice(bufferStart, buf.length - 1).join("")
   - bp.registerTemplate(templateName, templateStr)
   //- - bp.showTemplate(templateStr)  
+
+mixin relation(from, type, to)
+  - console.log('add relation')
