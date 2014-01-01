@@ -1,0 +1,5 @@
+mixin _component(docName)
+  - console.log("this is: ", this.block.prototype)
+  :text
+    +component('#{docName}')
+      #{this} 

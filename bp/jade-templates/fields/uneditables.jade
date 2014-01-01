@@ -66,11 +66,13 @@ mixin ref-dimmable-links-list(label, attr, face)
             | {{/each}}
 
 
-
-
 //-# 在表单中，自动插入属性。用法示例： +auto-insert('老师', A.currentUserName())
 mixin auto-insert(attr, valueExpression)
   | {{bp-auto-insert '#{attr}' "#{valueExpression}"}} 
+
+
+mixin auto-insert-current-user-as(role)
+  +auto-insert(role, A.currentUserName())
 
 
 //- ------ 待实现 ------

@@ -6,6 +6,9 @@ do make-splash-click-fadeout = !->
   Template.splash.events do
     'click':  (e)!->
       $ '#splash' .add-class 'fadeout'
+
+    'webkitAnimationEnd': !->
+      Router.go BP.Component.main-nav-paths.0.path
       # $ '.bp-form' .add-class 'fadein'
 
 do make-loading-spinner = !->

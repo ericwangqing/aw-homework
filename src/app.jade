@@ -1,7 +1,7 @@
 include ../bp/jade-templates/bp-mixins
 
 +component('assignment')
-  +list(['题目', '要求', '截止时间'])
+  +list(['题目', '要求', '截止时间', '老师'])
 
   +detail()
     +fieldset('作业要求')
@@ -11,10 +11,11 @@ include ../bp/jade-templates/bp-mixins
         +multi-ahead('学生')(candidates=['沈少伟', '陈伟津', '陈杰文', '林臻南', '曾灏'])
       +row()
         +html('要求')(span=FULL_ROW)
-    +auto-insert('老师', A.currentUserName())
+    +auto-insert-current-user-as('老师')
+    //- +auto-insert('老师', A.currentUserName())
 
 +component('assignment')(name='aw', cited={homework: {query: '{assignmentId: doc._id}'}})
-  +list(['题目', '要求', '截止时间'])
+  +list(['题目', '要求', '截止时间', '老师'])
     - console.log("add-item-link block called!************************")
     +add-item-link({label: '开始写作业', path: 'create-homework', to: 'homework.detail.create', guard: '!homework._id', icon: 'go-create'})
     +add-item-link({label: '更新作业', path: 'update-homework', to: 'homework.detail.update', context: 'homework', guard: 'homework._id', icon: 'go-update'})
@@ -31,7 +32,7 @@ include ../bp/jade-templates/bp-mixins
 
 - var cited = {assignment: {query: '{_id: doc.assignmentId}', attributes: ['题目', '要求', '截止时间', 'testRefList']}}
 +component('homework')(cited=cited)
-  +list(['题目', '要求', '截止时间', '学生'])
+  +list(['题目', '要求', '截止时间', '内容', '学生'])
     +remove-link('go-create')
     +add-list-link({label: '看作业要求列表', path: 'go-assignment-list', to: 'assignment.list.list', guard: true, icon: 'go'})
 

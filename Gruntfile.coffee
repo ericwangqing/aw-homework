@@ -107,6 +107,21 @@ module.exports = (grunt)->
           filters: require './bp/jade-scripts/_jade-filters'
           data:
             bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
+
+      # pre_compile_app: 
+      #   files: [
+      #     expand: true
+      #     cwd: 'src'
+      #     src: ['**/*.jade']
+      #     dest: 'src-temp'
+      #     ext: '.jade'
+      #   ]
+      #   options:
+      #     debug: false
+      #     pretty: true
+      #     filters: require './bp/jade-scripts/_jade-filters'
+      #     data:
+      #       bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
       app:
         files: [
           expand: true

@@ -34,3 +34,12 @@ do config-and-static-route = !~>
 /* --------------------- Meteor Account 的配置 --------------- */
 Accounts.ui.config password-signup-fields: 'USERNAME_ONLY'
 
+
+
+/* --------------------- Utility Functions ------------------ */
+@BP ||= {}
+vendor-prefix = ["webkit", "moz", "MS", "o", ""]
+BP.utils =
+  addVendorPrefixEvents: (element, event-name, callback)!->
+    for prefix in vendor-prefix
+      element.add-event-listener (prefix + event-name.to-lower-case!), callback, false

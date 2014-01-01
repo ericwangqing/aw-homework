@@ -91,6 +91,8 @@ class @BP.View extends BP._View
         wait-on: -> # 注意：wait-on实际上在before之前执行！！
           self.data-manager.subscribe @params
 
+
+
   is-permit: (doc, face, cited-doc-name, cited-view-type)~> 
     doc-name = if typeof cited-doc-name is 'string' then cited-doc-name else @doc-name
     type = if typeof cited-view-type is 'string' then cited-view-type else @type

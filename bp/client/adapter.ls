@@ -9,6 +9,7 @@ class @BP.Template-adapter
     default throw new Error "type: '#type' is not supported yet."
 
   (@view)->
+    self = @
     @template = Template[view.template-name] # Meteor的template实际上是一个加载template html之后，编译成的函数。也就是说只编译一次，因此不会出现变化。
     @permission = BP.Permission.get-instance! # permission与view无关，因此可以共用。
     @data-retriever-name = if @view.type is 'list' then @view.names.list-data-retriever-name else @view.names.detail-data-retriever-name
@@ -17,8 +18,9 @@ class @BP.Template-adapter
     @create-event-handlers!
     @template.helpers @helpers
     @template.events @events-handlers 
-    @template.rendered = !~> 
-      [method.call @ for method in @renderers]
+    @template.rendered = !-> 
+      $ @.first-node .add-class 'fadein'
+      [method.call self for method in self.renderers]
 
   create-helpers: !->
     self = @
@@ -34,7 +36,7 @@ class @BP.Template-adapter
       # "#{@data-retriever-name}"       :  ~> @view.data-manager.meteor-template-main-data-helper.apply  @view.data-manager, &
 
   create-renderers: !-> 
-    @renderers = [@enable-tooltips]
+    @renderers = [@enable-tooltips, @enable-fadein]
     @renderers ++= template-ui-post-render-methods if template-ui-post-render-methods = @view.add-to-template-rendered!
 
   create-event-handlers: !-> @events-handlers = @view.ui.register-event-handlers!
@@ -51,6 +53,10 @@ class @BP.Template-adapter
         ''
 
   enable-tooltips: -> $ '.tooltip' .tooltipster interactive: true, theme: '.tooltipster-shadow'
+
+  enable-fadein: (e)-> 
+    # console.log "this is: ", e.current-target
+    # $ @ .add-class 'fadein'
 
   enable-get-links-html-str-for-tooltipster: -> 
     self = @
