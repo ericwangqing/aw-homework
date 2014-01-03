@@ -93,13 +93,15 @@
       return relation.getGoUpdateLink(currentEnd);
     },
     getCited: function(docName){
-      var relations, cited, i$, len$, relation;
+      var relations, cited, i$, len$, relation, oppositeEnd;
       relations = Relation.getRelationsByDocName(docName);
       cited = {};
       for (i$ = 0, len$ = relations.length; i$ < len$; ++i$) {
         relation = relations[i$];
-        cited[relation.getOppositeEnd(docName).docName] = {
-          query: relation.getQuery(docName)
+        oppositeEnd = relation.getOppositeEnd(docName);
+        cited[oppositeEnd.docName] = {
+          query: relation.getQuery(docName),
+          isMultiple: oppositeEnd.multiplicity !== '1'
         };
       }
       return cited;

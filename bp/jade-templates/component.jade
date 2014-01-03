@@ -31,12 +31,16 @@ mixin alter-list()
   each relation in bp.getRelations(docName)
     - console.log("--------- relation is: ", relation)
     - currentEnd = relation.getCurrentEnd(docName)
+    - oppositeEnd = relation.getOppositeEnd(docName)
     if relation.type == 'composition' && currentEnd.type == 'end'
       //- 一旦本doc从属于某个doc，也就是为某个composite relation中的endPoint.docName时，不能直接创建本doc
       +remove-create-link()
     if currentEnd.canCreateOtherSide
       +add-go-create-relation-data-link(docName, relation)
-    +add-go-update-relation-data-link(docName, relation)
+    if oppositeEnd.multiplicity == '1'
+      +add-go-update-relation-data-link(docName, relation)
+    else
+      +add-go-update-relation-data-links(docName, relation)
   block
 
 

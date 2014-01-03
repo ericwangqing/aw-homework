@@ -46,6 +46,7 @@ mixin _ref-links-list-wrapper(label, attr, face)
 
 mixin ref-dimmable-links-list(label, attr, face)
   +_ref-links-list-wrapper(label, attr, face)(attributes)
+    - showAttr = attributes.showAttr || 'title'
     span.content(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');") 查看链接列表
       i.unordered.list.icon
     if attributes.isWholePage
@@ -54,7 +55,7 @@ mixin ref-dimmable-links-list(label, attr, face)
           .center
             h3 #{_attr}: 
             | {{#each #{_attr}}}
-            a.item(href='#') {{this.title}}
+            a.item(href='#') {{this.#{showAttr}}}
             | {{/each}}
     else
       .ui.dimmer
@@ -62,7 +63,7 @@ mixin ref-dimmable-links-list(label, attr, face)
           .center
             span #{_attr}: 
             | {{#each #{_attr}}}
-            a.item(href='#') {{this.title}}
+            a.item(href='#') {{this.#{showAttr}}}
             | {{/each}}
 
 

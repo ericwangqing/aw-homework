@@ -84,25 +84,40 @@
         path: action + '-' + fullDocName,
         to: [fullDocName, view, face].join('.'),
         citedDoc: docName,
+        showName: showName,
         citedViewType: view,
         context: docName
       };
-      return this._alterLinkByFace(link, face, docName, showName);
+      this._alterLinkByFace(destinationEnd, link, face, docName, showName);
+      console.log("action: " + action + ", current-end: " + currentEnd + ", link: ", link);
+      return link;
     };
-    prototype._alterLinkByFace = function(link, face, docName, showName){
+    prototype._alterLinkByFace = function(destinationEnd, link, face, docName, showName){
       switch (face) {
       case 'create':
         link.label = '创建' + showName;
-        link.guard = "!" + docName + "._id";
+        link.guard = destinationEnd.multiplicity === '1' ? "!" + docName + "._id" : true;
         delete link.context;
         break;
       case 'update':
-        link.label = '更新' + showName;
-        link.guard = docName + "";
+        link.label = destinationEnd.multiplicity === '1'
+          ? "更新" + showName
+          : "更新{{bs '" + destinationEnd.showAttr + "'}}";
+        link.guard = destinationEnd.multiplicity === '1'
+          ? docName + ""
+          : docName.pluralize() + "";
         break;
       case 'view':
-        link.label = '查看' + showName;
-        link.guard = view === 'detail' ? docName + "" : 'true';
+        link.label = destinationEnd.multiplicity === '1'
+          ? "更新" + showName
+          : "更新{{bs '" + destinationEnd.showAttr + "'}}";
+        if (view === 'detail') {
+          link.guard = destinationEnd.multiplicity === '1'
+            ? docName + ""
+            : docName.pluralize() + "";
+        } else {
+          link.guard = 'true';
+        }
         break;
       default:
         link.label = face + ': ' + showName;

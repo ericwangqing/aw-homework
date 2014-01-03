@@ -11,7 +11,7 @@ class @BP.Abstract-data-manager
     @create-data-helpers! # {meteor-template-helper-name, helper-fn}
 
   set-cited-data: !->
-    @cited-data = [{doc-name: doc-name, query: cite.query} for doc-name, cite of @view.cited]
+    @cited-data = [cite <<< doc-name: doc-name for doc-name, cite of @view.cited]
 
   get-transferred-state: (attr)-> @@state-transferred-across-views.get attr
 
@@ -59,10 +59,13 @@ class @BP.List-data-manager extends BP.Abstract-data-manager
   meteor-template-main-data-helper: ~> # doc: list视图时，将cited的data装配到docs里面，便于用Meteor的each进行遍历
     @docs = @collection.find!fetch!
     @docs.map (doc)~>
-      for {doc-name, query} in @cited-data
+      for {doc-name, query, is-multiple} in @cited-data
         collection = BP.Collection.get-by-doc-name doc-name
         eval "query = " + query if typeof query is 'string'
-        doc[doc-name] = collection.findOne query
+        if is-multiple
+          doc[doc-name.pluralize!] = collection.find query .fetch!
+        else
+          doc[doc-name] = collection.findOne query 
       doc
 
 

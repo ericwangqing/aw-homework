@@ -62,23 +62,30 @@ class Relation
       path: action + '-' + full-doc-name
       to: [full-doc-name, view, face].join '.' 
       cited-doc: doc-name
+      show-name: show-name
       cited-view-type: view
       context: doc-name
 
-    @_alter-link-by-face link, face, doc-name, show-name 
+    @_alter-link-by-face destination-end, link, face, doc-name, show-name 
+    console.log "action: #action, current-end: #currentEnd, link: ", link
+    link
 
-  _alter-link-by-face: (link, face, doc-name, show-name)->
+
+  _alter-link-by-face: (destination-end, link, face, doc-name, show-name)->
     switch face 
     case 'create' 
       link.label = '创建' + show-name
-      link.guard = "!#{doc-name}._id" 
+      link.guard = if destination-end.multiplicity is '1' then "!#{doc-name}._id" else true
       delete link.context
     case 'update' 
-      link.label = '更新' + show-name
-      link.guard = "#{doc-name}"
+      link.label = if destination-end.multiplicity is '1' then "更新#{show-name}" else "更新{{bs '#{destination-end.show-attr}'}}"
+      link.guard = if destination-end.multiplicity is '1' then "#{doc-name}" else "#{doc-name.pluralize!}"
     case 'view' 
-      link.label = '查看' + show-name
-      link.guard = if view is 'detail' then "#{doc-name}" else 'true'  
+      link.label = if destination-end.multiplicity is '1' then "更新#{show-name}" else "更新{{bs '#{destination-end.show-attr}'}}"
+      if view is 'detail' 
+        link.guard = if destination-end.multiplicity is '1' then "#{doc-name}" else "#{doc-name.pluralize!}"
+      else 
+        link.guard = 'true'  
     default 
       link.label = face + ': ' + show-name
       link.guard = 'true'

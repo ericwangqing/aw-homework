@@ -78,7 +78,10 @@ module.exports =
     relations = Relation.get-relations-by-doc-name doc-name
     cited = {}
     for relation in relations
-      cited[relation.getOppositeEnd(doc-name).doc-name] = query: relation.get-query(doc-name)
+      opposite-end = relation.get-opposite-end(doc-name)
+      cited[opposite-end.doc-name] = 
+        query: relation.get-query(doc-name)
+        is-multiple: opposite-end.multiplicity isnt '1'
     cited
 
 

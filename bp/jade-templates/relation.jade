@@ -16,6 +16,12 @@ mixin add-go-update-relation-data-link(docName, relation)
   - var goUpdateLink = bp.getGoUpdateLink(docName, relation)
   +add-item-link(goUpdateLink)
 
-//- mixin add-related-from-links(docName, relation)
+mixin add-go-update-relation-data-links(docName, relation)
+  - var goUpdateLink = bp.getGoUpdateLink(docName, relation)
+  +add-item-links(goUpdateLink)
+
+  
+
+//- mixin add-related-from-links(docName, relation) 
   
 //-   +add-additional-links 

@@ -4,7 +4,7 @@ include conditions-and-buttons
 //-# BP表格，用于list视图
 mixin table(items, columnNames, attributesNames)
   - var attributesNames = attributesNames ? attributesNames : columnNames
-  - rowLinks = [], tableLinks = [], removedLinks = []
+  - rowLinks = [], rowMutipleLinks = [], tableLinks = [], removedLinks = []
   block
   //- 用户自定义的links
   +add-addtional-links(tableLinks)
@@ -62,11 +62,15 @@ mixin _guarded-operation-cell()
       +guarded-link('go-update')
       +guarded-link('delete')
       +add-addtional-links(rowLinks)
+      +add-addtional-multiple-links(rowMutipleLinks)
 
 //-# --------------- 添加links -------------
 
 mixin add-item-link(link)
   - rowLinks.push(link)
+
+mixin add-item-links(link)
+  - rowMutipleLinks.push(link)
 
 mixin add-list-link(link)
   - tableLinks.push(link)
