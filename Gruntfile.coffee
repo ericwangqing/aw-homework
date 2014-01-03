@@ -102,7 +102,7 @@ module.exports = (grunt)->
           ext: '.html'
         ]
         options:
-          debug: false
+          compileDebug: true
           pretty: true
           filters: require './bp/jade-scripts/_jade-filters'
           data:
@@ -117,7 +117,7 @@ module.exports = (grunt)->
       #     ext: '.jade'
       #   ]
       #   options:
-      #     debug: false
+      #     compileDebug: true
       #     pretty: true
       #     filters: require './bp/jade-scripts/_jade-filters'
       #     data:
@@ -131,7 +131,7 @@ module.exports = (grunt)->
           ext: '.html'
         ]
         options:
-          debug: false
+          compileDebug: true
           pretty: true
           filters: require './bp/jade-scripts/_jade-filters'
           data:

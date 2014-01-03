@@ -6,7 +6,7 @@ mixin guarded-input-wrapper(label, attr)
   - var span = attributes.span || Field_SPAN
   - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航。为了在mixin和block之间传递，使用了全局变量。注意：此处不用在结束form的渲染时，将index清零，因为：1）tabindex在一个页面上应该可以在多个表单连续工作；2）jade在渲染两份jade文件时，使用全新的环境，因此不会造成下一个HTML的tabindex被连续排号的问题。
   - citedDoc = bp.getCitedDoc(attr, cited)
-  if citedDoc
+  if attr.indexOf('.') > 0
     +_uneditable-content(label, attr, span)(clazz='cited')
   else      
     +if-face('update')
@@ -26,6 +26,7 @@ mixin guarded-input-wrapper(label, attr)
 
 
 mixin wrap-filed-with-label(label, span)
+  - label = bp.getAttrName(label)
   .controls(data-field-span=span)
     if attributes.title
       label.tooltip(title=attributes.title) #{label}:
@@ -41,5 +42,5 @@ mixin _uneditable-content(label, attr, span)
     - var citedClassStr = attributes.clazz ? 'content cited' : 'content'
 
     span.content 
-      != bp.value(attr, cited)
+      != bp.value(attr)
 

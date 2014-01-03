@@ -7,8 +7,9 @@ mixin if-face(face)
   | {{/if}}
 
 //-# 是否允许当前用户对数据（默认为当前，除非给出citedDoc），进行某种操作（go-create, go-update, create, update, view; 以及其它用户通过add-links增加的action）
-mixin if-bp-permit(action, citedDoc)
+mixin if-bp-permit(action)
   - var citedDocStr = attributes.citedDoc ? "'" + attributes.citedDoc + "'" : ''
+  - console.log("in if-bp-permit, action is: ", action)
   | {{#if bp-permit this '#{action}' #{citedDocStr}}}
   block
   | {{/if}}
@@ -65,6 +66,7 @@ mixin _link-button(action, href, isLink, label)
       block
 
 mixin guarded-link(action)
+  - console.log("in guarded link, action is: " + action + ", attributes are: ", attributes)
   +if-bp-permit(action)(attributes)
     +_link-button(action, null, true)(attributes)
 
@@ -101,15 +103,17 @@ mixin add-addtional-links(links)
       +_with-or-without-context(link)
       | {{/if}}
 
+
+
 mixin _with-or-without-context(link)
-  - var citedDoc = link.to.split('.')[0]
-  - var citedViewType = link.to.split('.')[1]
+  - attributes = link 
   if link.context
     | {{#with #{link.context}}}
-    +guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
+    //- 注意：这里必须用attributes来传递，直接用link，传递会成为{link: true}
+    +guarded-link(link.icon)(attributes)
     | {{/with}}
   else
-    +guarded-link(link.icon)(path=link.path, label=link.label, citedDoc=citedDoc, citedViewType=citedViewType)
+    +guarded-link(link.icon)(attributes)
 
 
 

@@ -9,7 +9,7 @@ mixin ref-list(label, attr)
   - var attr = attr ? attr : label
   - var span = attributes.span || Field_SPAN
   +wrap-filed-with-label(label, span)
-    - var citedDocName = bp.getCitedDocName(attr, cited)
+    - var citedDocName = attr.split('.')[0]
     | {{#with #{citedDocName}}}
     if attributes.isOrdered 
       ol
@@ -37,7 +37,7 @@ mixin _ref-links-list-wrapper(label, attr, face)
   - if(!attr){throw new Error("'ref-links-list' requires at least two parameters.")}
   - if(!face){face = attr; attr = label}
   - var span = attributes.span || Field_SPAN
-  - var citedDocName = bp.getCitedDocName(attr, cited)
+  - var citedDocName = attr.split('.')[0]
   - _attr = attr
   | {{#with #{citedDocName}}}
   +wrap-filed-with-label(label, span)

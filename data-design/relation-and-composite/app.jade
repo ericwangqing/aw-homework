@@ -1,4 +1,5 @@
 +relation('assignment', '1 -> *', 'homework')(type='composite')
+//- +relation({docName: 'assignment', showName: '作业要求'}, '1 -> *', {docName: 'homework', showName: '作业'})(type='composite')
 
 +component('assignment')
   +list(['题目', '要求', '截止时间', '老师'])

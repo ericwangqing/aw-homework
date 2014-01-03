@@ -1,7 +1,8 @@
 # !!! 注意，此文件不是运行时代码，是开发时代码。
 ## 给Jade用，根据template中的定义，动态编译出Views，以便BP Router加载。
 
-require! [fs, 'jade', './_view'.View, './Names']
+require! [fs, 'jade', './_view'.View, './Names', './Relation']
+_ = require 'underscore'
 
 jade.filters <<< filters = require './_jade-filters'
 
@@ -16,11 +17,14 @@ module.exports =
       name = name.trim!
       View.registry[name].is-main-nav = true
 
-  value: (attr, cited)->
-    for doc-name, cite of cited
-      if cite.attributes and attr in cite.attributes 
-        return "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
-    "{{bs '#attr'}}"
+  value: (attr)->
+    if (attr.index-of '.') > 0
+      [doc-name, attr] = attr.split '.' 
+      result = "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
+    else
+      result = "{{bs '#attr'}}"
+    console.log "attr is: #attr, result is: ", result
+    result
 
   get-cited-doc-name: (attr, cited)->
     for doc-name, cite of cited
@@ -41,7 +45,10 @@ module.exports =
     default ref
 
   get-names: (doc-name, component-name)-> 
-    @names = new Names doc-name, component-name 
+    @names = new Names doc-name, component-name  
+
+  get-attr-name: (full-attr-name)->
+    _.last full-attr-name.split '.'
 
   save-view: !->
     fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)
@@ -53,6 +60,27 @@ module.exports =
 
   show-template: (template-str)!->
     console.log template-str
+
+  ## 声明式relation
+  add-relation: (component-name, start, relation-description, end, type)!->
+    Relation.add-relation component-name, start, relation-description, end, type
+
+  get-relations: (doc-name)->
+    Relation.get-relations-by-doc-name doc-name
+
+  get-go-create-link: (current-end, relation)->
+    relation.get-go-create-link current-end
+  
+  get-go-update-link: (current-end, relation)->
+    relation.get-go-update-link current-end
+
+  get-cited: (doc-name)->
+    relations = Relation.get-relations-by-doc-name doc-name
+    cited = {}
+    for relation in relations
+      cited[relation.getOppositeEnd(doc-name).doc-name] = query: relation.get-query(doc-name)
+    cited
+
 
 
 

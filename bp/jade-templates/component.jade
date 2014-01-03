@@ -1,3 +1,4 @@
+include relation
 //-# ### Component是BP数据（collection）展示和操作的基本单位。
 
 //-# Component包括list和detail两种视图（view）
@@ -9,7 +10,7 @@ mixin component(_docName, isMainNav)
   - docName = _docName
   - componentName = attributes.name || 'default' // 一个doc有一个必须实现的默认component，包括一个list和一个detaill，还可以任意多个其它component
   - names = bp.getNames(docName, componentName)
-  - cited = attributes.cited
+  - cited = bp.getCited(docName)
   block
   if isMainNav
     - bp.setMainNav(names.listTemplateName)
@@ -27,10 +28,18 @@ mixin list(titles, attrs)
             block
 
 mixin alter-list()
-  //- each relatedData in bp.getRelationData(docName)
-  //-   if relatedData.relation.type == 'composite' && docName == relatedData.relation.endPoint
-  //-     +remove-create-link()
-  //-   +add-link-go-create-or-update-relation-data(relationData.docName, labelForCreate, labelForUpdate)(relation=relatedData.relation)
+  each relation in bp.getRelations(docName)
+    - console.log("--------- relation is: ", relation)
+    if relation.type == 'composition' && docName == relation.endPoint.docName
+      //- 一旦本doc从属于某个doc，也就是为某个composite relation中的endPoint.docName时，不能直接创建本doc
+      +remove-create-link()
+    - console.log("%%%%%%%%%%%%%%%% relation.type: " + relation.type + ", docName: " + docName + ", relation.startPoint.docName:" + relation.startPoint.docName)
+    if relation.type == 'composition' && docName == relation.startPoint.docName
+      +add-go-create-relation-data-link(docName, relation)
+    if docName == relation.startPoint.docName
+      +add-go-update-relation-data-link(docName, relation)
+    if docName == relation.endPoint.docName
+      +add-go-update-relation-data-link(docName, relation)
   block
 
 
@@ -43,15 +52,15 @@ mixin detail()
             block
 
 mixin alter-detail()
-  //- each relatedData in bp.getRelationData(docName)
-  //-   .related-docs
-  //-     if docName == relatedData.relation.endPoint
-  //-       +add-related-from-links(relatedData)
+  //- each relation in bp.getRelations(docName)
+  //-   .related-from-links
+  //-     if docName == relation.endPoint.docName
+  //-       +add-related-from-links(docName, relation)
   block
-  //- each relatedData in bp.getRelationData(docName)
-  //-   .related-docs
-  //-     if docName == relatedData.relation.startPoint
-  //-       +add-related-to-links(relatedData)
+  //- each relation in bp.getRelations(docName)
+  //-   .related-to-links
+  //-     if docName == relation.startPoint.docName
+  //-       +add-related-to-links(docName, relation)
 
 
 
@@ -62,5 +71,3 @@ mixin register-bp-view(templateName)
   - bp.registerTemplate(templateName, templateStr)
   //- - bp.showTemplate(templateStr)  
 
-mixin relation(from, type, to)
-  - console.log('add relation')

@@ -43,8 +43,8 @@ class @BP.View extends BP._View
       
   @wire-addtional-links = (view)!->
     for link in view.additional-links
-      [doc-name, view-type, face-name] = link.to.split '.'
-      to-view = @doc-grouped-views[doc-name].default[view-type]
+      [component-name, doc-name, view-type, face-name] = link.to.split '.'
+      to-view = @doc-grouped-views[doc-name][component-name][view-type]
       view.links[link.path.camelize(false)] = view: to-view, face: to-view.faces[face-name]
 
   init: ->

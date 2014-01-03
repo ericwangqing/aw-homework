@@ -1,0 +1,21 @@
+include table
+
+mixin relation(from, relationDescription, to)
+  - componentName = componentName ? componentName : (attributes.componentName ? attributes.componentName : 'default')
+  - bp.addRelation(componentName, from, relationDescription, to, attributes.type)
+
+mixin remove-create-link()
+  +remove-link('go-create')
+
+
+mixin add-go-create-relation-data-link(docName, relation)
+  - var goCreateLink = bp.getGoCreateLink(docName, relation)
+  +add-item-link(goCreateLink)
+
+mixin add-go-update-relation-data-link(docName, relation)
+  - var goUpdateLink = bp.getGoUpdateLink(docName, relation)
+  +add-item-link(goUpdateLink)
+
+//- mixin add-related-from-links(docName, relation)
+  
+//-   +add-additional-links 
