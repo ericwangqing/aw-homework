@@ -14,23 +14,38 @@ class Relation
   @get-relations-by-doc-name = (doc-name)->
     @registry[doc-name] or []
 
+  (@namespace, start-point, @relation-description, end-point, type)!->
+    @type = type or 'aggregation' # compositon | aggregation
+    @get-points start-point, end-point
+    console.log "******** relation created is: ", JSON.stringify @
 
-  (@namespace, start-point, @relation-description, end-point, @type)!->
-    @start-point = @get-point start-point
-    @end-point = @get-point end-point
-    console.log "******** relation created is: ", @
+  get-points: (start-point, end-point)->
+    @start-point = @get-names start-point
+    @end-point = @get-names end-point
+    [@start-point.multiplicity, navigating-direction, @end-point.multiplicity] = @relation-description.split /\s+/
+    @mark-ability-of-create-other-side!
 
-  get-point: (config)->
-    if typeof config is 'string'
-      {docName: config, showName: config}
+  get-names: (point)->
+    if typeof point is 'string'
+      {docName: point, showName: point}
     else
-      config
+      point
+
+  mark-ability-of-create-other-side: !->
+    @start-point.can-create-other-side = true
+    if @type is 'composition'
+      @end-point.can-create-other-side = false
+    else # 'aggregation'
+      @end-point.can-create-other-side = true
 
   get-go-create-link: (current-end)->
     @get-link-by-action 'go-create', current-end
 
   get-go-update-link: (current-end)->
     @get-link-by-action 'go-update', current-end 
+
+  get-current-end: (current-end)->
+    if @start-point.doc-name is current-end then @start-point else @end-point
 
   get-opposite-end: (current-end)->
     if @start-point.doc-name is current-end then @end-point else @start-point
@@ -50,6 +65,9 @@ class Relation
       cited-view-type: view
       context: doc-name
 
+    @_alter-link-by-face link, face, doc-name, show-name 
+
+  _alter-link-by-face: (link, face, doc-name, show-name)->
     switch face 
     case 'create' 
       link.label = '创建' + show-name
@@ -64,7 +82,6 @@ class Relation
     default 
       link.label = face + ': ' + show-name
       link.guard = 'true'
-
     link
 
 
@@ -78,6 +95,5 @@ class Relation
       query = "{#{doc-name}Id: doc._id}"
     else
       query = "{_id: doc.#{@startPoint.doc-name}Id}"
-
 
 if module? then module.exports = Relation else BP.Relation = Relation # 让Jade和Meteor都可以使用

@@ -30,16 +30,13 @@ mixin list(titles, attrs)
 mixin alter-list()
   each relation in bp.getRelations(docName)
     - console.log("--------- relation is: ", relation)
-    if relation.type == 'composition' && docName == relation.endPoint.docName
+    - currentEnd = relation.getCurrentEnd(docName)
+    if relation.type == 'composition' && currentEnd.type == 'end'
       //- 一旦本doc从属于某个doc，也就是为某个composite relation中的endPoint.docName时，不能直接创建本doc
       +remove-create-link()
-    - console.log("%%%%%%%%%%%%%%%% relation.type: " + relation.type + ", docName: " + docName + ", relation.startPoint.docName:" + relation.startPoint.docName)
-    if relation.type == 'composition' && docName == relation.startPoint.docName
+    if currentEnd.canCreateOtherSide
       +add-go-create-relation-data-link(docName, relation)
-    if docName == relation.startPoint.docName
-      +add-go-update-relation-data-link(docName, relation)
-    if docName == relation.endPoint.docName
-      +add-go-update-relation-data-link(docName, relation)
+    +add-go-update-relation-data-link(docName, relation)
   block
 
 

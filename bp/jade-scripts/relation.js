@@ -23,19 +23,33 @@
     function Relation(namespace, startPoint, relationDescription, endPoint, type){
       this.namespace = namespace;
       this.relationDescription = relationDescription;
-      this.type = type;
-      this.startPoint = this.getPoint(startPoint);
-      this.endPoint = this.getPoint(endPoint);
-      console.log("******** relation created is: ", this);
+      this.type = type || 'aggregation';
+      this.getPoints(startPoint, endPoint);
+      console.log("******** relation created is: ", JSON.stringify(this));
     }
-    prototype.getPoint = function(config){
-      if (typeof config === 'string') {
+    prototype.getPoints = function(startPoint, endPoint){
+      var ref$, navigatingDirection;
+      this.startPoint = this.getNames(startPoint);
+      this.endPoint = this.getNames(endPoint);
+      ref$ = this.relationDescription.split(/\s+/), this.startPoint.multiplicity = ref$[0], navigatingDirection = ref$[1], this.endPoint.multiplicity = ref$[2];
+      return this.markAbilityOfCreateOtherSide();
+    };
+    prototype.getNames = function(point){
+      if (typeof point === 'string') {
         return {
-          docName: config,
-          showName: config
+          docName: point,
+          showName: point
         };
       } else {
-        return config;
+        return point;
+      }
+    };
+    prototype.markAbilityOfCreateOtherSide = function(){
+      this.startPoint.canCreateOtherSide = true;
+      if (this.type === 'composition') {
+        this.endPoint.canCreateOtherSide = false;
+      } else {
+        this.endPoint.canCreateOtherSide = true;
       }
     };
     prototype.getGoCreateLink = function(currentEnd){
@@ -43,6 +57,13 @@
     };
     prototype.getGoUpdateLink = function(currentEnd){
       return this.getLinkByAction('go-update', currentEnd);
+    };
+    prototype.getCurrentEnd = function(currentEnd){
+      if (this.startPoint.docName === currentEnd) {
+        return this.startPoint;
+      } else {
+        return this.endPoint;
+      }
     };
     prototype.getOppositeEnd = function(currentEnd){
       if (this.startPoint.docName === currentEnd) {
@@ -66,6 +87,9 @@
         citedViewType: view,
         context: docName
       };
+      return this._alterLinkByFace(link, face, docName, showName);
+    };
+    prototype._alterLinkByFace = function(link, face, docName, showName){
       switch (face) {
       case 'create':
         link.label = '创建' + showName;
