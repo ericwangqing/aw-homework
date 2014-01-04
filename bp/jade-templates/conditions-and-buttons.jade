@@ -124,7 +124,7 @@ mixin add-addtional-multiple-links(links)
     - var dataName = link.citedDoc.pluralize()
     | {{#if #{link.guard}}}
     span.content.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 
-      i.unordered.list.icon
+      i.bp-relation-links.unordered.list.icon
     .ui.dimmer 
       .content
         .center

@@ -20,8 +20,8 @@ class Relation
     console.log "******** relation created is: ", JSON.stringify @
 
   get-points: (start-point, end-point)->
-    @start-point = @get-names start-point
-    @end-point = @get-names end-point
+    @start-point = (@get-names start-point) <<< type: 'start'
+    @end-point = (@get-names end-point) <<< type: 'end'
     [@start-point.multiplicity, navigating-direction, @end-point.multiplicity] = @relation-description.split /\s+/
     @mark-ability-of-create-other-side!
 

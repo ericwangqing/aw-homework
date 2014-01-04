@@ -29,8 +29,8 @@
     }
     prototype.getPoints = function(startPoint, endPoint){
       var ref$, navigatingDirection;
-      this.startPoint = this.getNames(startPoint);
-      this.endPoint = this.getNames(endPoint);
+      this.startPoint = (ref$ = this.getNames(startPoint), ref$.type = 'start', ref$);
+      this.endPoint = (ref$ = this.getNames(endPoint), ref$.type = 'end', ref$);
       ref$ = this.relationDescription.split(/\s+/), this.startPoint.multiplicity = ref$[0], navigatingDirection = ref$[1], this.endPoint.multiplicity = ref$[2];
       return this.markAbilityOfCreateOtherSide();
     };

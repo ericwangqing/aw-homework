@@ -35,6 +35,7 @@ include ../bp/jade-templates/bp-mixins
     +fieldset('作业内容')
       +html('内容')(span=FULL_ROW, placeholder='在这里开始作业吧~')
 
+    +auto-insert('学生', A.currentUserName())
     +auto-insert('assignmentId', A.docId('assignment'))  
 
 
