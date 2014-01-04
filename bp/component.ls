@@ -8,11 +8,18 @@ class @BP.Collection
     top[collection-name] = @registry[collection-name] # 开发时暴露出来，便于插入数据和调试。
 
   @get-by-doc-name = (doc-name)->
-    collection-name = (new BP.Names doc-name, 'default').meteor-collection-name
+    collection-name = (new BP.Names 'default', doc-name).meteor-collection-name
     @get collection-name
 
 class @BP.Component
+  @registry = {}
   @main-nav-paths = []
+
+  @create-components = (components, relations)!->
+    [BP.Relation.add-relation relation for relation in relations]
+    [new BP.Component component for component in components]
+    [component.init! for doc-name, component of @registry]
+
 
   @create-components-from-jade-views =  (jade-views)->
     # debugger
@@ -20,27 +27,45 @@ class @BP.Component
     (view, view-name)  <~! _.each BP.View.registry
     component = new BP.Component view
 
-  (@view)-> # template-name, template-adapter, views
+  ({@namespace, @doc-name, @is-main-nav})-> # template-name, template-adapter, views
+    @list = new BP.List-view @namespace, @doc-name
+    @detail = new BP.Detail-view @namespace, @doc-name
+    @@registry[@doc-name] = @
+
+  init: !->
+    @list.add-links @detail
+    @detail.add-links @list
+    @add-relations-links!
+
     if Meteor.is-client
-      @create-template-adpater!
-      @add-main-navs!
-      @view.route!
+      @add-to-main-nav! if @is-main-nav
+      @list.route!
+      @detail.route!
 
     if Meteor.is-server 
       # debugger
-      @view.data-manager.publish!
+      @list.data-manager.publish!
+      @detail.data-manager.publish!
 
-  create-template-adpater: !->
-    @adapter = BP.Template-adapter.get @view
+  add-relations-links: !->
+    relations = BP.Relation.registry[@doc-name]
+    # debugger
+    [@add-relation-links relation for relation in relations]
 
-  add-main-navs: !->
-    if @view.is-main-nav
-      for face-name, path-pattern of @view.faces
-        if face-name is 'list'
-          path-name = @view.faces-manager.get-path-name face-name
-          @add-to-main-nav @view, path-name 
+  add-relation-links: (relation)!->
+    current-end = relation.get-current-end @doc-name
+    @add-action-link @list, 'go-create', relation
+    @add-action-link @list, 'go-update', relation
+    # TODO: other links
 
-  add-to-main-nav: (view, path-name)!->
-    @@main-nav-paths.push {name: view.name, path: path-name}
+  add-action-link: (view, action, relation)!->
+    link = relation.get-link-by-action action, @doc-name
+    to-view = @@registry[link.to.doc-name][link.to.view]
+    view.links[link.path] = view: to-view, face: to-view.faces[link.to.face]
+
+  add-to-main-nav: !->
+    path-name = @list.faces-manager.get-path-name 'list'
+    @@main-nav-paths.push {name: @list.name, path: path-name}
+
 
 

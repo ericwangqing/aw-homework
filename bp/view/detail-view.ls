@@ -1,4 +1,8 @@
 class @BP.Detail-view extends BP.View
+  (@namespace, @doc-name) ->
+    @type = 'detail'
+    @name = @template-name = new BP.Names @namespace, @doc-name .detail-template-name
+    super!
     
   create-data-manager: !-> @data-manager = new BP.Detail-data-manager @
 
@@ -20,4 +24,6 @@ class @BP.Detail-view extends BP.View
   create-ui: !->
     @ui = new BP.Form @
 
+  create-adapter: !->
+    @adapter = new BP.Detail-template-adpater @
 

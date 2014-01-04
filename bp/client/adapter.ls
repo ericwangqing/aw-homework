@@ -75,10 +75,10 @@ class @BP.Template-adapter
       new Handlebars.Safe-string result 
     
 # ----------------------- Detail ---------------------------------
-class List-template-adpater extends BP.Template-adapter
+class BP.List-template-adpater extends BP.Template-adapter
 
 
-class Detail-template-adpater extends BP.Template-adapter
+class BP.Detail-template-adpater extends BP.Template-adapter
   create-helpers: !->
     super ...
     @helpers <<<

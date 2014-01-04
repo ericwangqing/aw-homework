@@ -20,7 +20,7 @@ class @BP.View extends BP._View
     view = (@create-view-by-type jade-view.type) <<< jade-view
     view = (@create-view-by-type jade-view.type) <<< jade-view
     view.init!
-    @registry[view.name] = view
+    @registry[view.name] = viewπ
     
 
   @create-view-by-type = (type)->
@@ -47,15 +47,17 @@ class @BP.View extends BP._View
       to-view = @doc-grouped-views[doc-name][namespace][view-type]
       view.links[link.path.camelize(false)] = view: to-view, face: to-view.faces[face-name]
 
-  init: ->
-    @names = new BP.Names @doc-name, @namespace
+
+  ->
+    @names = new BP.Names @namespace, @doc-name
     @permission = BP.Permission.get-instance!
+    @create-faces! 
+    @create-data-manager!
     if Meteor.is-client
       @links = {}
       @state = new BP.State @name
-      @create-faces! 
       @create-ui!
-    @create-data-manager!
+      @create-adapter!
 
   get-path: (link-name, doc)->
     {view, face} = @links[link-name]

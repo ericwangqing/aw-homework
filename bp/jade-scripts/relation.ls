@@ -1,12 +1,11 @@
-_ = require 'underscore'
 class Relation
   @registry = {}
 
-  @add-relation = (namespace, start, relation-description, end, type)!->
-    relation = new Relation namespace, start, relation-description, end, type
+  @add-relation = ({namespace, start, relation-description, end, type})!->
+    relation = new Relation {namespace, start, relation-description, end, type}
     @_add-to-registry-of relation.start-point.doc-name, relation
     @_add-to-registry-of relation.end-point.doc-name, relation
-    console.log "Registry is: ", @registry
+    # console.log "Registry is: ", @registry
 
   @_add-to-registry-of = (doc-name, relation)!->
     @registry[doc-name] ||= []
@@ -15,13 +14,13 @@ class Relation
   @get-relations-by-doc-name = (doc-name)->
     @registry[doc-name] or []
 
-  (@namespace, start-point, @relation-description, end-point, @type)!-> #type: compositon | aggregation
-    @get-points start-point, end-point
-    console.log "******** relation created is: ", JSON.stringify @
+  ({@namespace, start, @relation-description, end, @type})!-> #type: compositon | aggregation
+    @get-points start, end
+    # console.log "******** relation created is: ", JSON.stringify @
 
-  get-points: (start-point, end-point)->
-    @start-point = (@get-names start-point) <<< type: 'start'
-    @end-point = (@get-names end-point) <<< type: 'end'
+  get-points: (start, end)->
+    @start-point = (@get-names start) <<< type: 'start'
+    @end-point = (@get-names end) <<< type: 'end'
     [@start-point.multiplicity, navigating-direction, @end-point.multiplicity] = @relation-description.split /\s+/
     @mark-ability-of-create-other-side!
 
@@ -29,7 +28,7 @@ class Relation
     if typeof point is 'string'
       {docName: point, showName: point}
     else
-      _.clone point
+      Object.clone point
 
   mark-ability-of-create-other-side: !->
     @start-point.can-create-other-side = true
@@ -59,16 +58,16 @@ class Relation
 
     link =
       icon: action
-      path: action + '-' + full-doc-name
-      to: [full-doc-name, view, face].join '.' 
+      path: [action, @namespace, doc-name].join '-' .camelize false
+      to: {@namespace, doc-name, view, face}
       cited-doc: doc-name
       show-name: show-name
       cited-view-type: view
       context: doc-name
 
     @_alter-link-by-face destination-end, link, face, doc-name, show-name 
-    console.log "action: #action, current-end: #currentEnd, link: ", link
-    link
+    # console.log "action: #action, current-end: #currentEnd, link: ", link
+    # link
 
 
   _alter-link-by-face: (destination-end, link, face, doc-name, show-name)->
@@ -99,8 +98,8 @@ class Relation
 
   get-query: (doc-name)->
     if doc-name is @startPoint.doc-name
-      query = "{#{doc-name}Id: doc._id}"
+      query = "{_id: doc.#{doc-name}Id}"
     else
-      query = "{_id: doc.#{@startPoint.doc-name}Id}"
+      query = "{#{@startPoint.doc-name}Id: doc._id}"
 
 if module? then module.exports = Relation else BP.Relation = Relation # 让Jade和Meteor都可以使用

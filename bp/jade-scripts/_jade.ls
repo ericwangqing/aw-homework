@@ -15,8 +15,8 @@ module.exports =
 
   ## 声明式relation
   add-relation: (namespace, start, relation-description, end, type)!-> 
-    @relations.push {namespace, start, relation-description, end, type}
-    relation = Relation.add-relation namespace, start, relation-description, end, type # 实例化后，给jade在compile模板时使用
+    @relations.push relation = {namespace, start, relation-description, end, type}
+    relation = Relation.add-relation relation # 实例化后，给jade在compile模板时使用
 
   value: (attr)->
     if (attr.index-of '.') > 0
@@ -27,8 +27,8 @@ module.exports =
     console.log "attr is: #attr, result is: ", result
     result
 
-  get-names: (doc-name, namespace)-> 
-    @names = new Names doc-name, namespace  
+  get-names: (namespace, doc-name)-> 
+    @names = new Names namespace, doc-name  
 
   get-attr-name: (full-attr-name)->
     _.last full-attr-name.split '.'

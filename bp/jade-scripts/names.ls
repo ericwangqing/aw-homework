@@ -1,6 +1,6 @@
 ## used both at developing time by jade and runtime by meteor
 class Names
-  (doc-name, namespace)-> 
+  (namespace, doc-name)-> 
     @component-prefix            =   if namespace is 'default' then '' else namespace + '-'
       # -------------- doc和collection名称 ----------------------
     @doc-name                    =   doc-name

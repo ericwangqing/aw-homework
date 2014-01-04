@@ -5,13 +5,19 @@ class @BP.Abstract-data-manager
   @_state = @state-transferred-across-views = new BP.State '_transfer-state' if Meteor.is-client
   
   (@view)->
+    @cited-data = []
     @state = @view.state
     @collection = BP.Collection.get view.names.meteor-collection-name
     @set-cited-data! # {doc-name, query}, query仅用于在客户端查询数据，publish时不用
     @create-data-helpers! # {meteor-template-helper-name, helper-fn}
 
   set-cited-data: !->
-    @cited-data = [cite <<< doc-name: doc-name for doc-name, cite of @view.cited]
+    relations = BP.Relation.registry[@view.doc-name]
+    for relation in relations
+      related = relation.get-opposite-end(@view.doc-name)
+      @cited-data.push {doc-name: related.doc-name, query: (relation.get-query related.doc-name), is-multiple: (related.multiplicity isnt '1')}
+    # @cited-data = [{doc-name: relation.get-opposite-end(@doc-name).doc-name, query: relation.get-query }]
+    # @cited-data = [cite <<< doc-name: doc-name for doc-name, cite of @view.cited]
 
   get-transferred-state: (attr)-> @@state-transferred-across-views.get attr
 

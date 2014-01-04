@@ -1,4 +1,8 @@
 class BP.List-view extends BP.View
+  (@namespace, @doc-name) ->
+    @type = 'list'
+    @name = @template-name = new BP.Names @namespace, @doc-name .list-template-name
+    super!
 
   create-data-manager: !-> 
     @data-manager = new BP.List-data-manager @
@@ -8,6 +12,9 @@ class BP.List-view extends BP.View
     @faces = @faces-manager.create-faces!
 
   create-ui: !->  @ui = new BP.Table @
+
+  create-adapter: !->
+    @adapter = new BP.List-template-adpater @
 
   add-links: (detail)!-> @links =
     go-create : view: detail, face: detail.faces.create

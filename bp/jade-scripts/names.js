@@ -4,7 +4,7 @@
   Names = (function(){
     Names.displayName = 'Names';
     var prototype = Names.prototype, constructor = Names;
-    function Names(docName, namespace){
+    function Names(namespace, docName){
       this.componentPrefix = namespace === 'default'
         ? ''
         : namespace + '-';

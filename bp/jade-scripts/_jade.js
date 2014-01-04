@@ -21,14 +21,14 @@
     },
     addRelation: function(namespace, start, relationDescription, end, type){
       var relation;
-      this.relations.push({
+      this.relations.push(relation = {
         namespace: namespace,
         start: start,
         relationDescription: relationDescription,
         end: end,
         type: type
       });
-      relation = Relation.addRelation(namespace, start, relationDescription, end, type);
+      relation = Relation.addRelation(relation);
     },
     value: function(attr){
       var ref$, docName, result;
@@ -41,8 +41,8 @@
       console.log("attr is: " + attr + ", result is: ", result);
       return result;
     },
-    getNames: function(docName, namespace){
-      return this.names = new Names(docName, namespace);
+    getNames: function(namespace, docName){
+      return this.names = new Names(namespace, docName);
     },
     getAttrName: function(fullAttrName){
       return _.last(fullAttrName.split('.'));
