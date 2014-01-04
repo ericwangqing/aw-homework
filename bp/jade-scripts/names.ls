@@ -1,7 +1,7 @@
 ## used both at developing time by jade and runtime by meteor
 class Names
-  (doc-name, component-name)-> 
-    @component-prefix            =   if component-name is 'default' then '' else component-name + '-'
+  (doc-name, namespace)-> 
+    @component-prefix            =   if namespace is 'default' then '' else namespace + '-'
       # -------------- doc和collection名称 ----------------------
     @doc-name                    =   doc-name
     @mongo-collection-name       =   doc-name.pluralize!

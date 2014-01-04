@@ -8,12 +8,12 @@ include relation
 mixin component(_docName, isMainNav)
   - if(typeof isMainNav == 'undefined'){isMainNav = true} // 默认将component的list加到主导航
   - docName = _docName
-  - componentName = attributes.name || 'default' // 一个doc有一个必须实现的默认component，包括一个list和一个detaill，还可以任意多个其它component
-  - names = bp.getNames(docName, componentName)
-  - cited = bp.getCited(docName)
+  - namespace = attributes.name || 'default' // 一个doc有一个必须实现的默认component，包括一个list和一个detaill，还可以任意多个其它component
+  - names = bp.getNames(docName, namespace)
+
+  - bp.addComponent(namespace, docName, isMainNav, className)
+
   block
-  if isMainNav
-    - bp.setMainNav(names.listTemplateName)
   - bp.saveView()
 
 
@@ -21,7 +21,7 @@ mixin list(titles, attrs)
   - attrs = attrs || titles // 可以只给属性名（attrs），此时就用属性名作为标题
   - titles = titles
   +register-bp-view(viewName)
-    +template(docName, componentName, viewName = names.listTemplateName, 'list')
+    +template(docName, namespace, viewName = names.listTemplateName, 'list')
       .bp-list(bp-view-name=viewName)
         +table(names.listDataRetrieverName, titles, attrs)
           +alter-list()
@@ -46,7 +46,7 @@ mixin alter-list()
 
 mixin detail()
   +register-bp-view(viewName)
-    +template(docName, componentName, viewName = names.detailTemplateName, 'detail')
+    +template(docName, namespace, viewName = names.detailTemplateName, 'detail')
       .bp-detail(bp-view-name=viewName)
         +alter-detail()
           +form(names.detailDataRetrieverName)
@@ -71,5 +71,5 @@ mixin register-bp-view(templateName)
   - var templateStr = buf.slice(bufferStart, buf.length - 1).join("")
   - bp.registerTemplate(templateName, templateStr)
   //- - bp.showTemplate(templateStr)  
-  
+
 

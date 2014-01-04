@@ -1,11 +1,11 @@
 ## used both at developing time by jade and runtime by meteor
 class View
   @registry = {}
-  @get-view = (doc-name, component-name, template-name, type)->
+  @get-view = (doc-name, namespace, template-name, type)->
     throw new Error "view: '#template-name' already exists" if @registry[template-name]
-    @registry[template-name] = new View doc-name, component-name, template-name, type 
+    @registry[template-name] = new View doc-name, namespace, template-name, type 
 
-  (@doc-name, @component-name, @template-name, @type)->
+  (@doc-name, @namespace, @template-name, @type)->
     @name = @template-name
     @is-main-nav = false
     @referred-views = {}

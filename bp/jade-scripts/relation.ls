@@ -1,3 +1,4 @@
+_ = require 'underscore'
 class Relation
   @registry = {}
 
@@ -14,8 +15,7 @@ class Relation
   @get-relations-by-doc-name = (doc-name)->
     @registry[doc-name] or []
 
-  (@namespace, start-point, @relation-description, end-point, type)!->
-    @type = type or 'aggregation' # compositon | aggregation
+  (@namespace, start-point, @relation-description, end-point, @type)!-> #type: compositon | aggregation
     @get-points start-point, end-point
     console.log "******** relation created is: ", JSON.stringify @
 
@@ -29,7 +29,7 @@ class Relation
     if typeof point is 'string'
       {docName: point, showName: point}
     else
-      point
+      _.clone point
 
   mark-ability-of-create-other-side: !->
     @start-point.can-create-other-side = true

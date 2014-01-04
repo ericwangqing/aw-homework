@@ -1,8 +1,9 @@
 include table
 
 mixin relation(from, relationDescription, to)
-  - componentName = componentName ? componentName : (attributes.componentName ? attributes.componentName : 'default')
-  - bp.addRelation(componentName, from, relationDescription, to, attributes.type)
+  - namespace = namespace || (attributes.namespace || 'default')
+  - type = attributes.type || 'aggregation'
+  - bp.addRelation(namespace, from, relationDescription, to, attributes.type)
 
 mixin remove-create-link()
   +remove-link('go-create')

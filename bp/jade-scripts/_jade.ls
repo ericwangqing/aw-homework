@@ -7,15 +7,16 @@ _ = require 'underscore'
 jade.filters <<< filters = require './_jade-filters'
 
 module.exports =
+  components: []
+  relations: []
 
-  get-view: (doc-name, component-name, template-name, template-type)->
-    @view = View.get-view.apply View, &
+  add-component: (namespace, doc-name, is-main-nav, class-name)->
+    @components.push {namespace, doc-name, is-main-nav, class-name}
 
-  set-main-nav: (template-names)->
-    template-names = template-names.split ',' if typeof template-names is 'string'
-    for name in template-names
-      name = name.trim!
-      View.registry[name].is-main-nav = true
+  ## 声明式relation
+  add-relation: (namespace, start, relation-description, end, type)!-> 
+    @relations.push {namespace, start, relation-description, end, type}
+    relation = Relation.add-relation namespace, start, relation-description, end, type # 实例化后，给jade在compile模板时使用
 
   value: (attr)->
     if (attr.index-of '.') > 0
@@ -26,32 +27,14 @@ module.exports =
     console.log "attr is: #attr, result is: ", result
     result
 
-  get-cited-doc-name: (attr, cited)->
-    for doc-name, cite of cited
-      return doc-name if cite.attributes and attr in cite.attributes 
-
-  get-cited-doc: (attr, cited)->
-    # console.log "attr: #attr, cited: ", cited
-    for doc-name, cite of cited
-      return doc-name if cite.attributes and attr in cite.attributes 
-    null
-
-  # set-custom-class-name: (class-name)-> @view.custom-class = class-name
-
-  get-ref-name: (ref)->
-    switch ref
-    case 'detail' then @names.detail-template-name
-    case 'list' then @names.list-template-name
-    default ref
-
-  get-names: (doc-name, component-name)-> 
-    @names = new Names doc-name, component-name  
+  get-names: (doc-name, namespace)-> 
+    @names = new Names doc-name, namespace  
 
   get-attr-name: (full-attr-name)->
     _.last full-attr-name.split '.'
 
   save-view: !->
-    fs.write-file-sync 'bp/main.ls', code + (JSON.stringify View.registry)
+    fs.write-file-sync 'bp/main.ls', "BP.Component.create-components #{JSON.stringify @components}, #{JSON.stringify @relations}"
 
   ## 将jade渲染之后的template保存起来，以便在引用的时候，更名使用。避免直接用Handlebars的include {{> }}时，同名的template，实际上使用的是相同的helpers，拥有同样的状态。
   register-template: (templateName, templateStr)!->
@@ -61,9 +44,6 @@ module.exports =
   show-template: (template-str)!->
     console.log template-str
 
-  ## 声明式relation
-  add-relation: (component-name, start, relation-description, end, type)!->
-    Relation.add-relation component-name, start, relation-description, end, type
 
   get-relations: (doc-name)->
     Relation.get-relations-by-doc-name doc-name
@@ -81,7 +61,7 @@ module.exports =
       opposite-end = relation.get-opposite-end(doc-name)
       cited[opposite-end.doc-name] = 
         query: relation.get-query(doc-name)
-        is-multiple: opposite-end.multiplicity isnt '1'
+        is-multiple: opposite-end.multiplicity isnt '1' 
     cited
 
 
@@ -103,6 +83,11 @@ code = '''
 # debugger
 BP.Component.create-components-from-jade-views jade-views = 
 '''
+
+_code = '''
+BP.Component.create-components 
+'''
+
 
 
 

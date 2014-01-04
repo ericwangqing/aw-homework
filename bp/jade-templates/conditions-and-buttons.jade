@@ -89,9 +89,7 @@ mixin next-link()
 
 //- TODO：用relation声明数据关系后，进一步改善。
 mixin add-addtional-links(links)
-  - view.additionalLinks = view.additionalLinks || []
   each link in links
-    - view.additionalLinks.push(link)
     - var isNegative = link.guard[0] == '!'
     - if(isNegative){link.guard = link.guard.from(1)}
     if isNegative
@@ -117,10 +115,8 @@ mixin _with-or-without-context(link)
 
 
 mixin add-addtional-multiple-links(links)
-  - view.additionalLinks = view.additionalLinks || []
   each link in links
     - attributes = link 
-    - view.additionalLinks.push(link)
     - var dataName = link.citedDoc.pluralize()
     | {{#if #{link.guard}}}
     span.content.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 

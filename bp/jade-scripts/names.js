@@ -4,10 +4,10 @@
   Names = (function(){
     Names.displayName = 'Names';
     var prototype = Names.prototype, constructor = Names;
-    function Names(docName, componentName){
-      this.componentPrefix = componentName === 'default'
+    function Names(docName, namespace){
+      this.componentPrefix = namespace === 'default'
         ? ''
-        : componentName + '-';
+        : namespace + '-';
       this.docName = docName;
       this.mongoCollectionName = docName.pluralize();
       this.meteorCollectionName = docName.pluralize().capitalize();
