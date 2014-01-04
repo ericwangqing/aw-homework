@@ -1,53 +1,6 @@
 ## View是Component在Web page上的呈现。View使用Data-mananger获取数据。每个View有几种不同的face，face上有一些action（以button和link形式存在）。
-
 # 本文件命名加下划线，因为需要让Meteor在list-view.ls和detail-view.ls之前加载。
-class @BP.View extends BP._View
-  @doc-grouped-views = @_dgv = {}
-
-  @register-in-doc-grouped-views = (view)!->
-    @_dgv[view.doc-name] ||= {}
-    @_dgv[view.doc-name][view.namespace] ||= {}
-    @_dgv[view.doc-name][view.namespace][view.type] = view
-
-  @resume-views = !(jade-views)->
-    for view-name, jade-view of jade-views
-      @registry[view-name] = view = @resume-view jade-view
-      @register-in-doc-grouped-views view
-    # @create-referred-views!
-    @wire-view-links! if Meteor.is-client
-
-  @resume-view = (jade-view)->
-    view = (@create-view-by-type jade-view.type) <<< jade-view
-    view = (@create-view-by-type jade-view.type) <<< jade-view
-    view.init!
-    @registry[view.name] = viewπ
-    
-
-  @create-view-by-type = (type)->
-    if type is 'list' then new BP.List-view! else new BP.Detail-view!
-
-  @wire-view-links = !->
-    @wire-default-list-detail-views!
-    @wire-additional-view-links!
-
-  @wire-default-list-detail-views = !->
-    for doc-name, grouped-views of @doc-grouped-views
-      default-list = @doc-grouped-views[doc-name].default.list
-      default-detail = @doc-grouped-views[doc-name].default.detail
-      for namespace, {list, detail} of grouped-views
-        list.add-links (detail or default-detail)
-        detail.add-links (list or default-list)
-
-  @wire-additional-view-links = !->
-    [@wire-addtional-links view for view-name, view of @registry]
-      
-  @wire-addtional-links = (view)!->
-    for link in view.additional-links
-      [namespace, doc-name, view-type, face-name] = link.to.split '.'
-      to-view = @doc-grouped-views[doc-name][namespace][view-type]
-      view.links[link.path.camelize(false)] = view: to-view, face: to-view.faces[face-name]
-
-
+class @BP.View
   ->
     @names = new BP.Names @namespace, @doc-name
     @permission = BP.Permission.get-instance!
@@ -55,7 +8,6 @@ class @BP.View extends BP._View
     @create-data-manager!
     if Meteor.is-client
       @links = {}
-      @state = new BP.State @name
       @create-ui!
       @create-adapter!
 
@@ -92,8 +44,6 @@ class @BP.View extends BP._View
             self.change-to-face face-name, @params
         wait-on: -> # 注意：wait-on实际上在before之前执行！！
           self.data-manager.subscribe @params
-
-
 
   is-permit: (doc, face, cited-doc-name, cited-view-type)~> 
     doc-name = if typeof cited-doc-name is 'string' then cited-doc-name else @doc-name

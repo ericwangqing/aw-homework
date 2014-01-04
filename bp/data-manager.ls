@@ -6,7 +6,7 @@ class @BP.Abstract-data-manager
   
   (@view)->
     @cited-data = []
-    @state = @view.state
+    @state = new BP.State view.name if Meteor.is-client
     @collection = BP.Collection.get view.names.meteor-collection-name
     @set-cited-data! # {doc-name, query}, query仅用于在客户端查询数据，publish时不用
     @create-data-helpers! # {meteor-template-helper-name, helper-fn}

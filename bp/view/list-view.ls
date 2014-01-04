@@ -22,7 +22,7 @@ class BP.List-view extends BP.View
     'delete'  : view: @,      face: @faces.list
 
   add-to-template-rendered: -> 
-    if @additional-links and not _.is-empty @additional-links
+    if not _.is-empty @data-manager.cited-data
       @add-addtional-links-data-transfer!
 
   add-addtional-links-data-transfer: ->

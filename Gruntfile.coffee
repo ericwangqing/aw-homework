@@ -1,7 +1,7 @@
 module.exports = (grunt)->
   # process.env.DEBUG = 'aw'
   require 'sugar'
-  bp = require './bp/jade-scripts/_jade' # 将bp引入jade，编译出Router和View需要的代码
+  bp = require './bp/jade-scripts/_bp' # 将bp引入jade，编译出Router和View需要的代码
   grunt.initConfig
     clean: 
       src:
@@ -59,7 +59,7 @@ module.exports = (grunt)->
         files: [
           expand: true
           cwd: 'bp'
-          src: ['**/*.ls', '!main.ls', '!jade-scripts/_jade*.ls']
+          src: ['**/*.ls', '!main.ls', '!jade-scripts/_bp*.ls']
           dest: 'bin/lib'
           ext: '.js'
         ]
@@ -104,7 +104,7 @@ module.exports = (grunt)->
         options:
           compileDebug: true
           pretty: true
-          filters: require './bp/jade-scripts/_jade-filters'
+          filters: require './bp/jade-scripts/_bp-filters'
           data:
             bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
 
@@ -119,7 +119,7 @@ module.exports = (grunt)->
       #   options:
       #     compileDebug: true
       #     pretty: true
-      #     filters: require './bp/jade-scripts/_jade-filters'
+      #     filters: require './bp/jade-scripts/_bp-filters'
       #     data:
       #       bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
       app:
@@ -133,7 +133,7 @@ module.exports = (grunt)->
         options:
           compileDebug: true
           pretty: true
-          filters: require './bp/jade-scripts/_jade-filters'
+          filters: require './bp/jade-scripts/_bp-filters'
           data:
             bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
           #   grunt: ()-> grunt

@@ -20,13 +20,6 @@ class @BP.Component
     [new BP.Component component for component in components]
     [component.init! for doc-name, component of @registry]
 
-
-  @create-components-from-jade-views =  (jade-views)->
-    # debugger
-    BP.View.resume-views jade-views
-    (view, view-name)  <~! _.each BP.View.registry
-    component = new BP.Component view
-
   ({@namespace, @doc-name, @is-main-nav})-> # template-name, template-adapter, views
     @list = new BP.List-view @namespace, @doc-name
     @detail = new BP.Detail-view @namespace, @doc-name
@@ -66,6 +59,3 @@ class @BP.Component
   add-to-main-nav: !->
     path-name = @list.faces-manager.get-path-name 'list'
     @@main-nav-paths.push {name: @list.name, path: path-name}
-
-
-
