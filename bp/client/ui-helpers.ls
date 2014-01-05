@@ -53,13 +53,19 @@ class @BP.Form extends Abstract-Form
         name:  config-name
         local: [str.trim! for str in candidates.split ',']
 
-  get-multi-ahead-render: (attr-name, doc, config)->
+  get-multi-ahead-render: (attr-name, doc, _config)->
     ~>
-      # Meteor.defer ~>
-      multi-ahead = $ @rv "select[name='#{attr-name}']"
-      multi-ahead .select2 (config or {})
-      multi-ahead = $ @rv "select[name='#{attr-name}']"
-      multi-ahead .select2 'val', doc[attr-name]
+      if _config and _config isnt '' and !_config.hash # 注意, Meteor会自动添加最后一个参数{hash: }，用来传递更多options
+        eval 'config = ' + _config
+        data-config = 
+          multiple: config.multiple
+          data: @view.data-manager.get-doc-data config
+        multi-ahead = $ @rv "input[name='#{attr-name}']"
+        multi-ahead.select2 data-config
+      else
+        multi-ahead = $ @rv "select[name='#{attr-name}']"
+        multi-ahead.select2 {}
+      multi-ahead.select2 'val', doc[attr-name]
 
   add-validation: !~> 
     try
@@ -82,8 +88,14 @@ class @BP.Form extends Abstract-Form
   update-doc-value: !~>
     $ @rv 'form' .find all-input-field-selector .each (index, input)!~>
       attr-path-name = $ input .attr 'name'
-      @update-by-json-path attr-path-name, ($ input .val!) 
+      @update-by-json-path attr-path-name, @get-value input 
     @insert-auto-fields!
+
+  get-value: (input)~>
+    if $ input .has-class 'select2-hidden'
+      $ input .select2 'val'
+    else
+      $ input .val!
 
   update-by-json-path: !(json-path, value)-> # TODO: 改为JSON Path实现，应对复杂表单
       # 目前仅仅是简单表单，input的name直接对应doc的attribute
@@ -96,13 +108,3 @@ class @BP.Form extends Abstract-Form
 
 
 class @BP.Table extends Abstract-Form
-  # ------------- 下面改用Router的Before 来实现了 ----------------------
-  # register-event-handlers: (events-handlers)!->
-  #   super ...
-  #   events-handlers['click a.bp-update'] = @record-previous-and-next-link-in-session # 去到detail时，需要渲染“上一条”、“下一条”
-
-  # record-previous-and-next-link-in-session: (e)!->
-  #   current-tr = $ e.current-target .closest 'tr'
-  #   pre = current-tr.prev().find('a.bp-update').attr 'href'
-  #   next = current-tr.next().find('a.bp-update').attr 'href'
-  #   BP.State.set {pre-href: pre, next-href: next}

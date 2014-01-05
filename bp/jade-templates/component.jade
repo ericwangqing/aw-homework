@@ -29,7 +29,7 @@ mixin list(titles, attrs)
 
 mixin alter-list()
   each relation in bp.getRelations(docName)
-    - console.log("--------- relation is: ", relation)
+    //- - console.log("--------- relation is: ", relation)
     - currentEnd = relation.getCurrentEnd(docName)
     - oppositeEnd = relation.getOppositeEnd(docName)
     if relation.type == 'composition' && currentEnd.type == 'end'
@@ -53,11 +53,13 @@ mixin detail()
             block
 
 mixin alter-detail()
+  - var relations = bp.getRelations(docName)
   //- each relation in bp.getRelations(docName)
   //-   .related-from-links
   //-     if docName == relation.endPoint.docName
   //-       +add-related-from-links(docName, relation)
   block
+  //- +add-relations-fields(docName, relations)
   //- each relation in bp.getRelations(docName)
   //-   .related-to-links
   //-     if docName == relation.startPoint.docName

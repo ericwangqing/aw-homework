@@ -131,3 +131,19 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
     @previous-id = pre
     @next-id = next
 
+  get-doc-data: ({source, attr, option, value, query})->
+    if source is '@' 
+      values = @doc[attr]
+    else
+      data-source = @data-helpers[source]!
+      values = data-source[attr]
+
+    values = [values] if not _.is-array values 
+
+    # TODO: 以下需要考虑重复值的情况
+    if value
+      result = [{text: data[option], id: data[value]} for data, index in values]
+    else
+      result = [{text: data, id: data} for data, index in values]
+
+

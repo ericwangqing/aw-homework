@@ -5,6 +5,10 @@ mixin if-face(face)
   | {{#if bp-face-is '#{face}'}}
   block
   | {{/if}}
+//-# 控制仅在某个face中显示
+mixin if-else-face(face)
+  | {{#if bp-face-is '#{face}'}}
+  block
 
 //-# 是否允许当前用户对数据（默认为当前，除非给出citedDoc），进行某种操作（go-create, go-update, create, update, view; 以及其它用户通过add-links增加的action）
 mixin if-bp-permit(action)

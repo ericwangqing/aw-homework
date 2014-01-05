@@ -110,8 +110,8 @@ class BP.Detail-template-adpater extends BP.Template-adapter
         candidates: candidates
 
   enable-add-multi-ahead: ->
-    (attr, config)!~> # 模板中的multi-ahead控件将调用它，以便render后，动态添加multi-ahead功能
-      @renderers.push @view.ui.get-multi-ahead-render attr, config
+    (attr, doc, config)!~> # 模板中的multi-ahead控件将调用它，以便render后，动态添加multi-ahead功能
+      @renderers.push @view.ui.get-multi-ahead-render attr, doc, config
 
   enable-html-editor-field: ->
     (editor-id, toolbar-id, placeholder)!~>

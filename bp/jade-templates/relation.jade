@@ -1,4 +1,5 @@
 include table
+include fields/fields
 
 mixin relation(from, relationDescription, to)
   - namespace = namespace || (attributes.namespace || 'default')
@@ -21,7 +22,31 @@ mixin add-go-update-relation-data-links(docName, relation)
   - var goUpdateLink = bp.getGoUpdateLink(docName, relation)
   +add-item-links(goUpdateLink)
 
-  
+mixin add-relations-fields(docName, relations)
+  +fieldset('选择关联关系')
+    each relation in relations
+      - currentEnd = relation.getCurrentEnd(docName)
+      - related = relation.getOppositeEnd(docName)
+      if relation.type == 'composition' && currentEnd.type == 'end'
+        +_if-else-face('create')
+          +auto-insert(oppositeEnd.docName + 'Id', A.docId(oppositeEnd.docName))
+        +else()
+          +show-relation-data(oppositeEnd)
+      else
+        if oppositeEnd.multiplicity == '1'
+          +show-relation-data(oppositeEnd)
+        else
+          +show-multiple-related-data(oppositeEnd)
+
+mixin show-relation-data(related)
+  | {{#with #{related.docName}}}
+  +text(related.showName, related.showAttr)
+  | {{/with}}
+
+mixin show-multiple-related-data(related)
+  | {{#with #{related.docName}}}
+  +multi-ahead-dynamic()
+  | {{/with}}
 
 //- mixin add-related-from-links(docName, relation) 
   
