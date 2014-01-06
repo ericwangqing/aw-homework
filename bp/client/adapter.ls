@@ -100,7 +100,7 @@ class BP.Detail-template-adpater extends BP.Template-adapter
 
   enable-nav-link: (nav)->
     ~>
-      @view.get-path action = nav, if nav is 'previous' then @view.data-manager.previous-id else @view.data-manager.next-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
+      @view.get-path '', action = nav, if nav is 'previous' then @view.data-manager.previous-id else @view.data-manager.next-id # 这里需要考虑组合view的情况，要得到整体的path，现在只是局部
 
   enable-add-typeahead-to-input-field: -> 
     (attr, candidates)!~> # 模板中的ahead控件将调用它，以便render后，动态添加typeahead功能

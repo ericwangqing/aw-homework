@@ -33,18 +33,19 @@
       var ref$, docName, result;
       if (attr.indexOf('.') > 0) {
         ref$ = attr.split('.'), docName = ref$[0], attr = ref$[1];
-        result = "{{#with " + docName + "}} {{bs '" + attr + "'}} {{/with}}";
+        return result = "{{#with " + docName + "}} {{bs '" + attr + "'}} {{/with}}";
       } else {
-        result = "{{bs '" + attr + "'}}";
+        return result = "{{bs '" + attr + "'}}";
       }
-      console.log("attr is: " + attr + ", result is: ", result);
-      return result;
     },
     getNames: function(namespace, docName){
       return this.names = new Names(namespace, docName);
     },
     getAttrName: function(fullAttrName){
       return _.last(fullAttrName.split('.'));
+    },
+    getDocName: function(fullAttrName){
+      return _.first(fullAttrName.split('.'));
     },
     saveComponent: function(){
       fs.writeFileSync('bp/main.ls', "BP.Component.create-components " + JSON.stringify(this.components) + ", " + JSON.stringify(this.relations));

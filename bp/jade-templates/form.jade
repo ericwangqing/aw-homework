@@ -17,12 +17,12 @@ mixin form(item)
         +guarded-button('update', '提交')(classNames='positive')
         +guarded-button('delete', '删除')(classNames='negative')
 
-      +add-addtional-links(mainLinks)
+      +add-additional-links(mainLinks)
     
     .pre-next
       +previous-link()
       +next-link()
-      +add-addtional-links(navLinks)
+      +add-additional-links(navLinks)
   | {{/with}}  
 
 
@@ -47,4 +47,3 @@ mixin add-main-link(link)
 
 mixin add-nav-link(link)
   - navLinks.push(link)
-

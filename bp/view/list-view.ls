@@ -23,9 +23,9 @@ class BP.List-view extends BP.View
 
   add-to-template-rendered: -> 
     if not _.is-empty @data-manager.cited-data
-      @add-addtional-links-data-transfer!
+      @add-additional-links-data-transfer!
 
-  add-addtional-links-data-transfer: ->
+  add-additional-links-data-transfer: ->
     view = @
     [
       !-> $ 'a[class^="bp-"]' .filter ->

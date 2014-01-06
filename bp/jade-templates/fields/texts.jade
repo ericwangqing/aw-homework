@@ -24,11 +24,11 @@ mixin _text(label, attr, htmlTag)
         != "<textarea type='text' " + nameStr + validationStr + placeholderStr + " tabindex='" + index + "'>" + valueStr + "</textarea>"
 
 mixin text(label, attr)
- +_text(label, attr, 'input')(attributes)
+  +_text(label, attr, 'input')(attributes)
 
 //- text area
 mixin block-text(label, attr)
- +_text(label, attr, 'textarea')(attributes)
+  +_text(label, attr, 'textarea')(attributes)
 
 
 mixin no-blank-text(label, attr)

@@ -59,6 +59,7 @@ class Relation
 
     link =
       icon: action
+      face: face
       path: [action, @namespace, doc-name].join '-' .camelize false
       to: {@namespace, doc-name, view, face}
       cited-doc: doc-name

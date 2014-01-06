@@ -26,7 +26,7 @@ include ../bp/jade-templates/bp-mixins
   +detail()
     +fieldset('作业要求')
       +row()
-        +ref-text('assignment.题目')(span=HALF_ROW)
+        //- +ref-text('assignment.题目')(span=HALF_ROW, isLink=true, action='update', path='goUpdateDefaultAssignment', viewName='homeworks-list')
         +ref-text('assignment.截止时间')
         +multi-ahead('测试')(sourceDocName='assignment', sourceAttr='学生', multiple=true)
       +row() 

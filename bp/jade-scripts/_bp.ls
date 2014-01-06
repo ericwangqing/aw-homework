@@ -23,15 +23,18 @@ module.exports =
       [doc-name, attr] = attr.split '.' 
       result = "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
     else
-      result = "{{bs '#attr'}}"
-    console.log "attr is: #attr, result is: ", result
-    result
+      result = "{{bs '#attr'}}" 
+    # console.log "attr is: #attr, result is: ", result
+    # result
 
   get-names: (namespace, doc-name)-> 
     @names = new Names namespace, doc-name  
 
   get-attr-name: (full-attr-name)->
     _.last full-attr-name.split '.'
+
+  get-doc-name: (full-attr-name)->
+    _.first full-attr-name.split '.'
 
   save-component: !->
     fs.write-file-sync 'bp/main.ls', "BP.Component.create-components #{JSON.stringify @components}, #{JSON.stringify @relations}"

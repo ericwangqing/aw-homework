@@ -7,7 +7,7 @@ mixin table(items, columnNames, attributesNames)
   - rowLinks = [], rowMutipleLinks = [], tableLinks = [], removedLinks = []
   block
   //- 用户自定义的links
-  +add-addtional-links(tableLinks)
+  +add-additional-links(tableLinks)
   //- 可配置，可动态移除go-create按钮
   if removedLinks.indexOf('go-create') < 0 
     //- 只有list时，才有go-create按钮，view时没有
@@ -61,7 +61,7 @@ mixin _guarded-operation-cell()
     +mark-current-doc-id()
       +guarded-link('go-update')
       +guarded-link('delete')
-      +add-addtional-links(rowLinks)
+      +add-additional-links(rowLinks)
       +add-addtional-multiple-links(rowMutipleLinks)
 
 //-# --------------- 添加links -------------

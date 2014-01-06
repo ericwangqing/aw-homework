@@ -39,7 +39,6 @@ mixin _uneditable-content(label, attr, span)
   //- 不可编辑的域只显示值，并且不可tab导航
   +wrap-filed-with-label(label, span)
     - var citedClassStr = attributes.clazz ? 'content cited' : 'content'
-
     span.content 
       != bp.value(attr)
 

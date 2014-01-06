@@ -13,7 +13,7 @@ mixin if-else-face(face)
 //-# 是否允许当前用户对数据（默认为当前，除非给出citedDoc），进行某种操作（go-create, go-update, create, update, view; 以及其它用户通过add-links增加的action）
 mixin if-bp-permit(action)
   - var citedDocStr = attributes.citedDoc ? "'" + attributes.citedDoc + "'" : ''
-  - console.log("in if-bp-permit, action is: ", action)
+  //- - console.log("in if-bp-permit, action is: ", action)
   | {{#if bp-permit this '#{action}' #{citedDocStr}}}
   block
   | {{/if}}
@@ -48,8 +48,9 @@ mixin guarded-button(action, label)
         | #{label}
 
 mixin _link-button(action, href, isLink, label)
-  - var path = attributes.path || action
-  - var href = href || (isLink ? ("{{bp-path-for '"+ path.camelize(false) +"' this}}") : '#')
+  - var path = attributes.face || attributes.path || action
+  - var viewName = attributes.viewName || attributes.citedDoc || ''
+  - var href = href || (isLink ? ("{{bp-path-for '"+ viewName +"' '" + path.camelize(false) +"' this}}") : '#')
   - var tooltip = attributes.label ? attributes.label : null // 将label作为tooltip显示
   - var classNames = 'bp-' + action + (tooltip ? ' tooltip ' : ' ' )+ (attributes.classNames ? attributes.classNames : '')
   - classNames = attributes.isButton ? "ui icon tiny button " + classNames : classNames // Semantic UI button
@@ -64,15 +65,17 @@ mixin _link-button(action, href, isLink, label)
         when 'create'     :   i.fa.fa-plus.fa-fw 
         when 'go-create'  :   i.fa.fa-plus.fa-fw 
         when 'go-update'  :   i.fa.fa-pencil.fa-fw 
+        when 'update'     :   i.fa.fa-pencil.fa-fw 
         when 'delete'     :   i.fa.fa-trash-o.fa-fw 
         when 'previous'   :   i.fa.fa-arrow-left.fa-fw
         defaule: i
       block
 
 mixin guarded-link(action)
-  - console.log("in guarded link, action is: " + action + ", attributes are: ", attributes)
+  //- - console.log("in guarded link, action is: " + action + ", attributes are: ", attributes)
   +if-bp-permit(action)(attributes)
     +_link-button(action, null, true)(attributes)
+      block
 
 mixin previous-link()
   | {{#if bp-pre-link}}
@@ -86,13 +89,8 @@ mixin next-link()
     | 下一条
   | {{/if}}
 
-//- mixin show-reference(ref, query)
-//-   - var referredViewName = bp.getRefName(ref)
-//-   - if(references.none(referredViewName)){references.push({referredViewName: 'homework', query: query});} // 一个reference可在多个域标注
-//-   i.fa.fa-info.reference(bp-view-name = 'ref-' + referredViewName)
 
-//- TODO：用relation声明数据关系后，进一步改善。
-mixin add-addtional-links(links)
+mixin add-additional-links(links)
   each link in links
     - var isNegative = link.guard[0] == '!'
     - if(isNegative){link.guard = link.guard.from(1)}
@@ -104,8 +102,6 @@ mixin add-addtional-links(links)
       | {{#if #{link.guard}}}
       +_with-or-without-context(link)
       | {{/if}}
-
-
 
 mixin _with-or-without-context(link)
   - attributes = link 
@@ -119,8 +115,10 @@ mixin _with-or-without-context(link)
 
 
 mixin add-addtional-multiple-links(links)
+  - var oppositeEnd = attributes.oppositeEnd
   each link in links
     - attributes = link 
+    - console.log("*************** link: ", link)
     - var dataName = link.citedDoc.pluralize()
     | {{#if #{link.guard}}}
     span.content.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 
@@ -130,6 +128,8 @@ mixin add-addtional-multiple-links(links)
         .center
           | {{#each #{dataName}}}
           +guarded-link(link.icon)(attributes)
+            if oppositeEnd
+              | {{bs '#{oppositeEnd.docName + '.' + oppositeEnd.showAttr}'}}
           | {{/each}}
     | {{/if}}
 

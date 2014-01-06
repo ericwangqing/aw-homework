@@ -1,4 +1,5 @@
 include table
+include form
 include fields/fields
 
 mixin relation(from, relationDescription, to)
@@ -15,7 +16,7 @@ mixin add-go-create-relation-data-link(docName, relation)
   +add-item-link(goCreateLink)
 
 mixin add-go-update-relation-data-link(docName, relation)
-  - var goUpdateLink = bp.getGoUpdateLink(docName, relation)
+  - var goUpdateLink = bp.getGoUpdateLink(docName, relation) // 改为直接用relation.getLinkByAction
   +add-item-link(goUpdateLink)
 
 mixin add-go-update-relation-data-links(docName, relation)
@@ -23,31 +24,52 @@ mixin add-go-update-relation-data-links(docName, relation)
   +add-item-links(goUpdateLink)
 
 mixin add-relations-fields(docName, relations)
-  +fieldset('选择关联关系')
+  +fieldset('关联关系')
     each relation in relations
+      - console.log("******** relation is: ", relation)
       - currentEnd = relation.getCurrentEnd(docName)
-      - related = relation.getOppositeEnd(docName)
-      if relation.type == 'composition' && currentEnd.type == 'end'
-        +_if-else-face('create')
-          +auto-insert(oppositeEnd.docName + 'Id', A.docId(oppositeEnd.docName))
-        +else()
-          +show-relation-data(oppositeEnd)
+      - oppositeEnd = relation.getOppositeEnd(docName)
+      if relation.type == 'composition' 
+        +add-composition-relation-field(docName, relation)
+    //-   else
+    //-     +add-aggregation-relation-field(docName, relation)
+
+mixin add-composition-relation-field(docName, relation)
+  //- composition时，start一端的多重性一定是1
+  if currentEnd.type == 'end'
+    +if-else-face('create')
+      +auto-insert(oppositeEnd.docName + 'Id', A.docId(oppositeEnd.docName))
+    +else()
+      +show-related-data-with-text-link(relation, oppositeEnd)
+  else 
+    +if-else-face('create')
+      //- 啥也不显示
+      span 
+    +else()
+      if oppositeEnd.multiplicity == 1
+        +add-go-create-or-go-update-text-link(docName, relation)
       else
-        if oppositeEnd.multiplicity == '1'
-          +show-relation-data(oppositeEnd)
-        else
-          +show-multiple-related-data(oppositeEnd)
+        +add-go-create-and-go-update-text-links(docName, relation)
 
-mixin show-relation-data(related)
-  | {{#with #{related.docName}}}
-  +text(related.showName, related.showAttr)
-  | {{/with}}
+mixin show-related-data-with-text-link(relation, oppositeEnd)
+  - link = relation.getLinkByAction('go-update')
+  - attributes = Object.merge({isLink: true}, link)
+  +ref-text(oppositeEnd.showName, oppositeEnd.showAttr)(attributes)
 
-mixin show-multiple-related-data(related)
-  | {{#with #{related.docName}}}
-  +multi-ahead-dynamic()
-  | {{/with}}
+mixin add-go-create-or-go-update-text-link(docName, relation)
+  - goCreateLink = relation.getLinkByAction('go-create')
+  - goUpdateLink = relation.getLinkByAction('go-update')
+  +add-additional-links([goCreateLink])
+    | #{oppositeEnd.showName}
+  +add-additional-links([goUpdateLink])
+    | {{bs '#{oppositeEnd.docName + '.' + oppositeEnd.showAttr}'}}
 
-//- mixin add-related-from-links(docName, relation) 
-  
-//-   +add-additional-links 
+mixin add-go-create-and-go-update-text-links(docName, relation)
+  - goCreateLink = relation.getLinkByAction('go-create')
+  - goUpdateLink = relation.getLinkByAction('go-update')
+  +add-additional-links([goCreateLink])
+    | #{oppositeEnd.showName}
+  +add-addtional-multiple-links([goUpdateLink])(oppositeEnd=oppositeEnd)
+
+mixin add-aggregation-relation-field(docName, relation)
+  span 'NO IMPLEMENTED YET.'

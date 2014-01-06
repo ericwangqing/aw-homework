@@ -85,6 +85,7 @@
       view = face === 'list' ? 'list' : 'detail';
       link = {
         icon: action,
+        face: face,
         path: [action, this.namespace, docName].join('-').camelize(false),
         to: {
           namespace: this.namespace,

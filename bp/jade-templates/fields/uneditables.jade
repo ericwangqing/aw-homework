@@ -3,7 +3,16 @@ include commons
 //-# 不可编辑域
 mixin ref-text(label, attr)
   - var attr = attr ? attr : label
-  +guarded-input-wrapper(label, attr)(attributes)
+  - var span = attributes.span || Field_SPAN
+  +wrap-filed-with-label(label, span)
+    if attributes.isLink
+      | {{#with #{attributes.citedDoc}}}
+      +guarded-link('go-update')(attributes)
+        | {{bs '#{attr}'}}
+      | {{/with}}
+    else
+      span.content
+        != bp.value(attr)
 
 mixin ref-list(label, attr)
   - var attr = attr ? attr : label
