@@ -100,8 +100,9 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
     @view.ui.doc = @state.get 'doc'
 
   add-addtional-data-helpers: !->
-    for {doc-name, query} in @cited-data
-      @data-helpers[doc-name] = @create-data-helper doc-name, query
+    for {doc-name, query, is-multiple} in @cited-data
+      helper-name = if is-multiple then doc-name.pluralize! else doc-name
+      @data-helpers[helper-name] = @create-data-helper doc-name, query
 
   create-data-helper: (doc-name, query)->
     self = @
@@ -110,7 +111,7 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
       if self.is-main-data-available!
         doc = self.doc
         eval "query = " + query if typeof query is 'string'
-        collection.findOne query
+        collection.find query
       else
         self.get-transferred-state doc-name
 

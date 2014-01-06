@@ -27,8 +27,6 @@ mixin add-relations-fields(docName, relations)
   +fieldset('关联关系')
     each relation in relations
       - console.log("******** relation is: ", relation)
-      - currentEnd = relation.getCurrentEnd(docName)
-      - oppositeEnd = relation.getOppositeEnd(docName)
       if relation.type == 'composition' 
         +add-composition-relation-field(docName, relation)
     //-   else
@@ -36,6 +34,8 @@ mixin add-relations-fields(docName, relations)
 
 mixin add-composition-relation-field(docName, relation)
   //- composition时，start一端的多重性一定是1
+  - currentEnd = relation.getCurrentEnd(docName)
+  - oppositeEnd = relation.getOppositeEnd(docName)
   if currentEnd.type == 'end'
     +if-else-face('create')
       +auto-insert(oppositeEnd.docName + 'Id', A.docId(oppositeEnd.docName))
@@ -52,24 +52,26 @@ mixin add-composition-relation-field(docName, relation)
         +add-go-create-and-go-update-text-links(docName, relation)
 
 mixin show-related-data-with-text-link(relation, oppositeEnd)
-  - link = relation.getLinkByAction('go-update')
+  - link = relation.getLinkByAction('go-update', currentEnd)
   - attributes = Object.merge({isLink: true}, link)
   +ref-text(oppositeEnd.showName, oppositeEnd.showAttr)(attributes)
 
 mixin add-go-create-or-go-update-text-link(docName, relation)
-  - goCreateLink = relation.getLinkByAction('go-create')
-  - goUpdateLink = relation.getLinkByAction('go-update')
+  - goCreateLink = relation.getLinkByAction('go-create', currentEnd)
+  - goUpdateLink = relation.getLinkByAction('go-update', currentEnd)
   +add-additional-links([goCreateLink])
     | #{oppositeEnd.showName}
   +add-additional-links([goUpdateLink])
     | {{bs '#{oppositeEnd.docName + '.' + oppositeEnd.showAttr}'}}
 
 mixin add-go-create-and-go-update-text-links(docName, relation)
-  - goCreateLink = relation.getLinkByAction('go-create')
-  - goUpdateLink = relation.getLinkByAction('go-update')
+  - goCreateLink = relation.getLinkByAction('go-create', currentEnd)
+  - goUpdateLink = relation.getLinkByAction('go-update', currentEnd)
+  - console.log("currentEnd: ", currentEnd)
+  - console.log("goCreateLink: ", goCreateLink)
   +add-additional-links([goCreateLink])
     | #{oppositeEnd.showName}
-  +add-addtional-multiple-links([goUpdateLink])(oppositeEnd=oppositeEnd)
+  +add-addtional-multiple-links([goUpdateLink])(showAttr=oppositeEnd.showAttr)
 
 mixin add-aggregation-relation-field(docName, relation)
   span 'NO IMPLEMENTED YET.'

@@ -97,10 +97,12 @@ mixin add-additional-links(links)
     if isNegative
       | {{#unless #{link.guard}}}
       +_with-or-without-context(link)
+        block
       | {{/unless}}
     else
       | {{#if #{link.guard}}}
       +_with-or-without-context(link)
+        block
       | {{/if}}
 
 mixin _with-or-without-context(link)
@@ -109,19 +111,21 @@ mixin _with-or-without-context(link)
     | {{#with #{link.context}}}
     //- 注意：这里必须用attributes来传递，直接用link，传递会成为{link: true}
     +guarded-link(link.icon)(attributes)
+      block
     | {{/with}}
   else
     +guarded-link(link.icon)(attributes)
+      block
 
 
 mixin add-addtional-multiple-links(links)
-  - var oppositeEnd = attributes.oppositeEnd
+  - var showAttr = attributes.showAttr
   each link in links
     - attributes = link 
     - console.log("*************** link: ", link)
     - var dataName = link.citedDoc.pluralize()
     | {{#if #{link.guard}}}
-    span.content.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 
+    span.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 
       i.bp-relation-links.unordered.list.icon
     .ui.dimmer 
       .content
@@ -129,7 +133,7 @@ mixin add-addtional-multiple-links(links)
           | {{#each #{dataName}}}
           +guarded-link(link.icon)(attributes)
             if oppositeEnd
-              | {{bs '#{oppositeEnd.docName + '.' + oppositeEnd.showAttr}'}}
+              | {{bs '#{showAttr}'}}
           | {{/each}}
     | {{/if}}
 

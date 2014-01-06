@@ -44,20 +44,29 @@ class Relation
   get-go-update-link: (current-end)->
     @get-link-by-action 'go-update', current-end 
 
-  get-current-end: (current-end)->
-    if @start-point.doc-name is current-end then @start-point else @end-point
+  get-current-end: (current)->
+    console.log "current current is: ", current
+    console.log "typeof current is: ", typeof current
+    current-doc-name = if typeof current is 'string' then current else current.doc-name
+    if @start-point.doc-name is current-doc-name then @start-point else @end-point
 
-  get-opposite-end: (current-end)->
-    if @start-point.doc-name is current-end then @end-point else @start-point
+  get-opposite-end: (current)->
+    console.log "opposite current is: ", current
+    console.log "typeof current is: ", typeof current
+    current-doc-name = if typeof current is'string' then current else current.doc-name
+    if @start-point.doc-name is current-doc-name then @end-point else @start-point
 
   get-link-by-action: (action, current-end)->
     destination-end = @get-opposite-end current-end
+    console.log "relation is: ", @
+    console.log "current-end: ", current-end
+    console.log "destination-end: ", destination-end
     face = @strip-go-prefix action
     {doc-name, show-name} = destination-end
     full-doc-name = @namespace + '.' +  doc-name
     view = if face is 'list' then 'list' else 'detail'
 
-    link =
+    link = 
       icon: action
       face: face
       path: [action, @namespace, doc-name].join '-' .camelize false

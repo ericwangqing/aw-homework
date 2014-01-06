@@ -62,15 +62,27 @@
     prototype.getGoUpdateLink = function(currentEnd){
       return this.getLinkByAction('go-update', currentEnd);
     };
-    prototype.getCurrentEnd = function(currentEnd){
-      if (this.startPoint.docName === currentEnd) {
+    prototype.getCurrentEnd = function(current){
+      var currentDocName;
+      console.log("current current is: ", current);
+      console.log("typeof current is: ", typeof current);
+      currentDocName = typeof current === 'string'
+        ? current
+        : current.docName;
+      if (this.startPoint.docName === currentDocName) {
         return this.startPoint;
       } else {
         return this.endPoint;
       }
     };
-    prototype.getOppositeEnd = function(currentEnd){
-      if (this.startPoint.docName === currentEnd) {
+    prototype.getOppositeEnd = function(current){
+      var currentDocName;
+      console.log("opposite current is: ", current);
+      console.log("typeof current is: ", typeof current);
+      currentDocName = typeof current === 'string'
+        ? current
+        : current.docName;
+      if (this.startPoint.docName === currentDocName) {
         return this.endPoint;
       } else {
         return this.startPoint;
@@ -79,6 +91,9 @@
     prototype.getLinkByAction = function(action, currentEnd){
       var destinationEnd, face, docName, showName, fullDocName, view, link;
       destinationEnd = this.getOppositeEnd(currentEnd);
+      console.log("relation is: ", this);
+      console.log("current-end: ", currentEnd);
+      console.log("destination-end: ", destinationEnd);
       face = this.stripGoPrefix(action);
       docName = destinationEnd.docName, showName = destinationEnd.showName;
       fullDocName = this.namespace + '.' + docName;
