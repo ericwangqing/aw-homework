@@ -1,6 +1,7 @@
 include commons
 
 //-# 不可编辑域
+//-# 用以呈现relation数据的属性。可以呈现为带有link的值
 mixin ref-text(label, attr)
   - var attr = attr ? attr : label
   - var span = attributes.span || Field_SPAN
@@ -19,7 +20,7 @@ mixin ref-list(label, attr)
   - var span = attributes.span || Field_SPAN
   +wrap-filed-with-label(label, span)
     - var citedDocName = attr.split('.')[0]
-    | {{#with #{citedDocName}}}
+    | {{#with #{attributes.citedDoc}}}
     if attributes.isOrdered 
       ol
         +_ref-list-items(attr)
@@ -33,48 +34,6 @@ mixin _ref-list-items(attr)
   | {{#each #{attr}}}
   li {{this}}
   | {{/each}}
-
-mixin ref-links-list(label, attr, face)
-  +_ref-links-list-wrapper(label, attr, face)(attributes)
-    .ui.text.menu.content
-      .header.item 选择链接
-      | {{#each #{_attr}}}
-      a.item(href='#') {{this.title}}
-      | {{/each}}
-
-mixin _ref-links-list-wrapper(label, attr, face)
-  - if(!attr){throw new Error("'ref-links-list' requires at least two parameters.")}
-  - if(!face){face = attr; attr = label}
-  - var span = attributes.span || Field_SPAN
-  - var citedDocName = attr.split('.')[0]
-  - _attr = attr
-  | {{#with #{citedDocName}}}
-  +wrap-filed-with-label(label, span)
-    block
-  | {{/with}}
-
-mixin ref-dimmable-links-list(label, attr, face)
-  +_ref-links-list-wrapper(label, attr, face)(attributes)
-    - showAttr = attributes.showAttr || 'title'
-    span.content(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');") 查看链接列表
-      i.unordered.list.icon
-    if attributes.isWholePage
-      .ui.page.dimmer
-        .content
-          .center
-            h3 #{_attr}: 
-            | {{#each #{_attr}}}
-            a.item(href='#') {{this.#{showAttr}}}
-            | {{/each}}
-    else
-      .ui.dimmer
-        .content
-          .center
-            span #{_attr}: 
-            | {{#each #{_attr}}}
-            a.item(href='#') {{this.#{showAttr}}}
-            | {{/each}}
-
 
 //-# 在表单中，自动插入属性。用法示例： +auto-insert('老师', A.currentUserName())
 mixin auto-insert(attr, valueExpression)

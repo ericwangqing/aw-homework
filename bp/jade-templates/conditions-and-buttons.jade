@@ -121,6 +121,7 @@ mixin _with-or-without-context(link)
 mixin add-addtional-multiple-links(links)
   - var showAttr = attributes.showAttr
   each link in links
+    - showAttr = attributes.showAttr
     - attributes = link 
     - console.log("*************** link: ", link)
     - var dataName = link.citedDoc.pluralize()
@@ -132,7 +133,7 @@ mixin add-addtional-multiple-links(links)
         .center
           | {{#each #{dataName}}}
           +guarded-link(link.icon)(attributes)
-            if oppositeEnd
+            if showAttr
               | {{bs '#{showAttr}'}}
           | {{/each}}
     | {{/if}}

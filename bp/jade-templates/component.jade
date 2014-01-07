@@ -29,24 +29,12 @@ mixin list(titles, attrs)
 
 mixin alter-list()
   each relation in bp.getRelations(docName)
-    //- - console.log("--------- relation is: ", relation)
     - var currentEnd = relation.getCurrentEnd(docName)
     if relation.type == 'composition' && currentEnd.type == 'end'
       //- 一旦本doc从属于某个doc，也就是为某个composite relation中的endPoint.docName时，不能直接创建本doc
       +remove-create-link()
     +add-go-create-or-go-update(docName, relation) 
   block
-
-mixin add-go-create-or-go-update(docName, relation)
-  - var currentEnd = relation.getCurrentEnd(docName)
-  - var oppositeEnd = relation.getOppositeEnd(docName)
-  if currentEnd.canCreateOtherSide
-    +add-go-create-relation-data-link(docName, relation)
-  if oppositeEnd.multiplicity == '1'
-    +add-go-update-relation-data-link(docName, relation)
-  else
-    +add-go-update-relation-data-links(docName, relation)
-
 
 mixin detail()
   +register-bp-view(viewName)
@@ -56,21 +44,9 @@ mixin detail()
             block
             +alter-detail()
 
-
 mixin alter-detail()
   - var relations = bp.getRelations(docName)
-  //- each relation in bp.getRelations(docName)
-  //-   .related-from-links
-  //-     if docName == relation.endPoint.docName
-  //-       +add-related-from-links(docName, relation)
   +add-relations-fields(docName, relations) 
-  //- +add-relations-fields(docName, relations)
-  //- each relation in bp.getRelations(docName)
-  //-   .related-to-links
-  //-     if docName == relation.startPoint.docName
-  //-       +add-related-to-links(docName, relation)
-
-
 
 mixin register-bp-view(templateName)
   - var bufferStart = buf.length

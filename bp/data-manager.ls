@@ -102,16 +102,19 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
   add-addtional-data-helpers: !->
     for {doc-name, query, is-multiple} in @cited-data
       helper-name = if is-multiple then doc-name.pluralize! else doc-name
-      @data-helpers[helper-name] = @create-data-helper doc-name, query
+      @data-helpers[helper-name] = @create-data-helper doc-name, is-multiple, query
 
-  create-data-helper: (doc-name, query)->
+  create-data-helper: (doc-name, is-multiple, query)->
     self = @
     ->
       collection = BP.Collection.get-by-doc-name doc-name
       if self.is-main-data-available!
         doc = self.doc
         eval "query = " + query if typeof query is 'string'
-        collection.find query
+        if is-multiple
+          collection.find query
+        else
+          collection.findOne query
       else
         self.get-transferred-state doc-name
 
@@ -137,7 +140,7 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
       values = @doc[attr]
     else
       data-source = @data-helpers[source]!
-      values = data-source[attr]
+      values = if data-source then data-source[attr] else []
 
     values = [values] if not _.is-array values 
 

@@ -27,3 +27,14 @@ class @BP.Detail-view extends BP.View
   create-adapter: !->
     @adapter = new BP.Detail-template-adpater @
 
+
+  add-relation-data-transfer: ->
+    view = @
+    [
+      transfer-for-create-related = !-> $ 'a.bp-go-create' .click (e)!->
+        # alert('haha')
+        view.save-data-for-relation-data-in-transferred-state e
+    ]
+
+  save-data-for-relation-data-in-transferred-state: _.once (e)!->
+    @data-manager.set-transferred-state @names.doc-name, @data-manager.doc

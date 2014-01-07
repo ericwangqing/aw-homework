@@ -21,21 +21,17 @@ class BP.List-view extends BP.View
     go-update : view: detail, face: detail.faces.update
     'delete'  : view: @,      face: @faces.list
 
-  add-to-template-rendered: -> 
-    if not _.is-empty @data-manager.cited-data
-      @add-additional-links-data-transfer!
-
-  add-additional-links-data-transfer: ->
+  add-relation-data-transfer: ->
     view = @
     [
       !-> $ 'a[class^="bp-"]' .filter ->
         view.is-link-to-cited-doc @
       .click (e)!->
         # alert('haha')
-        view.save-data-for-additional-link-in-transferred-state e
+        view.save-data-for-relation-data-in-transferred-state e
     ]
 
-  save-data-for-additional-link-in-transferred-state: _.once (e)!->
+  save-data-for-relation-data-in-transferred-state: _.once (e)!->
     clicked-link = $ e.current-target
     current-doc-id = clicked-link.closest '.current-doc-id' .attr 'bp-doc-id'
     current-doc = @data-manager.collection.find-one _id: current-doc-id

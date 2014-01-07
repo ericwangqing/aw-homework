@@ -47,12 +47,5 @@ module.exports =
   show-template: (template-str)!->
     console.log template-str
 
-
   get-relations: (doc-name)->
     Relation.get-relations-by-doc-name doc-name
-
-  get-go-create-link: (current-end, relation)->
-    relation.get-go-create-link current-end
-  
-  get-go-update-link: (current-end, relation)->
-    relation.get-go-update-link current-end

@@ -17,6 +17,7 @@ class @BP.View
   ## 1）link-name, doc；得到当前view的link path
   ## 2）view-name, link-name, doc；得到name为view-name的view的link path
   get-path: (view, face, doc)->
+    # doc = doc?.fetch?!0 # 当doc是cursor时，取回doc
     view = @ if view is ''
     if face not in ['previous', 'next'] 
       if view is @ 
@@ -74,5 +75,6 @@ class @BP.View
 
 
   # ----------------------------- Hooks 留给客户化定制时，在这里插入各种渲染后的逻辑 ---------------
-  add-to-template-rendered: (methods)!-> []# ABSTRACT-METHOD
-  # add-to-template-row-meteor-rendered: (methods)!-> []# ABSTRACT-METHOD
+  add-to-template-rendered: -> 
+    if not _.is-empty @data-manager.cited-data
+      @add-relation-data-transfer!

@@ -59,12 +59,6 @@
     },
     getRelations: function(docName){
       return Relation.getRelationsByDocName(docName);
-    },
-    getGoCreateLink: function(currentEnd, relation){
-      return relation.getGoCreateLink(currentEnd);
-    },
-    getGoUpdateLink: function(currentEnd, relation){
-      return relation.getGoUpdateLink(currentEnd);
     }
   };
   function import$(obj, src){
