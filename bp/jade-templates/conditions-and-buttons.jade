@@ -5,6 +5,12 @@ mixin if-face(face)
   | {{#if bp-face-is '#{face}'}}
   block
   | {{/if}}
+
+//-# 控制不在某个face中显示
+mixin unless-face(face)
+  | {{#unless bp-face-is '#{face}'}}
+  block
+  | {{/unless}}
 //-# 控制仅在某个face中显示
 mixin if-else-face(face)
   | {{#if bp-face-is '#{face}'}}
