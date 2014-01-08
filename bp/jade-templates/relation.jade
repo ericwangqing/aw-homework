@@ -10,43 +10,44 @@ mixin relation(from, relationDescription, to)
 mixin remove-create-link()
   +remove-link('go-create')
 
-mixin add-go-create-or-go-update(docName, relation)
+mixin add-go-create-or-go-update(relation)
   - var currentEnd = relation.getCurrentEnd(docName)
   - var oppositeEnd = relation.getOppositeEnd(docName)
   if currentEnd.canCreateOtherSide
-    +add-go-create-relation-data-link(docName, relation)
+    +add-go-create-relation-data-link(relation)
   if oppositeEnd.multiplicity == '1'
-    +add-go-update-relation-data-link(docName, relation)
+    +add-go-update-relation-data-link(relation)
   else
-    +add-go-update-relation-data-links(docName, relation)
+    +add-go-update-relation-data-links(relation)
 
-mixin add-go-create-relation-data-link(docName, relation)
+mixin add-go-create-relation-data-link(relation)
   - var goCreateLink = relation.getLinkByAction('go-create', docName)
   +add-item-link(goCreateLink)
 
-mixin add-go-update-relation-data-link(docName, relation)
+mixin add-go-update-relation-data-link(relation)
   - var goUpdateLink = relation.getLinkByAction('go-update', docName) // 改为直接用relation.getLinkByAction
   +add-item-link(goUpdateLink)
 
-mixin add-go-update-relation-data-links(docName, relation)
+mixin add-go-update-relation-data-links(relation)
   - var goUpdateLink = relation.getLinkByAction('go-update', docName)
   +add-item-links(goUpdateLink)
 
-mixin add-relations-fields(docName, relations)
+mixin add-relations-fields(relations)
   +fieldset('关联关系')
-    each relation in relations
-      //- - console.log("******** relation is: ", relation)
-      if relation.type == 'composition' 
-        +add-composition-relation-field(docName, relation)
-    //-   else
-    //-     +add-aggregation-relation-field(docName, relation)
+    +row()
+      each relation in relations
+        - currentEnd = relation.getCurrentEnd(docName)
+        - oppositeEnd = relation.getOppositeEnd(docName)
+        - goCreateLink = relation.getLinkByAction('go-create', currentEnd)
+        - goUpdateLink = relation.getLinkByAction('go-update', currentEnd)
+        //- - console.log("******** relation is: ", relation)
+        if relation.type == 'composition' 
+          +add-composition-relation-field(relation)
+        else
+          +add-aggregation-relation-field(relation)
 
-mixin add-composition-relation-field(docName, relation)
+mixin add-composition-relation-field(relation)
   //- composition时，start一端的多重性一定是1
-  - currentEnd = relation.getCurrentEnd(docName)
-  - oppositeEnd = relation.getOppositeEnd(docName)
-  - goCreateLink = relation.getLinkByAction('go-create', currentEnd)
-  - goUpdateLink = relation.getLinkByAction('go-update', currentEnd)
   if currentEnd.type == 'end'
     +if-else-face('create')
       +auto-insert(oppositeEnd.docName + 'Id', A.docId(oppositeEnd.docName))
@@ -58,24 +59,36 @@ mixin add-composition-relation-field(docName, relation)
       span 
     +else()
       if oppositeEnd.multiplicity == 1
-        +add-go-create-or-go-update-text-link(docName, relation)
+        +add-go-create-or-go-update-text-link(relation)
       else
-        +add-go-create-and-go-update-text-links(docName, relation)
+        +add-go-create-and-go-update-text-links(relation)
 
 mixin show-related-data-with-text-link(relation)
   - attributes = Object.merge({isLink: true}, goUpdateLink)
   +ref-text(oppositeEnd.showName, oppositeEnd.showAttr)(attributes)
 
-mixin add-go-create-or-go-update-text-link(docName, relation)
+mixin add-go-create-or-go-update-text-link(relation)
   +add-additional-links([goCreateLink])
     | #{oppositeEnd.showName}
   +add-additional-links([goUpdateLink])
     | {{bs '#{oppositeEnd.docName + '.' + oppositeEnd.showAttr}'}}
 
-mixin add-go-create-and-go-update-text-links(docName, relation)
+mixin add-go-create-and-go-update-text-links(relation)
   +add-additional-links([goCreateLink])
     | #{oppositeEnd.showName}
   +add-addtional-multiple-links([goUpdateLink])(showAttr=oppositeEnd.showAttr)
 
-mixin add-aggregation-relation-field(docName, relation)
+mixin add-aggregation-relation-field(relation)
+  +if-else-face('create')
+    +add-relation-select(relation)
+  +else()
+    +add-relation-select(relation)
+    //- +add-relation-create-and-link-select(relation)
+
+mixin add-relation-select(relation)
+  - var isMultiple = oppositeEnd.multiplicity != '1'
+  - var idAttrName = oppositeEnd.docName + (isMultiple ?  'Ids' : 'Id') 
+  +multi-ahead(oppositeEnd.showName, idAttrName)(sourceDocName=oppositeEnd.docName, sourceAttr='_id', optionAttr=oppositeEnd.showAttr, multiple=isMultiple)
+
+mixin add-relation-create-and-link-select(relation)
   span 'NO IMPLEMENTED YET.'

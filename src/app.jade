@@ -4,7 +4,7 @@ include ../bp/jade-templates/bp-mixins
 //-# casecade: TODO: 待添加 
 
 //- +relation('assignment', '1 -> *', 'homework')(type='composition')
-+relation({docName: 'assignment', showName: '作业要求', showAttr: '题目'}, '1 -> *', {docName: 'homework', showName: '作业', showAttr: '学生'})(type='composition')
++relation({docName: 'assignment', showName: '作业要求', showAttr: '题目'}, '1 -> *', {docName: 'homework', showName: '作业', showAttr: '学生'})(type='aggregation')
 
 +component('assignment')
   +list(['题目', '要求', '截止时间', '老师'])
@@ -35,7 +35,7 @@ include ../bp/jade-templates/bp-mixins
       +html('内容')(span=FULL_ROW, placeholder='在这里开始作业吧~')
 
     +auto-insert('学生', A.currentUserName())
-    +auto-insert('assignmentId', A.docId('assignment'))  
+    //- +auto-insert('assignmentId', A.docId('assignment'))  
 
 
 //- +relation('assignment', '1 -> *', 'homework')(type='composite')

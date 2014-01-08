@@ -1,10 +1,10 @@
 include relation
+
 //-# ### Component是BP数据（collection）展示和操作的基本单位。
 
 //-# Component包括list和detail两种视图（view）
 //-# 1. list上用户可以进行go-create、go-update和delete操作，
 //-# 2. detail上用户可以提交（submit）和delete，还可以浏览“上一条”、“下一条”
-
 mixin component(_docName, isMainNav)
   - if(typeof isMainNav == 'undefined'){isMainNav = true} // 默认将component的list加到主导航
   - docName = _docName
@@ -33,7 +33,7 @@ mixin alter-list()
     if relation.type == 'composition' && currentEnd.type == 'end'
       //- 一旦本doc从属于某个doc，也就是为某个composite relation中的endPoint.docName时，不能直接创建本doc
       +remove-create-link()
-    +add-go-create-or-go-update(docName, relation) 
+    +add-go-create-or-go-update(relation) 
   block
 
 mixin detail()
@@ -46,7 +46,7 @@ mixin detail()
 
 mixin alter-detail()
   - var relations = bp.getRelations(docName)
-  +add-relations-fields(docName, relations) 
+  +add-relations-fields(relations) 
 
 mixin register-bp-view(templateName)
   - var bufferStart = buf.length

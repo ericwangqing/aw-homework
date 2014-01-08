@@ -64,8 +64,6 @@
     };
     prototype.getCurrentEnd = function(current){
       var currentDocName;
-      console.log("current current is: ", current);
-      console.log("typeof current is: ", typeof current);
       currentDocName = typeof current === 'string'
         ? current
         : current.docName;
@@ -77,8 +75,6 @@
     };
     prototype.getOppositeEnd = function(current){
       var currentDocName;
-      console.log("opposite current is: ", current);
-      console.log("typeof current is: ", typeof current);
       currentDocName = typeof current === 'string'
         ? current
         : current.docName;
@@ -91,9 +87,6 @@
     prototype.getLinkByAction = function(action, currentEnd){
       var destinationEnd, face, docName, showName, fullDocName, view, link;
       destinationEnd = this.getOppositeEnd(currentEnd);
-      console.log("relation is: ", this);
-      console.log("current-end: ", currentEnd);
-      console.log("destination-end: ", destinationEnd);
       face = this.stripGoPrefix(action);
       docName = destinationEnd.docName, showName = destinationEnd.showName;
       fullDocName = this.namespace + '.' + docName;

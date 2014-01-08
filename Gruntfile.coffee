@@ -96,7 +96,7 @@ module.exports = (grunt)->
       bp:
         files: [
           expand: true
-          cwd: 'bp/client'
+          cwd: 'bp/runtime-scripts/client'
           src: ['**/*.jade']
           dest: 'bin/lib/client'
           ext: '.html'
