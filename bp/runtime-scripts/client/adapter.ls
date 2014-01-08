@@ -30,13 +30,12 @@ class @BP.Template-adapter
       "bp-attribute-permit"  :  @view.is-attribute-permit
       "bp-face-is"           :  @view.current-face-checker
       "bp-path-for"          :  ~> @view.get-path.apply @view, &
-      'bp-links'             :  @enable-get-links-html-str-for-tooltipster! 
 
     @helpers <<< @view.data-manager.data-helpers
       # "#{@data-retriever-name}"       :  ~> @view.data-manager.meteor-template-main-data-helper.apply  @view.data-manager, &
 
   create-renderers: !-> 
-    @renderers = [@enable-tooltips, @enable-fadein]
+    @renderers = [@enable-tooltips, @enable-semantic-ui]
     @renderers ++= template-ui-post-render-methods if template-ui-post-render-methods = @view.add-to-template-rendered!
 
   create-event-handlers: !-> @events-handlers = @view.ui.register-event-handlers!
@@ -54,26 +53,9 @@ class @BP.Template-adapter
 
   enable-tooltips: -> $ '.tooltip' .tooltipster interactive: true, theme: '.tooltipster-shadow'
 
-  enable-fadein: (e)-> 
-    # console.log "this is: ", e.current-target
-    # $ @ .add-class 'fadein'
+  enable-semantic-ui: -> $ '.ui.accordion' .accordion!
 
-  enable-get-links-html-str-for-tooltipster: -> 
-    self = @
-    (action, attr, name-attr)->
-      name-attr = if typeof name-attr is 'string' then name-attr else 'title'
-      result = ''
-      if _.is-array docs = @[attr]
-        for doc in docs
-          if action is 'test'
-            url = '#'
-          else
-            url = self.view.get-path action doc
-          result += "<a href='#{url}'> #{doc[nameAttr]} </a>"
-          console.log "************* result: ", doc
-          console.log "************* name-attr: ", doc[nameAttr]
-      new Handlebars.Safe-string result 
-    
+
 # ----------------------- Detail ---------------------------------
 class BP.List-template-adpater extends BP.Template-adapter
 
