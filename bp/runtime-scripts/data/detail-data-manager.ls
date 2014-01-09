@@ -52,7 +52,7 @@ class @BP.Detail-data-manager extends BP.Abstract-data-manager
     @doc and not _.is-empty @doc
 
   set-previous-and-next-ids: !-> # doc: 从list拿到列表的doc ids并更新pre 和 next
-    @doc-ids = @get-transferred-state 'doc-ids'
+    @doc-ids = @get-transferred-state @view.doc-name + '-doc-ids'
     if @doc-id and @doc-ids and not _.is-empty @doc-ids
       @update-previous-and-next-ids!
 
