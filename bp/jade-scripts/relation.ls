@@ -101,7 +101,6 @@ class Relation
       link.guard = 'true'
     link
 
-
   strip-go-prefix: (action)->
     if (action.index-of 'go-') >= 0 then face = action - 'go-' else face = action
     face = 'list' if action is 'go'

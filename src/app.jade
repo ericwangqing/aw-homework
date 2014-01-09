@@ -35,3 +35,7 @@ include ../bp/jade-templates/bp-mixins
       +html('内容')(span=FULL_ROW, placeholder='在这里开始作业吧~')
 
     +auto-insert('学生', A.currentUserName())
+
++page('teacher-assignment-homework')(isMainNav=true)
+  +view('assignment', 'list', 'list')
+  +view('homework', 'list', 'list')(query='{assignmentId: assignment._id}')

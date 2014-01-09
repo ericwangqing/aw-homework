@@ -2,7 +2,7 @@ ABSTRACT-METHOD = !-> throw new Meteor.Error "This is a abstract method, you sho
 @BP ||= {}
 # 业务逻辑中，由用户权限和流程权限决定的筛选在服务端完成（Meteor Method），而由用户体验形成的筛选在客户端完成，也即是在template中声明的query，用在这里。
 class BP.Abstract-data-manager
-  @_state = @state-transferred-across-views = new BP.State '_transfer-state' if Meteor.is-client
+  @_state = @state-transferred-across-views = new BP.State '_transfer-state', is-reactive = false if Meteor.is-client
   
   (@view)->
     @cited-data = []

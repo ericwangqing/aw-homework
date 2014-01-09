@@ -18,12 +18,13 @@ class @BP.Component
   @create-components = (components, relations)!->
     [BP.Relation.add-relation relation for relation in relations]
     [new BP.Component component for component in components]
-    [component.init! for doc-name, component of @registry]
+    [[component.init! for doc-name, component of components] for namespace, components of @registry]
 
   ({@namespace, @doc-name, @is-main-nav})-> # template-name, template-adapter, views
     @list = new BP.List-view @namespace, @doc-name
     @detail = new BP.Detail-view @namespace, @doc-name
-    @@registry[@doc-name] = @
+    @@registry[@namespace] ||= {}
+    @@registry[@namespace][@doc-name] = @
 
   init: !->
     @list.add-links @detail
@@ -53,7 +54,7 @@ class @BP.Component
 
   add-action-link: (view, action, relation)!->
     link = relation.get-link-by-action action, @doc-name
-    to-view = @@registry[link.to.doc-name][link.to.view]
+    to-view = @@registry[@namespace][link.to.doc-name][link.to.view]
     view.links[link.path] = view: to-view, face: to-view.faces[link.to.face]
 
   add-to-main-nav: !->
