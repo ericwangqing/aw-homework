@@ -29,7 +29,8 @@ class @BP.Template-adapter
       "bp-permit"            :  @view.is-permit
       "bp-attribute-permit"  :  @view.is-attribute-permit
       "bp-face-is"           :  @view.current-face-checker
-      "bp-path-for"          :  ~> @view.get-path.apply @view, &
+      "bp-path-for-view"     :  ~> @view.get-path.apply @view, &
+      "bp-path-for-page"     :  BP.Page.path-for
 
     @helpers <<< @view.data-manager.data-helpers
       # "#{@data-retriever-name}"       :  ~> @view.data-manager.meteor-template-main-data-helper.apply  @view.data-manager, &

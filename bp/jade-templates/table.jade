@@ -4,13 +4,15 @@ include conditions-and-buttons
 //-# BP表格，用于list视图
 mixin table(items, columnNames, attributesNames)
   - var attributesNames = attributesNames ? attributesNames : columnNames
-  - rowLinks = [], rowMutipleLinks = [], tableLinks = [], removedLinks = []
   block
   //- 用户自定义的links
+  - var tableLinks = bp.getTableConfig(namespace, docName).tableLinks
+  - console.log("******************** 2 ********************")
   +add-additional-links(tableLinks)
   //- 可配置，可动态移除go-create按钮
+  - var removedLinks = bp.getTableConfig(namespace, docName).removedLinks
   if removedLinks.indexOf('go-create') < 0 
-    //- 只有list时，才有go-create按钮，view时没有
+    //- 只有list时，才有go-create按钮，view时没有 
     +if-face('list')
       +guarded-link('go-create')
   table.ui.table.segment
@@ -18,6 +20,12 @@ mixin table(items, columnNames, attributesNames)
       +_head-row(columnNames)
     tbody
       +_rows(items, attributesNames)
+
+//-# 获取Page中对table的微调
+mixin init-table-variables()
+  - var config = bp.getTableConfig(namespace, docName)
+  - rowLinks = config.rowLinks, rowMultipleLinks = config.rowMultipleLinks, tableLinks = config.tableLinks, removedLinks = config.removedLinks
+
 
 mixin _rows(items, attributesNames)
   | {{#each #{items}}}
@@ -61,20 +69,26 @@ mixin _guarded-operation-cell()
     +mark-current-doc-id()
       +guarded-link('go-update')
       +guarded-link('delete')
+      - var rowLinks = bp.getTableConfig(namespace, docName).rowLinks
+      - var rowMultipleLinks = bp.getTableConfig(namespace, docName).rowMultipleLinks
       +add-additional-links(rowLinks)
-      +add-addtional-multiple-links(rowMutipleLinks)
+      +add-addtional-multiple-links(rowMultipleLinks)
 
 //-# --------------- 添加links -------------
 
 mixin add-item-link(link)
-  - rowLinks.push(link)
+  - bp.addItemLink(namespace, docName, link)
+  //- - rowLinks.push(link)
 
 mixin add-item-links(link)
-  - rowMutipleLinks.push(link)
+  - bp.addItemLinks(namespace, docName, link)
+  //- - rowMultipleLinks.push(link)
 
 mixin add-list-link(link)
-  - tableLinks.push(link)
+  - bp.addListLink(namespace, docName, link) 
+  //- - tableLinks.push(link)
 
 mixin remove-link(linkName)
-  - removedLinks.push(linkName)
-  - removedLinks = removedLinks.unique() 
+  -bp.removeLink(namespace, docName, linkName)
+  //- - removedLinks.push(linkName)
+  //- - removedLinks = removedLinks.unique() 

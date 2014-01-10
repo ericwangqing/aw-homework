@@ -10,7 +10,6 @@ mixin component(_docName, isMainNav)
   - docName = _docName
   - namespace = attributes.name || 'default' // 一个doc有一个必须实现的默认component，包括一个list和一个detaill，还可以任意多个其它component
   - names = bp.getNames(namespace, docName)
-
   - bp.addComponent(namespace, docName, isMainNav, className)
 
   block

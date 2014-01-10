@@ -18,13 +18,18 @@
       page = new Page(pageConfig);
       page.faces = [];
       page.pathName = page.templateName;
-      (ref$ = constructor.registry)[key$ = page.namespace] || (ref$[key$] = {});
-      constructor.registry[page.namespace][page.name] = page;
+      (ref$ = this.registry)[key$ = page.namespace] || (ref$[key$] = {});
+      this.registry[page.namespace][page.name] = page;
       for (i$ = 0, len$ = (ref$ = pageConfig.views).length; i$ < len$; ++i$) {
         viewConfig = ref$[i$];
         page.addComponentView(viewConfig);
       }
       return page.init();
+    };
+    Page.pathFor = function(namespace, pageName, docName, doc){
+      var page;
+      page = Page.registry[namespace][pageName];
+      return page.getPath(docName, doc);
     };
     function Page(arg$){
       this.namespace = arg$.namespace, this.name = arg$.name, this.isMainNav = arg$.isMainNav;
@@ -50,11 +55,14 @@
       });
     };
     prototype.init = function(){
+      var path;
       this.route();
-      BP.Component.mainNavPaths.push({
-        name: this.name,
-        path: this.pathName
-      });
+      if (this.isMainNav) {
+        BP.Component.mainNavPaths.push(path = {
+          name: this.templateName,
+          path: this.pathName
+        });
+      }
     };
     prototype.route = function(){
       var self;
@@ -86,6 +94,22 @@
         pattern += face.view.faces[face.faceName];
       }
       return pattern;
+    };
+    prototype.getPath = function(docName, doc){
+      var path, i$, ref$, len$, face, id;
+      path = "/" + this.pathName;
+      for (i$ = 0, len$ = (ref$ = this.faces).length; i$ < len$; ++i$) {
+        face = ref$[i$];
+        id = this.getFaceId(face, docName, doc);
+        path += face.view.facesManager.getPath(face.view.faces[face.faceName], id);
+      }
+      return path;
+    };
+    prototype.getFaceId = function(face, docName, doc){
+      var id;
+      return id = face.view.docName === docName
+        ? doc._id
+        : doc[docName + 'Id'];
     };
     prototype.isPermit = function(){
       var i$, ref$, len$, face;

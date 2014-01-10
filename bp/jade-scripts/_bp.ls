@@ -11,9 +11,20 @@ module.exports =
   components: []
   relations: []
   pages: []
+  variables: {}
 
   add-component: (namespace, doc-name, is-main-nav, class-name)->
+    @init-variables(namespace, doc-name)
     @components.push {namespace, doc-name, is-main-nav, class-name}
+
+  init-variables: (namespace, doc-name)!->
+    @variables[namespace] ||= {}
+    @variables[namespace][doc-name] ||= table:
+      row-links: []
+      row-multiple-links: []
+      table-links: []
+      removed-links: []    
+    # console.log "init variables for: #namespace, #doc-name. @variables are: ", JSON.stringify @variables[namespace][doc-name]
 
   ## 声明式relation
   add-relation: (namespace, start, relation-description, end, type)!-> 
@@ -23,10 +34,6 @@ module.exports =
   add-page: (namespace, name, is-main-nav)->
     @pages.push page = new Page {namespace, name, is-main-nav}
     page
-
-  get-view-template-name: (namespace, doc-name, view-name)->
-    names = @get-names(namespace, doc-name)
-    if view-name is 'list' then names.list-template-name else names.detail-template-name
 
   save-page: !->
     @_save-all-configuration!
@@ -67,3 +74,25 @@ module.exports =
 
   get-relations: (doc-name)->
     Relation.get-relations-by-doc-name doc-name
+
+  get-view-template-name: (namespace, doc-name, view-name)->
+    names = @get-names(namespace, doc-name)
+    if view-name is 'list' then names.list-template-name else names.detail-template-name
+
+  get-table-config: (namespace, doc-name)->
+    config = @variables[namespace][doc-name].table
+    # console.log "namespace: #namespace, doc-name: #doc-name, config: ", config
+    # config
+
+  add-item-link: (namespace, doc-name, link)->
+    @variables[namespace][doc-name].table.row-links.push link
+
+  add-item-links: (namespace, doc-name, link)->
+    @variables[namespace][doc-name].table.row-multiple-links.push link
+
+  add-list-link: (namespace, doc-name, link)->
+    @variables[namespace][doc-name].table.table-links.push link
+
+  remove-link: (namespace, doc-name, linkName)->
+    @variables[namespace][doc-name].table.removed-links.push linkName
+    @variables[namespace][doc-name].table.removed-links.unique!

@@ -12,12 +12,26 @@
     components: [],
     relations: [],
     pages: [],
+    variables: {},
     addComponent: function(namespace, docName, isMainNav, className){
+      this.initVariables(namespace, docName);
       return this.components.push({
         namespace: namespace,
         docName: docName,
         isMainNav: isMainNav,
         className: className
+      });
+    },
+    initVariables: function(namespace, docName){
+      var ref$;
+      (ref$ = this.variables)[namespace] || (ref$[namespace] = {});
+      (ref$ = this.variables[namespace])[docName] || (ref$[docName] = {
+        table: {
+          rowLinks: [],
+          rowMultipleLinks: [],
+          tableLinks: [],
+          removedLinks: []
+        }
       });
     },
     addRelation: function(namespace, start, relationDescription, end, type){
@@ -39,15 +53,6 @@
         isMainNav: isMainNav
       }));
       return page;
-    },
-    getViewTemplateName: function(namespace, docName, viewName){
-      var names;
-      names = this.getNames(namespace, docName);
-      if (viewName === 'list') {
-        return names.listTemplateName;
-      } else {
-        return names.detailTemplateName;
-      }
     },
     savePage: function(){
       this._saveAllConfiguration();
@@ -85,6 +90,32 @@
     },
     getRelations: function(docName){
       return Relation.getRelationsByDocName(docName);
+    },
+    getViewTemplateName: function(namespace, docName, viewName){
+      var names;
+      names = this.getNames(namespace, docName);
+      if (viewName === 'list') {
+        return names.listTemplateName;
+      } else {
+        return names.detailTemplateName;
+      }
+    },
+    getTableConfig: function(namespace, docName){
+      var config;
+      return config = this.variables[namespace][docName].table;
+    },
+    addItemLink: function(namespace, docName, link){
+      return this.variables[namespace][docName].table.rowLinks.push(link);
+    },
+    addItemLinks: function(namespace, docName, link){
+      return this.variables[namespace][docName].table.rowMultipleLinks.push(link);
+    },
+    addListLink: function(namespace, docName, link){
+      return this.variables[namespace][docName].table.tableLinks.push(link);
+    },
+    removeLink: function(namespace, docName, linkName){
+      this.variables[namespace][docName].table.removedLinks.push(linkName);
+      return this.variables[namespace][docName].table.removedLinks.unique();
     }
   };
   function import$(obj, src){

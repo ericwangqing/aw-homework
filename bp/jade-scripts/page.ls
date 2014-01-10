@@ -8,10 +8,16 @@ class Page
     page = new Page page-config
     page.faces = []
     page.path-name = page.template-name
-    @@registry[page.namespace] ||= {}
-    @@registry[page.namespace][page.name] = page
+    @registry[page.namespace] ||= {}
+    @registry[page.namespace][page.name] = page
     [page.add-component-view view-config for view-config in page-config.views]
     page.init!
+
+  @path-for = (namespace, page-name, doc-name, doc)~>
+    page = @registry[namespace][page-name]
+    page.get-path doc-name, doc
+
+
 
   ({@namespace, @name, @is-main-nav})->
     @template-name = [@namespace, @name].join '-'
@@ -27,7 +33,7 @@ class Page
 
   init: !->
     @route!
-    BP.Component.main-nav-paths.push {@name, path: @path-name} # TODO: 厘清main-nav和second-nav
+    BP.Component.main-nav-paths.push path = {name: @template-name, path: @path-name} if @is-main-nav # TODO: 厘清main-nav和second-nav
 
   route: !->
     self = @
@@ -51,6 +57,16 @@ class Page
     for face in @faces
       pattern += face.view.faces[face.face-name]
     pattern
+
+  get-path: (doc-name, doc)->
+    path = "/#{@path-name}"
+    for face in @faces
+      id = @get-face-id face, doc-name, doc
+      path += face.view.faces-manager.get-path face.view.faces[face.face-name], id
+    path
+
+  get-face-id: (face, doc-name, doc)->
+    id = if face.view.doc-name is doc-name then doc._id else doc[doc-name + 'Id']
 
   is-permit: ->
     for face in @faces

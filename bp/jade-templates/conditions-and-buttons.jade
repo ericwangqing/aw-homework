@@ -18,9 +18,10 @@ mixin if-else-face(face)
 
 //-# 是否允许当前用户对数据（默认为当前，除非给出citedDoc），进行某种操作（go-create, go-update, create, update, view; 以及其它用户通过add-links增加的action）
 mixin if-bp-permit(action)
-  - var citedDocStr = attributes.citedDoc ? "'" + attributes.citedDoc + "'" : ''
+  - var target = attributes.citedDoc ? "'" + attributes.citedDoc + "'" : '' // Component
+  - target = attributes.pageName ? "'" + attributes.pageName + "'" : target // Page
   //- - console.log("in if-bp-permit, action is: ", action)
-  | {{#if bp-permit this '#{action}' #{citedDocStr}}}
+  | {{#if bp-permit this '#{action}' #{target}}}
   block
   | {{/if}}
 
@@ -56,7 +57,8 @@ mixin guarded-button(action, label)
 mixin _link-button(action, href, isLink, label)
   - var path = attributes.face || attributes.path || action
   - var viewName = attributes.viewName || attributes.citedDoc || ''
-  - var href = href || (isLink ? ("{{bp-path-for '"+ viewName +"' '" + path.camelize(false) +"' this}}") : '#')
+  - var href = href || (isLink ? ("{{bp-path-for-view '"+ viewName + "' '" + path.camelize(false) + "' this}}") : '#')
+  - href = attributes.page ? ("{{bp-path-for-page '" + attributes.namespace + "' '" + attributes.page + "' '" + attributes.currentDocName + "' this}}") : href
   - var tooltip = attributes.label ? attributes.label : null // 将label作为tooltip显示
   - var classNames = 'bp-' + action + (tooltip ? ' tooltip ' : ' ' )+ (attributes.classNames ? attributes.classNames : '')
   - classNames = attributes.isButton ? "ui icon tiny button " + classNames : classNames // Semantic UI button
@@ -129,7 +131,7 @@ mixin add-addtional-multiple-links(links)
   each link in links
     - showAttr = attributes.showAttr
     - attributes = link 
-    - console.log("*************** link: ", link)
+    //- - console.log("*************** link: ", link)
     - var dataName = link.citedDoc.pluralize()
     | {{#if #{link.guard}}}
     span.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 

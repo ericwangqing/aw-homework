@@ -3,12 +3,23 @@ mixin page(namespace, pageName)
   - page = bp.addPage(namespace, pageName, !!attributes.isMainNav)
   template(name=page.templateName)
     block
-  - bp.savePage()
+  //- - bp.savePage()
 
-mixin view(namespace, docName, viewName, faceName)
-  - if(typeof faceName == 'undefined'){faceName = viewName, viewName = docName, docName = namespace, namespace = 'default'} // namespace 缺省为default
+mixin view(namespace, _docName, viewName, faceName)
+  - viewNamespace = namespace
+  - docName = _docName
+  - if(typeof faceName == 'undefined'){faceName = viewName, viewName = docName, docName = viewNamespace, viewNamespace = 'default'} // viewNamespace 缺省为default
   - query = attributes.query || {}
-  - page.addView(namespace, docName, viewName, faceName, query)
-  - viewTemplateName = bp.getViewTemplateName(namespace, docName, viewName)
+  - page.addView(viewNamespace, docName, viewName, faceName, query)
+  - viewTemplateName = bp.getViewTemplateName(viewNamespace, docName, viewName)
+  - bp.initVariables(viewNamespace, docName)
+  block
   | {{> #{viewTemplateName}}}
   br
+
+mixin add-view-item-link(label, pageNamespace, page)
+  - var guard = attributes.guard || true
+  - var icon = attributes.icon || 'go'
+  - link = {label: label, namespace: pageNamespace, page: page, currentDocName: docName, guard: guard, icon: icon, isPageLink: true}
+  - bp.addItemLink(viewNamespace, docName, link)
+  //- - console.log("in add-view-item-link, namespace is: ", namespace)
