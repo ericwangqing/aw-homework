@@ -21,7 +21,6 @@ class Page
     Handlebars.register-helper 'bp-is-page', (namespace, name)~>
       @current-page and namespace is @current-page.namespace and name is @current-page.name 
 
-
   @path-for = (namespace, page-name, doc-name, doc)~>
     page = @registry[namespace][page-name]
     page.get-path doc-name, doc
@@ -36,7 +35,9 @@ class Page
   add-component-view: (view-config)!->
     vc = view-config
     component = BP.Component.registry[vc.namespace][vc.doc-name]
-    @faces.push {view: component[vc.view-name], vc.face-name}
+    view = component[vc.view-name]
+    view.page-query = vc.query 
+    @faces.push {view: view, vc.face-name}
 
   init: !->
     @route!
@@ -54,8 +55,7 @@ class Page
             @redirect 'default' # TODO: 改为last page
           else
             BP.Page.current-page = self # 追踪当前page
-            self.set-views-current-faces!
-            self.store-data-in-state!
+            self.config-views @params
         wait-on: ->
           self.subscribe @params
 
@@ -80,12 +80,24 @@ class Page
       return flase if !face.view.is-permit face.view.data-manager.doc, face.face-name
     true
 
+  config-views: (params)!->
+    @set-views-current-faces!
+    @filter-list-views-data params
+    @store-data-in-state!
+
   set-views-current-faces: !->
     [face.view.current-face-name = face.face-name for face in @faces]
-    
+
+  filter-list-views-data: (params)!->
+    [face.view.data-manager.query = @apply-query-on-params face.view.page-query, params for face in @faces when face.view.type is 'list' and face.view.page-query]
+
   store-data-in-state: !->
     # debugger
     [face.view.data-manager.store-data-in-state! for face in @faces]
+
+  apply-query-on-params: (query, params)->
+    eval 'query = ' + query
+    query
 
   subscribe: (params)!->
    [face.view.data-manager.subscribe params for face in @faces] 

@@ -9,7 +9,7 @@ mixin view(namespace, _docName, viewName, faceName)
   - viewNamespace = namespace
   - docName = _docName
   - if(typeof faceName == 'undefined'){faceName = viewName, viewName = docName, docName = viewNamespace, viewNamespace = 'default'} // viewNamespace 缺省为default
-  - query = attributes.query || {}
+  - query = attributes.query
   - page.addView(viewNamespace, docName, viewName, faceName, query)
   - viewTemplateName = bp.getViewTemplateName(viewNamespace, docName, viewName)
   - bp.initVariables(viewNamespace, docName)

@@ -55,11 +55,13 @@
       });
     };
     prototype.addComponentView = function(viewConfig){
-      var vc, component;
+      var vc, component, view;
       vc = viewConfig;
       component = BP.Component.registry[vc.namespace][vc.docName];
+      view = component[vc.viewName];
+      view.pageQuery = vc.query;
       this.faces.push({
-        view: component[vc.viewName],
+        view: view,
         faceName: vc.faceName
       });
     };
@@ -86,8 +88,7 @@
               this.redirect('default');
             } else {
               BP.Page.currentPage = self;
-              self.setViewsCurrentFaces();
-              self.storeDataInState();
+              self.configViews(this.params);
             }
           },
           waitOn: function(){
@@ -131,11 +132,25 @@
       }
       return true;
     };
+    prototype.configViews = function(params){
+      this.setViewsCurrentFaces();
+      this.filterListViewsData(params);
+      this.storeDataInState();
+    };
     prototype.setViewsCurrentFaces = function(){
       var i$, ref$, len$, face;
       for (i$ = 0, len$ = (ref$ = this.faces).length; i$ < len$; ++i$) {
         face = ref$[i$];
         face.view.currentFaceName = face.faceName;
+      }
+    };
+    prototype.filterListViewsData = function(params){
+      var i$, ref$, len$, face;
+      for (i$ = 0, len$ = (ref$ = this.faces).length; i$ < len$; ++i$) {
+        face = ref$[i$];
+        if (face.view.type === 'list' && face.view.pageQuery) {
+          face.view.dataManager.query = this.applyQueryOnParams(face.view.pageQuery, params);
+        }
       }
     };
     prototype.storeDataInState = function(){
@@ -144,6 +159,10 @@
         face = ref$[i$];
         face.view.dataManager.storeDataInState();
       }
+    };
+    prototype.applyQueryOnParams = function(query, params){
+      eval('query = ' + query);
+      return query;
     };
     prototype.subscribe = function(params){
       var i$, ref$, len$, face;

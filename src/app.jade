@@ -11,8 +11,7 @@ mixin head-of-homework-list()
 +page('aw', 'assignment-homework')
   +view('assignment', 'detail', 'reference')
   +head-of-homework-list()
-  +view('homework', 'list', 'list')(query='{assignmentId: assignment._id}')
-
+  +view('homework', 'list', 'list')(query='{assignmentId: params.assignmentId}')
 
 //-# type: aggregate | composite, aggregate时，二者独立，各自可独立创建，各自删除。composite时，导航终点doc不能直接从其列表上创建，而是通过起点doc的列表中的link来创建。删除起点doc，关联的终点doc将被一并删除。
 //-# casecade: TODO: 待添加 
@@ -48,5 +47,3 @@ mixin head-of-homework-list()
       +html('内容')(span=FULL_ROW, placeholder='在这里开始作业吧~')
 
     +auto-insert('学生', A.currentUserName())
-
-
