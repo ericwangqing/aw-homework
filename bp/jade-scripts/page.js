@@ -4,14 +4,17 @@
   Page = (function(){
     Page.displayName = 'Page';
     var prototype = Page.prototype, constructor = Page;
+    Page.currentPage = null;
     Page.registry = {};
     Page.createPages = function(pages){
-      var i$, len$, page, results$ = [];
+      var i$, len$, page;
       for (i$ = 0, len$ = pages.length; i$ < len$; ++i$) {
         page = pages[i$];
-        results$.push(this.resume(page));
+        this.resume(page);
       }
-      return results$;
+      if (Meteor.isClient) {
+        return this.addMeteorHelpers();
+      }
     };
     Page.resume = function(pageConfig){
       var page, ref$, key$, i$, len$, viewConfig;
@@ -25,6 +28,12 @@
         page.addComponentView(viewConfig);
       }
       return page.init();
+    };
+    Page.addMeteorHelpers = function(){
+      var this$ = this;
+      Handlebars.registerHelper('bp-is-page', function(namespace, name){
+        return this$.currentPage && namespace === this$.currentPage.namespace && name === this$.currentPage.name;
+      });
     };
     Page.pathFor = function(namespace, pageName, docName, doc){
       var page;
@@ -76,6 +85,7 @@
               alert("没有权限访问");
               this.redirect('default');
             } else {
+              BP.Page.currentPage = self;
               self.setViewsCurrentFaces();
               self.storeDataInState();
             }

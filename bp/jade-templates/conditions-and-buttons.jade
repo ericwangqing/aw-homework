@@ -58,11 +58,13 @@ mixin _link-button(action, href, isLink, label)
   - var path = attributes.face || attributes.path || action
   - var viewName = attributes.viewName || attributes.citedDoc || ''
   - var href = href || (isLink ? ("{{bp-path-for-view '"+ viewName + "' '" + path.camelize(false) + "' this}}") : '#')
-  - href = attributes.page ? ("{{bp-path-for-page '" + attributes.namespace + "' '" + attributes.page + "' '" + attributes.currentDocName + "' this}}") : href
+  - href = attributes.pageName ? ("{{bp-path-for-page '" + attributes.namespace + "' '" + attributes.pageName + "' '" + attributes.currentDocName + "' this}}") : href
   - var tooltip = attributes.label ? attributes.label : null // 将label作为tooltip显示
   - var classNames = 'bp-' + action + (tooltip ? ' tooltip ' : ' ' )+ (attributes.classNames ? attributes.classNames : '')
   - classNames = attributes.isButton ? "ui icon tiny button " + classNames : classNames // Semantic UI button
   - if(action == 'delete'){var bpDocId ="{{_id}}"} // 列表中出现delete按钮时，需要分清是哪个doc
+  if attributes.pageName
+    | {{#if bp-is-page '#{attributes.formPage.namespace}' '#{attributes.formPage.name}'}}
   a(href=href, class=classNames, title=tooltip, bp-doc-id=bpDocId)
     - if(action == 'next') // next的文字出现在前面，图标在后面，和其它相反
       block
@@ -78,6 +80,9 @@ mixin _link-button(action, href, isLink, label)
         when 'previous'   :   i.fa.fa-arrow-left.fa-fw
         defaule: i
       block
+  if attributes.pageName
+    | {{/if}}
+
 
 mixin guarded-link(action)
   //- - console.log("in guarded link, action is: " + action + ", attributes are: ", attributes)

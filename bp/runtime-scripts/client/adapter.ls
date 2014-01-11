@@ -78,7 +78,7 @@ class BP.Detail-template-adpater extends BP.Template-adapter
     @renderers.push @view.ui.add-validation
 
   add-auto-insert-field: !(attr, expression)~>
-    console.log "attr: #attr, expression: #expression"
+    # console.log "attr: #attr, expression: #expression"
     @view.data-manager.auto-insert-fields[attr] = attr: attr, expression: expression
 
   enable-nav-link: (nav)->

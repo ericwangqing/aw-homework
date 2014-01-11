@@ -2,14 +2,15 @@
 ## 因此，transfet-state用原生localStrage，component state用Session
 
 @BP ||= {}
+## 用以存放非reactive的状态，例如：页面之间的transfer-state
 Local-session = 
   get: (key)->
     value = window.session-storage[key]
-    console.log "get value: ", value
+    # console.log "get value: ", value
     if typeof value is 'string' then JSON.parse value else value
 
   set: (key, value)->
-    console.log "set value: ", value
+    # console.log "set value: ", value
     window.session-storage[key] = JSON.stringify value
 
 class @BP.State

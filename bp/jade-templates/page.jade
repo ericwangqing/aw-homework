@@ -17,9 +17,9 @@ mixin view(namespace, _docName, viewName, faceName)
   | {{> #{viewTemplateName}}}
   br
 
-mixin add-view-item-link(label, pageNamespace, page)
+mixin add-view-item-link(label, pageNamespace, pageName)
   - var guard = attributes.guard || true
   - var icon = attributes.icon || 'go'
-  - link = {label: label, namespace: pageNamespace, page: page, currentDocName: docName, guard: guard, icon: icon, isPageLink: true}
+  - link = {label: label, namespace: pageNamespace, pageName: pageName, currentDocName: docName, guard: guard, icon: icon, isPageLink: true, formPage: page}
   - bp.addItemLink(viewNamespace, docName, link)
   //- - console.log("in add-view-item-link, namespace is: ", namespace)

@@ -1,8 +1,12 @@
 ## used both at developing time by jade and runtime by meteor
+
 class Page
+  ## 浏览器当前显示的Page，在router中设置。
+  @current-page = null 
   @registry = {}
   @create-pages = (pages)->
     [@resume page for page in pages]
+    @add-meteor-helpers! if Meteor.is-client
 
   @resume = (page-config)->
     page = new Page page-config
@@ -12,6 +16,11 @@ class Page
     @registry[page.namespace][page.name] = page
     [page.add-component-view view-config for view-config in page-config.views]
     page.init!
+
+  @add-meteor-helpers = !->
+    Handlebars.register-helper 'bp-is-page', (namespace, name)~>
+      @current-page and namespace is @current-page.namespace and name is @current-page.name 
+
 
   @path-for = (namespace, page-name, doc-name, doc)~>
     page = @registry[namespace][page-name]
@@ -46,6 +55,7 @@ class Page
             alert "没有权限访问"
             @redirect 'default' # TODO: 改为last page
           else
+            BP.Page.current-page = self # 追踪当前page
             self.set-views-current-faces!
             self.store-data-in-state!
         wait-on: ->

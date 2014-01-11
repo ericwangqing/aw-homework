@@ -59,6 +59,7 @@ class @BP.View
             alert "你没有权限访问该页面"
             @redirect 'default'
           else
+            BP.Page.current-page = null
             self.change-to-face face-name, @params
         wait-on: -> # 注意：wait-on实际上在before之前执行！！
           self.data-manager.subscribe @params
