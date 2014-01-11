@@ -1,17 +1,20 @@
-include constants-and-utils
-include conditions-and-buttons
+include basics/constants-and-utils
+include basics/conditions
+include basics/buttons
 
 //-# BP表格，用于list视图
 mixin table(items, columnNames, attributesNames)
   - var attributesNames = attributesNames ? attributesNames : columnNames
   block
+  - var viewTableLinks = bp.getTableConfig(namespace, docName).viewTableLinks
   //- 用户自定义的links
-  - var tableLinks = bp.getTableConfig(namespace, docName).tableLinks
-  - console.log("******************** 2 ********************")
-  +add-additional-links(tableLinks)
-  //- 可配置，可动态移除go-create按钮
-  - var removedLinks = bp.getTableConfig(namespace, docName).removedLinks
-  if removedLinks.indexOf('go-create') < 0 
+  - var pageAddedTableLinks = bp.getTableConfig(namespace, docName).pageAddedTableLinks
+  +add-additional-links(viewTableLinks)
+  +add-additional-links(pageAddedTableLinks)
+  //- 可配置，可动态移除go-create按钮。Composition关系的end端go-create被移除，还可以在page里定义移除。
+  - var viewRemovedLinks = bp.getTableConfig(namespace, docName).viewRemovedLinks
+  - var pageAddedRemovedLinks = bp.getTableConfig(namespace, docName).pageAddedRemovedLinks
+  if (viewRemovedLinks.indexOf('go-create') < 0) && (pageAddedRemovedLinks.indexOf('go-create') < 0)
     //- 只有list时，才有go-create按钮，view时没有 
     +if-face('list')
       +guarded-link('go-create')
@@ -21,17 +24,10 @@ mixin table(items, columnNames, attributesNames)
     tbody
       +_rows(items, attributesNames)
 
-//-# 获取Page中对table的微调
-mixin init-table-variables()
-  - var config = bp.getTableConfig(namespace, docName)
-  - rowLinks = config.rowLinks, rowMultipleLinks = config.rowMultipleLinks, tableLinks = config.tableLinks, removedLinks = config.removedLinks
-
-
 mixin _rows(items, attributesNames)
   | {{#each #{items}}}
   +_row(attributesNames)
   | {{/each}}  
-
 
 mixin _head-row(columnNames)
   tr
@@ -69,26 +65,28 @@ mixin _guarded-operation-cell()
     +mark-current-doc-id()
       +guarded-link('go-update')
       +guarded-link('delete')
-      - var rowLinks = bp.getTableConfig(namespace, docName).rowLinks
-      - var rowMultipleLinks = bp.getTableConfig(namespace, docName).rowMultipleLinks
-      +add-additional-links(rowLinks)
-      +add-addtional-multiple-links(rowMultipleLinks)
+      - var viewRowLinks = bp.getTableConfig(namespace, docName).viewRowLinks
+      - var viewRowMultipleLinks = bp.getTableConfig(namespace, docName).viewRowMultipleLinks
+      - var pageAddedRowLinks = bp.getTableConfig(namespace, docName).pageAddedRowLinks
+      - var pageAddedRowMultipleLinks = bp.getTableConfig(namespace, docName).pageAddedRowMultipleLinks
+      +add-additional-links(viewRowLinks)
+      +add-addtional-multiple-links(viewRowMultipleLinks)
+      +add-additional-links(pageAddedRowLinks)
+      +add-addtional-multiple-links(pageAddedRowMultipleLinks)
+
+mixin mark-current-doc-id()
+  .current-doc-id(bp-doc-id='{{_id}}')
+    block
 
 //-# --------------- 添加links -------------
-
 mixin add-item-link(link)
   - bp.addItemLink(namespace, docName, link)
-  //- - rowLinks.push(link)
 
 mixin add-item-links(link)
   - bp.addItemLinks(namespace, docName, link)
-  //- - rowMultipleLinks.push(link)
 
 mixin add-list-link(link)
   - bp.addListLink(namespace, docName, link) 
-  //- - tableLinks.push(link)
 
 mixin remove-link(linkName)
   -bp.removeLink(namespace, docName, linkName)
-  //- - removedLinks.push(linkName)
-  //- - removedLinks = removedLinks.unique() 

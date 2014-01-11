@@ -1,0 +1,48 @@
+//-#  条件wrappers。帮助BP插入权限控制helpers， 参考：[adpater.ls](../ls/adapter.html), [permission.ls](../ls/permission.html)
+
+//-# 控制仅在某个face中显示
+mixin if-face(face)
+  | {{#if bp-face-is '#{face}'}}
+  block
+  | {{/if}}
+
+//-# 控制不在某个face中显示
+mixin unless-face(face)
+  | {{#unless bp-face-is '#{face}'}}
+  block
+  | {{/unless}}
+//-# 控制仅在某个face中显示
+mixin if-else-face(face)
+  | {{#if bp-face-is '#{face}'}}
+  block
+
+//-# 是否允许当前用户对数据（默认为当前，除非给出citedDoc），进行某种操作（go-create, go-update, create, update, view; 以及其它用户通过add-links增加的action）
+mixin if-bp-permit(action)
+  - var target = attributes.citedDoc ? "'" + attributes.citedDoc + "'" : '' // Component
+  - target = attributes.pageName ? "'" + attributes.pageName + "'" : target // Page
+  //- - console.log("in if-bp-permit, action is: ", action)
+  | {{#if bp-permit this '#{action}' #{target}}}
+  block
+  | {{/if}}
+
+//-# 是否允许当前用户对当前（默认为当前，除非给出citedDoc）的某个属性（attr），进行某种操作
+mixin if-bp-attribute-permit(attr, action)
+  - var citedDoc = attributes.citedDoc ? attributes.citedDoc : ''
+  | {{#if bp-attribute-permit this '#{attr}' '#{action}' '#{citedDoc}'}}
+  block
+  | {{/if}}
+
+
+mixin if-else-attribute-permit(attr, action)
+  | {{#if bp-attribute-permit this '#{attr}' '#{action}'}}
+  block
+    
+//- 和上面的if-else-attribute-permit配合一同使用
+mixin else()
+  | {{else}}
+  block
+  | {{/if}}
+
+
+
+

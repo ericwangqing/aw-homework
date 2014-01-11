@@ -1,7 +1,5 @@
 include ../bp/jade-templates/bp-mixins
 
-//-# type: aggregate | composite, aggregate时，二者独立，各自可独立创建，各自删除。composite时，导航终点doc不能直接从其列表上创建，而是通过起点doc的列表中的link来创建。删除起点doc，关联的终点doc将被一并删除。
-//-# casecade: TODO: 待添加 
 
 +page('aw', 'assignments-list')(isMainNav=true)
   +view('assignment', 'list', 'list')
@@ -12,6 +10,8 @@ include ../bp/jade-templates/bp-mixins
   +view('homework', 'list', 'list')(query='{assignmentId: assignment._id}')
 
 
+//-# type: aggregate | composite, aggregate时，二者独立，各自可独立创建，各自删除。composite时，导航终点doc不能直接从其列表上创建，而是通过起点doc的列表中的link来创建。删除起点doc，关联的终点doc将被一并删除。
+//-# casecade: TODO: 待添加 
 //- +relation('assignment', '1 -> *', 'homework')(type='composition')
 +relation({docName: 'assignment', showName: '作业要求', showAttr: '题目'}, '1 -> *', {docName: 'homework', showName: '作业', showAttr: '学生'})(type='composition')
 

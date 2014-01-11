@@ -2,6 +2,7 @@
 ## 给Jade用，根据template中的定义，动态编译出Views，以便BP Router加载。
 
 require! [fs, 'jade', './Names', './Relation', './Page']
+config = require './_bp-config'
 _ = require 'underscore'
 
 jade.filters <<< filters = require './_bp-filters'
@@ -18,12 +19,7 @@ module.exports =
     @components.push {namespace, doc-name, is-main-nav, class-name}
 
   init-variables: (namespace, doc-name)!->
-    @variables[namespace] ||= {}
-    @variables[namespace][doc-name] ||= table:
-      row-links: []
-      row-multiple-links: []
-      table-links: []
-      removed-links: []    
+    config.init namespace, doc-name
     # console.log "init variables for: #namespace, #doc-name. @variables are: ", JSON.stringify @variables[namespace][doc-name]
 
   ## 声明式relation
@@ -80,19 +76,12 @@ module.exports =
     if view-name is 'list' then names.list-template-name else names.detail-template-name
 
   get-table-config: (namespace, doc-name)->
-    config = @variables[namespace][doc-name].table
+    config.get-config namespace, doc-name .table
     # console.log "namespace: #namespace, doc-name: #doc-name, config: ", config
     # config
 
-  add-item-link: (namespace, doc-name, link)->
-    @variables[namespace][doc-name].table.row-links.push link
+  add-item-link: -> config.add-item-link.apply config, &
+  add-item-links: -> config.add-item-links.apply config, &
+  add-list-link: -> config.add-list-link.apply config, &
+  remove-link: -> config.remove-link.apply config, &
 
-  add-item-links: (namespace, doc-name, link)->
-    @variables[namespace][doc-name].table.row-multiple-links.push link
-
-  add-list-link: (namespace, doc-name, link)->
-    @variables[namespace][doc-name].table.table-links.push link
-
-  remove-link: (namespace, doc-name, linkName)->
-    @variables[namespace][doc-name].table.removed-links.push linkName
-    @variables[namespace][doc-name].table.removed-links.unique!
