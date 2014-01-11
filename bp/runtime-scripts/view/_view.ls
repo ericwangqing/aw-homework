@@ -14,24 +14,22 @@ class @BP.View
       @create-adapter!
 
   ## 得到已经添加好link关系的view的path，可以有两种不同参数的调用：
-  ## 1）link-name, doc；得到当前view的link path
-  ## 2）view-name, link-name, doc；得到name为view-name的view的link path
+  ## 1）'', link-name, doc；得到当前view的link path
+  ## 2）view-name, face, doc；得到name为view-name的view的face的link path
   get-path: (view, face, doc)-> # TODO：这里要重构
     # doc = doc?.fetch?!0 # 当doc是cursor时，取回doc
     view = @ if view is ''
     if face not in ['previous', 'next'] 
-      if view is @ 
+      if view is @ # 去到本view的links对应的face
         view = @links[face].view
         face-pattern = @links[face].face
         # face = (_.invert view.faces)[face-pattern] # 从face（例如："/assignment/:assignment_id/update"）查回face-name (例如："list")
-      else
+      else # 去到view对应的face
         view = @@registry[view]
         face-pattern = view.faces[face]
-    else
+    else # previous和next的情况，仍然在当前的face
       face-pattern = view.faces[view.current-face-name]
 
-    # docId = if view is @ and doc then doc._id else doc?[view.doc-name + 'Id']
-    # face-name = (_.invert view.faces)[face] # 从face（例如："/assignment/:assignment_id/update"）查回face-name (例如："list")
     if face in ['previous', 'next'] or view.is-permit doc, face # previous, next不需要check permission
       view.faces-manager.get-path face-pattern, doc
     else

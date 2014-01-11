@@ -19,8 +19,11 @@ class @BP.Template-adapter
     @template.helpers @helpers
     @template.events @events-handlers 
     @template.rendered = !-> 
-      $ @.first-node .add-class 'fadein'
+      self.fadein @
       [method.call self for method in self.renderers]
+
+  fadein: (rendered-template)!->
+    $ rendered-template.first-node .add-class 'fadein'
 
   create-helpers: !->
     self = @
@@ -100,14 +103,9 @@ class BP.Detail-template-adpater extends BP.Template-adapter
     (editor-id, toolbar-id, placeholder)!~>
       Meteor.defer -> # 这里需要等parentNode就位，如果不defer，parentNode会undefined
         if $ "#" + editor-id .length
-          new wysihtml5.Editor editor-id, 
+          editor = new wysihtml5.Editor editor-id, 
             toolbar: toolbar-id
             parser-rules: wysihtml5-parser-rules
             stylesheets: '/lib/wysihtml5/wysihtml5.css'
             placeholder-text: placeholder
-
-
-
-
-/* ------------------------ Private Methods ------------------- */
-
+          # $ editor.current-view.iframe .closest "div[data-row-span]" .add-class 'fadein'

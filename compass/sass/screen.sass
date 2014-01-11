@@ -1,11 +1,9 @@
 @import base
 
 body
-  +susy-grid-background
   background: #F8F9FA
   a
     text-decoration: none
-
 
   .container
     // +susy-grid-background
@@ -69,23 +67,12 @@ body
             fieldset
               margin-top: 10px
 
-
-
-
-      // a.bp-update, a.bp-create, a.bp-go-update, a.bp-go-create, a.bp-delete
       a[class*='bp-'], i[class*='bp-']
         margin: 10px 2px
         &:not([class~='ui'])
           color: rgba(0, 0, 0, 0.3)
         &:hover
           color: rgb(70, 131, 234)
-      //   +sassy-button-structure(2px, 14px, 2px 5px)
-      // a.bp-update, a.bp-go-update
-      //   +sassy-button-gradient("matte", lighten(#4ba3cc, 10%))
-      // a.bp-create, a.bp-go-create
-      //   +sassy-button-gradient("matte", lighten(#e86a43, 10%))
-      // a.bp-delete
-      //   +sassy-button-gradient("matte", lighten(#cc3512, 20%))
 
       div.reference
         display: none

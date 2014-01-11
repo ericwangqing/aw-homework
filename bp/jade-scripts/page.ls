@@ -26,8 +26,6 @@ class Page
     page = @registry[namespace][page-name]
     page.get-path doc-name, doc
 
-
-
   ({@namespace, @name, @is-main-nav})->
     @template-name = [@namespace, @name].join '-'
     @views = []
@@ -61,7 +59,6 @@ class Page
         wait-on: ->
           self.subscribe @params
 
-
   get-path-pattern: ->
     pattern = "/#{@path-name}"
     for face in @faces
@@ -92,6 +89,5 @@ class Page
 
   subscribe: (params)!->
    [face.view.data-manager.subscribe params for face in @faces] 
-
 
 if module? then module.exports = Page else BP.Page = Page # 让Jade和Meteor都可以使用

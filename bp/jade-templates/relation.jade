@@ -33,36 +33,36 @@ mixin add-go-update-relation-data-links(relation)
   +add-item-links(goUpdateLink)
 
 mixin add-relations-fields(relations)
-  .ui.fluid.accordion(data-row-span='12')
-    .title
-      i.dropdown.icon 
-      | 关联关系
-    .content
-      +fieldset('添加/更新关系')
-        +row()
-          each relation in relations
-            +_calculate-ends-and-links(relation)
-            if relation.type == 'aggregation' 
-              +add-relation-select(relation)
-            else
-              if currentEnd.type == 'end'
-                +if-face('create')
-                  +auto-insert(oppositeEnd.docName + 'Id', A.docId(oppositeEnd.docName))
-
-
-      +fieldset('已有关系')
-        +row()
-          each relation in relations
-            +_calculate-ends-and-links(relation)
-            //- create时还没有已有关系
-            +unless-face('create')
-              if relation.type == 'aggregation'
-                +add-go-create-and-go-update(relation)
+  +unless-face('reference')
+    .ui.fluid.accordion(data-row-span='12')
+      .title
+        i.dropdown.icon 
+        | 关联关系
+      .content
+        +fieldset('添加/更新关系')
+          +row()
+            each relation in relations
+              +_calculate-ends-and-links(relation)
+              if relation.type == 'aggregation' 
+                +add-relation-select(relation)
               else
                 if currentEnd.type == 'end'
-                  +show-related-data-with-text-link(relation)
-                else
+                  +if-face('create')
+                    +auto-insert(oppositeEnd.docName + 'Id', A.docId(oppositeEnd.docName))
+
+        +fieldset('已有关系')
+          +row()
+            each relation in relations
+              +_calculate-ends-and-links(relation)
+              //- create时还没有已有关系
+              +unless-face('create')
+                if relation.type == 'aggregation'
                   +add-go-create-and-go-update(relation)
+                else
+                  if currentEnd.type == 'end'
+                    +show-related-data-with-text-link(relation)
+                  else
+                    +add-go-create-and-go-update(relation)
 
 
 mixin _calculate-ends-and-links(relation)

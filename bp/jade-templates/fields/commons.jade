@@ -24,6 +24,9 @@ mixin guarded-input-wrapper(label, attr)
     +if-face('view')   
       +_uneditable-content(label, attr, span)
 
+    +if-face('reference')   
+      +_uneditable-content(label, attr, span)
+
 
 mixin wrap-filed-with-label(label, span)
   - label = bp.getAttrName(label)

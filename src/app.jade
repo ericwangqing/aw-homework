@@ -1,12 +1,16 @@
 include ../bp/jade-templates/bp-mixins
 
+mixin head-of-homework-list()
+  .ui.medium.teal.header 
+    i.hand.down.icon.tooltip.fadein(title='仅列出本次作业') 作业列表
 
 +page('aw', 'assignments-list')(isMainNav=true)
   +view('assignment', 'list', 'list')
     +add-view-item-link('批改作业', 'aw', 'assignment-homework')
 
 +page('aw', 'assignment-homework')
-  +view('assignment', 'detail', 'update')
+  +view('assignment', 'detail', 'reference')
+  +head-of-homework-list()
   +view('homework', 'list', 'list')(query='{assignmentId: assignment._id}')
 
 

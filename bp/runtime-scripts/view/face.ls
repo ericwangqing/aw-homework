@@ -19,9 +19,10 @@ class @BP.Detail-faces-manager extends BP.Abstract-faces-manager
   create-faces: ->
     @id-place-holder = ':' + @view.doc-name + '_id'
     faces = 
-      create  : "/#{@view.name}/create"
-      update  : "/#{@view.name}/#{@id-place-holder}/update"   
-      view    : "/#{@view.name}/#{@id-place-holder}/view"     
+      create    : "/#{@view.name}/create"
+      update    : "/#{@view.name}/#{@id-place-holder}/update"   
+      view      : "/#{@view.name}/#{@id-place-holder}/view"     # view没有操作按钮，有关联关系
+      reference : "/#{@view.name}/#{@id-place-holder}/view"     # reference没有操作按钮，也没有关联关系
 
   get-path: (pattern, doc-or-id)-> 
     path-pattern = super ...

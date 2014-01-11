@@ -9,12 +9,10 @@ do make-splash-click-fadeout = !->
 
     'webkitAnimationEnd': !->
       Router.go BP.Component.main-nav-paths.0.path
-      # $ '.bp-form' .add-class 'fadein'
 
 do make-loading-spinner = !->
   Template.loading.rendered = !->
     @spinner = new Spinner!spin @find "#loading"
-
 
 do initial-layout-semantic-ui = !->
   Template.layout.rendered = _.once ->
