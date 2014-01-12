@@ -41,8 +41,9 @@
       return page.getPath(docName, doc);
     };
     function Page(arg$){
-      this.namespace = arg$.namespace, this.name = arg$.name, this.isMainNav = arg$.isMainNav;
+      this.namespace = arg$.namespace, this.name = arg$.name, this.mainNav = arg$.mainNav;
       this.templateName = [this.namespace, this.name].join('-');
+      this.displayName = this.mainNav || this.templateName;
       this.views = [];
     }
     prototype.addView = function(namespace, docName, viewName, faceName, query){
@@ -66,11 +67,16 @@
       });
     };
     prototype.init = function(){
-      var path;
       this.route();
-      if (this.isMainNav) {
-        BP.Component.mainNavPaths.push(path = {
-          name: this.templateName,
+      if (this.mainNav) {
+        BP.Nav.addMainNav({
+          name: this.displayName,
+          path: this.pathName
+        });
+      }
+      if (this.secondNav) {
+        BP.Nav.addSecondNav({
+          name: this.displayName,
           path: this.pathName
         });
       }

@@ -25,8 +25,9 @@ class Page
     page = @registry[namespace][page-name]
     page.get-path doc-name, doc
 
-  ({@namespace, @name, @is-main-nav})->
+  ({@namespace, @name, @main-nav})->
     @template-name = [@namespace, @name].join '-'
+    @display-name = @main-nav or @template-name
     @views = []
 
   add-view: (namespace, doc-name, view-name, face-name, query)->
@@ -41,7 +42,8 @@ class Page
 
   init: !->
     @route!
-    BP.Component.main-nav-paths.push path = {name: @template-name, path: @path-name} if @is-main-nav # TODO: 厘清main-nav和second-nav
+    BP.Nav.add-main-nav {name: @display-name, path: @path-name} if @main-nav
+    BP.Nav.add-second-nav {name: @display-name, path: @path-name} if @second-nav
 
   route: !->
     self = @

@@ -71,8 +71,12 @@ body
         margin: 10px 2px
         &:not([class~='ui'])
           color: rgba(0, 0, 0, 0.3)
+
+      a[class*='bp-'] i, i[class*='bp-']
         &:hover
-          color: rgb(70, 131, 234)
+          // color: rgb(70, 131, 234)
+          color: #009FDA
+          +vendor-prefix(transform, scale(1.2))
 
       div.reference
         display: none

@@ -19,3 +19,9 @@ $computer       : 55em 12
 
 // $show-grid-backgrounds  : true
 // $sb-padding     : 0.3em 1.5em !default
+= vendor-prefix($name, $argument)
+  -webkit-#{$name}: #{$argument}
+  -ms-#{$name}: #{$argument}
+  -moz-#{$name}: #{$argument}
+  -o-#{$name}: #{$argument}
+  #{$name}: #{$argument}

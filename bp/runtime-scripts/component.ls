@@ -11,6 +11,12 @@ class @BP.Collection
     collection-name = (new BP.Names 'default', doc-name).meteor-collection-name
     @get collection-name
 
+@BP.Nav =
+  main-nav-paths: []
+  second-nav-paths: []
+  add-main-nav: (link)-> @main-nav-paths.push link # link: {name: 'show-on-the-link', path: 'iron-router-path-name'}
+  add-second-nav: (link)-> @second-nav-paths.push link 
+
 class @BP.Component
   @registry = {}
   @main-nav-paths = []
@@ -20,7 +26,7 @@ class @BP.Component
     [new BP.Component component for component in components]
     [[component.init! for doc-name, component of components] for namespace, components of @registry]
 
-  ({@namespace, @doc-name, @is-main-nav})-> # template-name, template-adapter, views
+  ({@namespace, @doc-name, @main-nav})-> # template-name, template-adapter, views
     @list = new BP.List-view @namespace, @doc-name
     @detail = new BP.Detail-view @namespace, @doc-name
     @@registry[@namespace] ||= {}
@@ -32,7 +38,8 @@ class @BP.Component
     @add-relations-links!
 
     if Meteor.is-client
-      @add-to-main-nav! if @is-main-nav
+      @add-to-main-nav! if @main-nav
+      @add-to-second-nav!
       @list.route!
       @detail.route!
 
@@ -44,7 +51,7 @@ class @BP.Component
   add-relations-links: !->
     relations = BP.Relation.registry[@doc-name]
     # debugger
-    [@add-relation-links relation for relation in relations]
+    [@add-relation-links relation for relation in relations] 
 
   add-relation-links: (relation)!->
     current-end = relation.get-current-end @doc-name
@@ -59,4 +66,8 @@ class @BP.Component
 
   add-to-main-nav: !->
     path-name = @list.faces-manager.get-path-name 'list'
-    @@main-nav-paths.push {name: @list.name, path: path-name}
+    BP.Nav.add-main-nav {name: @list.name, path: path-name}
+
+  add-to-second-nav: !->
+    path-name = @list.faces-manager.get-path-name 'list'
+    BP.Nav.add-second-nav {name: @list.name, path: path-name}

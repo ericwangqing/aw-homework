@@ -4,10 +4,11 @@ mixin head-of-homework-list()
   .ui.medium.teal.header 
     i.hand.down.icon.tooltip.fadein(title='仅列出本次作业') 作业列表
 
-+page('aw', 'assignments-list')(isMainNav=true)
++page('aw', 'assignments-list')(mainNav='作业列表')
   +view('assignment', 'list', 'list')
     +add-view-item-link('批改作业', 'aw', 'assignment-homework')
 
+//- 一般来说，含有detail视图的页面，因为需要对应的id参数，所以不会出现在一级导航（main nav，second nav）上。
 +page('aw', 'assignment-homework')
   +view('assignment', 'detail', 'reference')
   +head-of-homework-list()

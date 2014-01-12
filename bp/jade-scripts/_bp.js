@@ -14,12 +14,12 @@
     relations: [],
     pages: [],
     variables: {},
-    addComponent: function(namespace, docName, isMainNav, className){
+    addComponent: function(namespace, docName, mainNav, className){
       this.initVariables(namespace, docName);
       return this.components.push({
         namespace: namespace,
         docName: docName,
-        isMainNav: isMainNav,
+        mainNav: mainNav,
         className: className
       });
     },
@@ -37,12 +37,12 @@
       });
       relation = Relation.addRelation(relation);
     },
-    addPage: function(namespace, name, isMainNav){
+    addPage: function(namespace, name, mainNav){
       var page;
       this.pages.push(page = new Page({
         namespace: namespace,
         name: name,
-        isMainNav: isMainNav
+        mainNav: mainNav
       }));
       return page;
     },

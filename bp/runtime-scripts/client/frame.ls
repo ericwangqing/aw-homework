@@ -1,6 +1,6 @@
-do show-main-nav-with-all-bp-components-and-custom-nav-paths = !->
-  Template['bp-main-nav'].helpers 'main-nav-paths': ->
-    BP.Component.main-nav-paths
+do add-navs = !->
+  Template['bp-main-nav'].helpers 'main-nav-paths': -> BP.Nav.main-nav-paths
+  Template['bp-second-nav'].helpers 'second-nav-paths': -> BP.Nav.second-nav-paths
 
 do make-splash-click-fadeout = !->
   Template.splash.events do
@@ -8,7 +8,7 @@ do make-splash-click-fadeout = !->
       $ '#splash' .add-class 'fadeout'
 
     'webkitAnimationEnd': !->
-      Router.go BP.Component.main-nav-paths.0.path
+      Router.go BP.Nav.main-nav-paths.0.path
 
 do make-loading-spinner = !->
   Template.loading.rendered = !->

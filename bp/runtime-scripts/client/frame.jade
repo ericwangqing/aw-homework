@@ -39,8 +39,10 @@ template(name='bp-main-nav')
 
 
 template(name='bp-second-nav')
-  a.item
-    | 2nd Nav
+  | {{#each second-nav-paths}}
+  a.item(href="{{pathFor this.path}}") {{this.name}}
+  | {{/each}}
+
 
 
 template(name='splash')

@@ -14,9 +14,9 @@ module.exports =
   pages: []
   variables: {}
 
-  add-component: (namespace, doc-name, is-main-nav, class-name)->
+  add-component: (namespace, doc-name, main-nav, class-name)->
     @init-variables(namespace, doc-name)
-    @components.push {namespace, doc-name, is-main-nav, class-name}
+    @components.push {namespace, doc-name, main-nav, class-name}
 
   init-variables: (namespace, doc-name)!->
     config.init namespace, doc-name
@@ -27,8 +27,8 @@ module.exports =
     @relations.push relation = {namespace, start, relation-description, end, type}
     relation = Relation.add-relation relation # 实例化后，给jade在compile模板时使用
 
-  add-page: (namespace, name, is-main-nav)->
-    @pages.push page = new Page {namespace, name, is-main-nav}
+  add-page: (namespace, name, main-nav)->
+    @pages.push page = new Page {namespace, name, main-nav}
     page
 
   save-page: !->

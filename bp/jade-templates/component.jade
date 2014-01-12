@@ -5,12 +5,13 @@ include relation
 //-# Component包括list和detail两种视图（view）
 //-# 1. list上用户可以进行go-create、go-update和delete操作，
 //-# 2. detail上用户可以提交（submit）和delete，还可以浏览“上一条”、“下一条”
-mixin component(_docName, isMainNav)
-  - if(typeof isMainNav == 'undefined'){isMainNav = true} // 默认将component的list加到主导航
+mixin component(_docName, mainNav)
+  //- - if(typeof mainNav == 'undefined'){mainNav = true} // 默认将component的list加到主导航
+  //- component的list目前改为加到sencod nav中。TODO：设定bp的dev模式和deploy模式，显示不同内容。
   - docName = _docName
   - namespace = attributes.name || 'default' // 一个doc有一个必须实现的默认component，包括一个list和一个detaill，还可以任意多个其它component
   - names = bp.getNames(namespace, docName)
-  - bp.addComponent(namespace, docName, isMainNav, className)
+  - bp.addComponent(namespace, docName, mainNav, className)
 
   block
   - bp.saveComponent()
