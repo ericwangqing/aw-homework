@@ -29,7 +29,8 @@ class @BP.Template-adapter
     self = @
     @helpers =
       "bs"                   :  @enable-bs!
-      "bp-permit"            :  @view.is-permit
+      "bp-page-permit"       :  BP.Page.is-page-permit
+      "bp-view-permit"       :  @view.is-permit
       "bp-attribute-permit"  :  @view.is-attribute-permit
       "bp-face-is"           :  @view.current-face-checker
       "bp-path-for-view"     :  ~> @view.get-path.apply @view, &

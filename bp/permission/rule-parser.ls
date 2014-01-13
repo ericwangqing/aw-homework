@@ -1,21 +1,39 @@
+@BP ||= {}
+
 if Meteor? then _ = @_ else _ = require 'underscore' # 为测试用例在Meteor环境外加载underscore
+Rule = if Meteor? then BP.Rule else require './_rule'   
 
 class Rule-parser
   parse-users-and-roles: (rule)->
     @rule = rule
-    return 'all' if not @rule.rule-content.users # 未指定user时，应用到全体users
+    return @rule.applied-on-users = Rule.ALL_USERS if not @rule.rule-content.users # 未指定user时，应用到全体users
     tokens = @rule.rule-content.users.split /\s+/
-    @rule.applied-on-users = tokens.filter ~> not (@is-role-token it)
-    @rule.applied-on-roles = tokens.filter @is-role-token .map @cut-off-prefix
+    @rule.applied-on-users = @compact-set-considering-not-modifier tokens.filter ~> not (@is-role-token it)
+    @rule.applied-on-roles = @compact-set-considering-not-modifier tokens.filter @is-role-token .map @cut-off-role-prefix
+
 
   is-role-token: (token)->
-    (token.index-of 'R-') == 0 or (token.index-of 'r-') == 0
+    (token.index-of 'R-') == 0 or (token.index-of 'r-') == 0 or (token.index-of 'NOT-R-') == 0 or (token.index-of 'not-r-') == 0 
 
-  cut-off-prefix: (token)->
-    token.substr 2, token.length
+  cut-off-role-prefix: (token)~>
+    if @has-not-prefix token
+      token = 'NOT-' + token.substr 6, token.length 
+    else
+      token.substr 2, token.length
 
-  parse-rule: (rule)->
-    @rule = rule
+  has-not-prefix: (token)->
+    (token.index-of 'NOT-') == 0 or (token.index-of 'not-') == 0 
+
+  compact-set-considering-not-modifier: (items)->
+    items-with-not-modifier = _.unique items.filter ~> @has-not-prefix it
+    items-without-not-modifier = _.unique items.filter ~> not (@has-not-prefix it)
+    return Rule.ALL if items-with-not-modifier.length > 1 # 例如：not-张三，not-李四，那么实际上任何情况都已经包含
+    return items-without-not-modifier if items-with-not-modifier.length is 0
+    not-item = items-with-not-modifier[0] - 'NOT-'
+    if not-item in items-without-not-modifier then Rule.ALL else items-with-not-modifier[0]
+
+class Data-rule-parser extends Rule-parser
+  parse-rule: (@rule)->
     allows = {collection, item, attributes} = @gather-rule @rule.rule-content.allows
     denies = {collection, item, attributes} = @gather-rule @rule.rule-content.denies
     @parse-collection-rule allows.collection, denies.collection
@@ -31,7 +49,7 @@ class Rule-parser
       attributes: @extract-attributes-action tokens
 
   extract-action: (tokens, prefix)->
-    (tokens.filter -> (it.index-of prefix) == 0).map @cut-off-prefix
+    (tokens.filter -> (it.index-of prefix) == 0).map @cut-off-role-prefix
 
   extract-attributes-action: (tokens)->
     result = {}
@@ -63,6 +81,13 @@ class Rule-parser
     [sub-rule[action] = false for action in deny]
     # doc: 这里显然deny高于allow
 
-@BP ||= {}
-if module? then module.exports = Rule-parser else @BP.Rule-parser = Rule-parser # 让Jade和Meteor都可以使用
+class Page-rule-parser extends Rule-parser
+  parse-rule: (@rule)->
+    @rule.accessible = true if @rule.rule-content.allows?
+    @rule.accessible = false if @rule.rule-content.denies?
 
+if module? 
+  module.exports = {Data-rule-parser, Page-rule-parser} 
+else 
+  @BP.Data-rule-parser = Data-rule-parser # 让Jade和Meteor都可以使用
+  @BP.Page-rule-parser = Page-rule-parser # 让Jade和Meteor都可以使用

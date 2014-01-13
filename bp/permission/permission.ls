@@ -1,3 +1,5 @@
+@BP ||= {}
+
 if Meteor? then _ = @_ else _ = require 'underscore' # 为测试用例在Meteor环境外加载underscore
 
 class Permission
@@ -6,14 +8,41 @@ class Permission
     @instance
 
   ->
+    @page-rules = {}
     #形如：homework: [], assignment: []
-    @rules = {}
+    @data-rules = {}
 
-  add-rule: (unparsed-rule)->
-    Rule = if Meteor? then BP.Rule else require './rule'
-    new-rule = new Rule unparsed-rule
-    @rules[new-rule.doc-name] ||= []
-    @rules[new-rule.doc-name].push new-rule
+  add-data-rules: (unparsed-rules)!->
+    [@add-data-rule {"#doc-name": rule} for doc-name, rule of unparsed-rules]
+
+  add-data-rule: (unparsed-rule)!->
+    Rule = if Meteor? then BP.Rule else require './_rule'
+    new-rule = Rule.create-data-rule unparsed-rule
+    @data-rules[new-rule.doc-name] ||= []
+    @data-rules[new-rule.doc-name].push new-rule
+
+  add-page-rules: (unparsed-rules)!->
+    [@add-page-rule joint-page-name, {"#joint-page-name": rule} for joint-page-name, rule of unparsed-rules]
+
+  add-page-rule: (joint-page-name, unparsed-rule)!->
+    Rule = if Meteor? then BP.Rule else require './_rule'
+    new-rule = Rule.create-page-rule unparsed-rule
+    @page-rules[joint-page-name] ||= []
+    @page-rules[joint-page-name].push new-rule
+
+  check-page-action-permission: (namespace, page-name, doc, action)->
+    current-active-rules = @get-active-page-rules namespace, page-name, doc, action
+    if current-active-rules.length > 0
+      combined-rule = @combined-rules current-active-rules 
+      combined-rule.check doc, action
+    else
+      true
+
+  get-active-page-rules: (namespace, page-name, doc, action)->
+    Page = if Meteor? then BP.Page else require '../jade-scripts/page'
+    joint-page-name = BP.Page.get-joint-page-name namespace, page-name
+    return [] if not @page-rules[joint-page-name]
+    [rule for rule in @page-rules[joint-page-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-action doc, action]
 
   # Template和Router调用，检查当前用户是否有权限进行相应操作
   # view | go-create | go-update | delete 
@@ -34,8 +63,8 @@ class Permission
       true
 
   get-active-rules-on-action: (doc-name, doc, action, view-type)->
-    return [] if not @rules[doc-name]
-    [rule for rule in @rules[doc-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-action view-type, doc, action]
+    return [] if not @data-rules[doc-name]
+    [rule for rule in @data-rules[doc-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-action view-type, doc, action]
 
   combined-rules: (rules)->
     # TODO: 设计实现类似CSS selector的机制。
@@ -54,8 +83,8 @@ class Permission
       true
 
   get-active-rules-on-attribute-action: (doc-name, doc, attr-name, action)->
-    return [] if not @rules[doc-name]
-    [rule for rule in @rules[doc-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-attribute-and-action doc, attr-name, action]
+    return [] if not @data-rules[doc-name]
+    [rule for rule in @data-rules[doc-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-attribute-and-action doc, attr-name, action]
 
   add-constrain-on-query: (current-user-id, doc-name, origin-query)->
     # debugger
@@ -70,11 +99,11 @@ class Permission
 
     result = {query, projection}
     # console.log "********************** constrained-query is: ", result
-    # result
+    result
 
   get-active-rules-for-publish-data: (current-user-id, doc-name)->
-    return [] if not @rules[doc-name]
-    [rule for rule in @rules[doc-name] when rule.is-apply-on-current-user current-user-id]
+    return [] if not @data-rules[doc-name]
+    [rule for rule in @data-rules[doc-name] when rule.is-apply-on-current-user current-user-id]
 
   get-query-from-rule: (origin-query, rule)->
     $and: [origin-query, (rule.query or {})]
@@ -86,6 +115,5 @@ class Permission
     projection
 
 
-@BP ||= {}
 if module? then module.exports = Permission else @BP.Permission = Permission # 让Jade和Meteor都可以使用
 

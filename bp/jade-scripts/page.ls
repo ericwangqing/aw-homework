@@ -1,4 +1,5 @@
 ## used both at developing time by jade and runtime by meteor
+@BP ||= {}
 
 class Page
   ## 浏览器当前显示的Page，在router中设置。
@@ -24,6 +25,16 @@ class Page
   @path-for = (namespace, page-name, doc-name, doc)~>
     page = @registry[namespace][page-name]
     page.get-path doc-name, doc
+
+  @is-page-permit = (doc, action, namespace, page-name)->
+    @permission ||= BP.Permission.get-instance!
+    @permission.check-page-action-permission namespace, page-name, doc, action
+
+  @get-joint-page-name = (namespace, name)-> "#namespace:#name"
+
+  @parse-namespace-and-name-from-joint-page-name = (joint-page-name)-> 
+    tokens = joint-page-name.split ':'
+    {namespace: tokens.0, name: tokens[1 to -1].join ':'}
 
   ({@namespace, @name, @main-nav})->
     @template-name = [@namespace, @name].join '-'
