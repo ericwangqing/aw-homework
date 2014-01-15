@@ -1,5 +1,6 @@
 mixin page(namespace, pageName)
   - if(typeof pageName == 'undefined'){pageName = namespace, namespace = 'default'} // namespace 缺省为default
+  - console.log('----------- page attributes: ', attributes)
   - page = bp.addPage(namespace, pageName, attributes.mainNav)
   template(name=page.templateName)
     block

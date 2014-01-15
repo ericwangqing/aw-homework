@@ -25,10 +25,10 @@ class Data-rule extends Rule
   is-apply-on-current-detail-action: (doc, action)->
     switch action
     case 'view' then @collection.view? or (@item.view? and @satisfy-query doc)
-    case 'create' then @item.create?
-    case 'update' then @item.update? and @satisfy-query doc
-    case 'delete' then @item.delete? and @satisfy-query doc
-    default true
+    case 'create' then @collection.edit? or @item.create?
+    case 'update' then @collection.edit? or (@item.update? and @satisfy-query doc)
+    case 'delete' then @collection.edit? or (@item.delete? and @satisfy-query doc)
+    default false
 
   is-apply-on-current-attribute-and-action: (doc, attr-name, action)-> # doc: 目前attribute只支持update，
     if action is 'update'
@@ -38,6 +38,7 @@ class Data-rule extends Rule
 
 
   satisfy-query: (doc)->
+    return true if !!doc
     collection = BP.Collection.get-by-doc-name @doc-name
     collection.find {$and: [@query, {_id: doc._id}]} .count! is 1
 
@@ -59,9 +60,12 @@ class Data-rule extends Rule
     switch action
     case 'view'
       if @item.view? then @item.view else @collection.view
-    case 'create' then @item.create
-    case 'update' then @item.update
-    case 'delelte' then @item.delete
+    case 'create' 
+      if @item.create? then  @item.create else @collection.edit
+    case 'update' 
+      if @item.update? then  @item.update else @collection.edit
+    case 'delelte'
+      if @item.delete? then  @item.delete else @collection.edit
     default true
 
   check-attribute-editable: (attr-name)->

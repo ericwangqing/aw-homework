@@ -49,7 +49,7 @@ class @BP.Component
       @detail.data-manager.publish!
 
   add-relations-links: !->
-    relations = BP.Relation.registry[@doc-name]
+    relations = BP.Relation.registry[@doc-name] or []
     # debugger
     [@add-relation-links relation for relation in relations] 
 

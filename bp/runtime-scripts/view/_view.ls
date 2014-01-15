@@ -63,9 +63,16 @@ class @BP.View
           self.data-manager.subscribe @params
 
   is-permit: (doc, face, cited-doc-name, cited-view-type)~> 
-    doc-name = if typeof cited-doc-name is 'string' then cited-doc-name else @doc-name
-    type = if typeof cited-view-type is 'string' then cited-view-type else @type
-    action = if typeof face is 'string' then face else @faces-manager.get-action-by-face face
+    if typeof cited-doc-name is 'string'
+      doc-name = cited-doc-name
+      type = if typeof cited-view-type is 'string' then cited-view-type else null 
+      type ||= if face in ['list', 'go-create', 'go-update'] then 'list' else 'detail'
+      doc = null ## 此时需要检查的是对应的cited-doc有无权限，而不是doc本身。TODO：今后可能需要改为{_id: doc[cited-doc-name + 'Id']}
+    else
+      doc-name = @doc-name
+      type = @type
+    action = face
+    # action = if typeof face is 'string' then face else @faces-manager.get-action-by-face face
     if type is 'detail'
       @permission.check-detail-action-permission doc-name, doc, action
     else

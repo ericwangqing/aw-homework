@@ -7,3 +7,13 @@ Meteor.methods do
     else
       new-doc = doc # 这里是新建的情况
     collection.upsert {_id: doc._id}, new-doc
+
+  # 'bp-get-users': (usernames, rolename)->
+  #   result = []
+  #   users = Meteor.users.find {$or:
+  #     * username: usernames
+  #     * 'profile.roles': $regex: ".*#{rolename}.*"
+  #   } .fetch!
+
+    # console.log "________ find users: ", users
+    # users

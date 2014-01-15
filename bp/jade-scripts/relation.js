@@ -106,9 +106,14 @@
         citedViewType: view,
         context: docName
       };
-      return this._alterLinkByFace(destinationEnd, link, face, docName, showName);
+      if (typeof module != 'undefined' && module !== null) {
+        link = this._alterLinkByFace(destinationEnd, link, face, docName, showName);
+      }
+      return link;
     };
     prototype._alterLinkByFace = function(destinationEnd, link, face, docName, showName){
+      var bp;
+      bp = require('./_bp');
       switch (face) {
       case 'create':
         link.label = '创建' + showName;
@@ -118,7 +123,7 @@
       case 'update':
         link.label = destinationEnd.multiplicity === '1'
           ? "更新" + showName
-          : "更新{{bs '" + destinationEnd.showAttr + "'}}";
+          : "更新" + bp.value(destinationEnd.showAttr);
         link.guard = destinationEnd.multiplicity === '1'
           ? docName + ""
           : docName.pluralize() + "";
@@ -126,7 +131,7 @@
       case 'view':
         link.label = destinationEnd.multiplicity === '1'
           ? "更新" + showName
-          : "更新{{bs '" + destinationEnd.showAttr + "'}}";
+          : "更新" + bp.value(destinationEnd.showAttr);
         if (view === 'detail') {
           link.guard = destinationEnd.multiplicity === '1'
             ? docName + ""

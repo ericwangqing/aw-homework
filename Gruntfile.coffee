@@ -25,7 +25,7 @@ module.exports = (grunt)->
 
 
     concat: # 将每个测试中都要用的部分抽出来
-      prefix_src:
+      prefix_src_ls:
         # options:
           # banner: "debug = require('debug')('aw')\n"
         files: [
@@ -35,6 +35,18 @@ module.exports = (grunt)->
           src: ['**/*.ls', '!header.ls']
           dest: 'src-temp/'
           ext: '.ls'
+        ]
+
+      prefix_src_jade:
+        options:
+          banner: "include ../bp/jade-templates/bp-mixins\n"
+        files: [
+          expand: true # 将来改为在dev下的配置
+          # flatten: true
+          cwd: 'src'
+          src: ['**/*.jade']
+          dest: 'src-temp/'
+          ext: '.jade'
         ]
 
       prefix_test:
@@ -125,7 +137,7 @@ module.exports = (grunt)->
       app:
         files: [
           expand: true
-          cwd: 'src'
+          cwd: 'src-temp'
           src: ['**/*.jade']
           dest: 'bin'
           ext: '.html'
@@ -163,7 +175,7 @@ module.exports = (grunt)->
       app:
         files: ["bp/**/*.ls", "!bp/main.ls", "src/**/*.ls", "test/**/*.ls", "src/**/*.jade", "bp/**/*.jade", "compass/**/*.sass"]
         # tasks: ["concat", "livescript",  "copy", "simplemocha"]
-        tasks: ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha"]
+        tasks: ["clean", "copy", "concat", "jade", "livescript", "compass", "simplemocha"]
         options:
           spawn: true
       bp_jade_doc:
@@ -188,4 +200,4 @@ module.exports = (grunt)->
   grunt.loadNpmTasks "grunt-contrib-concat"
   grunt.loadNpmTasks "grunt-docco"
 
-  grunt.registerTask "default", ["clean", "copy", "jade", "concat", "livescript", "compass", "simplemocha", "watch"]
+  grunt.registerTask "default", ["clean", "copy", "concat", "jade", "livescript", "compass", "simplemocha", "watch"]

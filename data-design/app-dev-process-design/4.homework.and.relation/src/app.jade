@@ -1,0 +1,30 @@
++app('敏书')
+
++relation({docName: 'assignment', showName: '作业要求', showAttr: '题目'}, '1 -> *', {docName: 'homework', showName: '作业', showAttr: '学生'})(type='composition')
+
++component('assignment')
+  +list(['编号', '题目', '要求', '截止时间', '老师:User'])
+
+  +detail()
+    +fieldset('作业要求')
+      +row()
+        +no-blank-text('编号')
+        +no-blank-text('题目')(title='世上无难事，只要肯攀登')
+        +datetime('截止时间')
+        +users-selector('学生')(role='学生', multiple=true)
+      +row()
+        +html('要求')(span=FULL_ROW)
+    +auto-insert-current-user-as('老师')
+
++component('homework')
+  +list(['assignment.编号', 'assignment.题目', 'assignment.截止时间', '学生:User', '内容', '分数'])
+
+  +detail()
+    +fieldset('作业要求')
+      +row()
+        +ref-text('assignment.编号')
+        +ref-text('assignment.题目')
+        +ref-text('assignment.截止时间')
+        +default-current-user('学生')(whenNull='current-user')
+    +fieldset('作业内容')
+      +html('内容')(span=FULL_ROW, placeholder='在这里开始作业吧~')

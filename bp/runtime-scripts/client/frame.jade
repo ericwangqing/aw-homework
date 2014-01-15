@@ -24,7 +24,11 @@ template(name='bp-banner')
   //- i.fa.fa-camera-retro fa-camera-retro
   a.item(href='/') 
     i.home.icon
+    {{#if BP.AppName}}
+    | {{BP.AppName}}
+    {{else}}
     | BP Banner
+    {{/if}}
 
 template(name='bp-main-nav')
   a.launch-second-nav.item

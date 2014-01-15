@@ -25,5 +25,6 @@
 
 //-# auto-insert 表达式计算器
 - A = {} 
-- A.currentUserName = function(){return 'Meteor.user().profile.fullname'}
+- A.currentUserId = function(){return 'Meteor.user().profile.fullname'}
+- A.currentUserId = function(){return 'Meteor.user()._id'}
 - A.docId = function(docName){return "this.view.dataManager.doc." + docName + "Id || BP.AbstractDataManager._state.get('" + docName + "')._id"}

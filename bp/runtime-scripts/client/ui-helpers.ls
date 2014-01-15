@@ -5,8 +5,7 @@ restrict-selector-to-view = (selector, view-selector)->
   (selector.split ',' .map -> it.trim! |> ("#{view-selector} " +) ).join ', '
 
 class Abstract-Form
-  (view)->
-    @view = view
+  (@view)->
     @collection = BP.Collection.get view.names.meteor-collection-name
     @view-selector = "div[bp-view-name='#{@view.name}']"
     @events-handlers = {}
@@ -54,18 +53,36 @@ class @BP.Form extends Abstract-Form
         local: [str.trim! for str in candidates.split ',']
 
   get-multi-ahead-render: (attr-name, doc, _config)->
+    self = @
     ~>
       if _config and _config isnt '' and !_config.hash # 注意, Meteor会自动添加最后一个参数{hash: }，用来传递更多options
+        value = doc[attr-name]
         eval 'config = ' + _config
-        data-config = 
-          multiple: config.multiple
-          data: @view.data-manager.get-doc-data config
+        if config.is-meteor-users # for users-selector
+          user-candidates = self.view.data-manager.get-meteor-users-data config
+          data-config = 
+            multiple: config.multiple
+            data: user-candidates
+        else
+          if config.is-meteor-user # for default-current-user
+            disabled = true # default-current-user 并非用户可选择的
+            user = Meteor.user!
+            data-config = 
+              multiple: config.multiple
+              data: [{id: user._id, text: user.profile.fullname}]
+            value = [user._id]
+          else # for options来自citedDoc的
+            data-config = 
+              multiple: config.multiple
+              data: @view.data-manager.get-doc-data config
         multi-ahead = $ @rv "input[name='#{attr-name}']"
         multi-ahead.select2 data-config
+        multi-ahead.select2 'val', value
+        multi-ahead.select2 'enable', false if disabled
       else
         multi-ahead = $ @rv "select[name='#{attr-name}']"
         multi-ahead.select2 {}
-      multi-ahead.select2 'val', doc[attr-name]
+        multi-ahead.select2 'val', doc[attr-name]
 
   add-validation: !~> 
     try

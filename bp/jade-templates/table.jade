@@ -9,7 +9,8 @@ mixin table(items, columnNames, attributesNames)
   - var viewTableLinks = bp.getTableConfig(namespace, docName).viewTableLinks
   //- 用户自定义的links
   - var pageAddedTableLinks = bp.getTableConfig(namespace, docName).pageAddedTableLinks
-  +add-additional-links(viewTableLinks)
+  +is-shown-relation()
+    +add-additional-links(viewTableLinks)
   +add-additional-links(pageAddedTableLinks)
   //- 可配置，可动态移除go-create按钮。Composition关系的end端go-create被移除，还可以在page里定义移除。
   - var viewRemovedLinks = bp.getTableConfig(namespace, docName).viewRemovedLinks
@@ -69,8 +70,9 @@ mixin _guarded-operation-cell()
       - var viewRowMultipleLinks = bp.getTableConfig(namespace, docName).viewRowMultipleLinks
       - var pageAddedRowLinks = bp.getTableConfig(namespace, docName).pageAddedRowLinks
       - var pageAddedRowMultipleLinks = bp.getTableConfig(namespace, docName).pageAddedRowMultipleLinks
-      +add-additional-links(viewRowLinks)
-      +add-addtional-multiple-links(viewRowMultipleLinks)
+      +is-shown-relation()
+        +add-additional-links(viewRowLinks)
+        +add-addtional-multiple-links(viewRowMultipleLinks)
       +add-additional-links(pageAddedRowLinks)
       +add-addtional-multiple-links(pageAddedRowMultipleLinks)
 

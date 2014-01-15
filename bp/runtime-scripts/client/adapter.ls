@@ -29,6 +29,7 @@ class @BP.Template-adapter
     self = @
     @helpers =
       "bs"                   :  @enable-bs!
+      "bs-user"              :  @enable-bs-user!
       "bp-page-permit"       :  BP.Page.is-page-permit
       "bp-view-permit"       :  @view.is-permit
       "bp-attribute-permit"  :  @view.is-attribute-permit
@@ -55,6 +56,12 @@ class @BP.Template-adapter
         new Handlebars.Safe-string '<i class="bp-icon fa fa-eye-slash tooltip" title="没有权限查看"> </i>'
       else
         ''
+  enable-bs-user: ->
+    self = @
+    (attr)->
+      user-id = @[attr]
+      user = self.view.data-manager.get-meteor-user-by-id user-id
+      new Handlebars.Safe-string user.profile.fullname
 
   enable-tooltips: -> $ '.tooltip' .tooltipster interactive: true, theme: '.tooltipster-shadow'
 

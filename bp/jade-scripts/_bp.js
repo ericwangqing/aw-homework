@@ -14,6 +14,10 @@
     relations: [],
     pages: [],
     variables: {},
+    setApp: function(appName, isShownRelation){
+      this.appName = appName;
+      this.isShownRelation = isShownRelation;
+    },
     addComponent: function(namespace, docName, mainNav, className){
       this.initVariables(namespace, docName);
       return this.components.push({
@@ -42,7 +46,8 @@
       this.pages.push(page = new Page({
         namespace: namespace,
         name: name,
-        mainNav: mainNav
+        mainNav: mainNav,
+        isShownRelation: this.isShownRelation
       }));
       return page;
     },
@@ -50,11 +55,16 @@
       this._saveAllConfiguration();
     },
     _saveAllConfiguration: function(){
-      fs.writeFileSync('bp/main.ls', ("BP.Component.create-components " + JSON.stringify(this.components) + ", " + JSON.stringify(this.relations) + "\n") + ("BP.Page.create-pages " + JSON.stringify(this.pages)));
+      var appName;
+      appName = this.appName ? "'" + this.appName + "'" : undefined;
+      fs.writeFileSync('bp/main.ls', ("BP.App-name = " + appName + "\n") + ("BP.Component.create-components " + JSON.stringify(this.components) + ", " + JSON.stringify(this.relations) + "\n") + ("BP.Page.create-pages " + JSON.stringify(this.pages)));
     },
     value: function(attr){
-      var ref$, docName, result;
-      if (attr.indexOf('.') > 0) {
+      var attrName, result, ref$, docName;
+      if (attr.indexOf(':User') > 0 || attr.indexOf(':user') > 0) {
+        attrName = attr.split(':')[0];
+        return result = "{{bs-user '" + attrName + "'}}";
+      } else if (attr.indexOf('.') > 0) {
         ref$ = attr.split('.'), docName = ref$[0], attr = ref$[1];
         return result = "{{#with " + docName + "}} {{bs '" + attr + "'}} {{/with}}";
       } else {
@@ -65,7 +75,9 @@
       return this.names = new Names(namespace, docName);
     },
     getAttrName: function(fullAttrName){
-      return _.last(fullAttrName.split('.'));
+      var name;
+      name = _.first(fullAttrName.split(':'));
+      return name = _.last(name.split('.'));
     },
     getDocName: function(fullAttrName){
       return _.first(fullAttrName.split('.'));

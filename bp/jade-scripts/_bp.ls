@@ -14,6 +14,8 @@ module.exports =
   pages: []
   variables: {}
 
+  set-app: (@app-name, @is-shown-relation)!->  
+
   add-component: (namespace, doc-name, main-nav, class-name)->
     @init-variables(namespace, doc-name)
     @components.push {namespace, doc-name, main-nav, class-name}
@@ -28,19 +30,24 @@ module.exports =
     relation = Relation.add-relation relation # 实例化后，给jade在compile模板时使用
 
   add-page: (namespace, name, main-nav)->
-    @pages.push page = new Page {namespace, name, main-nav}
+    @pages.push page = new Page {namespace, name, main-nav, @is-shown-relation}
     page
 
   save-page: !->
     @_save-all-configuration!
 
   _save-all-configuration: !->
+    app-name = if @app-name then "'#{@app-name}'" else undefined
     fs.write-file-sync 'bp/main.ls', 
+      "BP.App-name = #{app-name}\n" +
       "BP.Component.create-components #{JSON.stringify @components}, #{JSON.stringify @relations}\n" +
       "BP.Page.create-pages #{JSON.stringify @pages}"
 
   value: (attr)->
-    if (attr.index-of '.') > 0
+    if (attr.index-of ':User') > 0 or (attr.index-of ':user') > 0 # 此时关联Meteor User，存储id，显示fullname
+      attr-name = attr.split ':' .0
+      result = "{{bs-user '#attr-name'}}"
+    else if (attr.index-of '.') > 0
       [doc-name, attr] = attr.split '.' 
       result = "{{\#with #doc-name}} {{bs '#attr'}} {{/with}}"
     else
@@ -52,7 +59,8 @@ module.exports =
     @names = new Names namespace, doc-name  
 
   get-attr-name: (full-attr-name)->
-    _.last full-attr-name.split '.'
+    name = _.first full-attr-name.split ':' # 去掉修饰符
+    name = _.last name.split '.' # 去掉cited-doc-name
 
   get-doc-name: (full-attr-name)->
     _.first full-attr-name.split '.'

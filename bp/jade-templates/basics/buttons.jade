@@ -71,18 +71,21 @@ mixin next-link()
 
 mixin add-additional-links(links)
   each link in links
-    - var isNegative = link.guard[0] == '!'
+    - isNegative = link.guard[0] == '!'
     - if(isNegative){link.guard = link.guard.from(1)}
-    if isNegative
-      | {{#unless #{link.guard}}}
-      +_with-or-without-context(link)
-        block
-      | {{/unless}}
-    else
-      | {{#if #{link.guard}}}
-      +_with-or-without-context(link)
-        block
-      | {{/if}}
+    +add-additional-link(link)
+
+mixin add-additional-link(link)
+  if isNegative
+    | {{#unless #{link.guard}}}
+    +_with-or-without-context(link)
+      block
+    | {{/unless}}
+  else
+    | {{#if #{link.guard}}}
+    +_with-or-without-context(link)
+      block
+    | {{/if}}
 
 mixin _with-or-without-context(link)
   - attributes = link 
@@ -96,26 +99,33 @@ mixin _with-or-without-context(link)
     +guarded-link(link.icon)(attributes)
       block
 
-
 mixin add-addtional-multiple-links(links)
-  - var showAttr = attributes.showAttr
-  each link in links
+  - var source = attributes.source
+  if links.length > 0
     - showAttr = attributes.showAttr
-    - attributes = link 
-    //- - console.log("*************** link: ", link)
-    - var dataName = link.citedDoc.pluralize()
-    | {{#if #{link.guard}}}
-    span.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 
-      i.bp-relation-links.unordered.list.icon
-    .ui.dimmer 
-      .content
-        .center
-          | {{#each #{dataName}}}
-          +guarded-link(link.icon)(attributes)
-            if showAttr
-              | {{bs '#{showAttr}'}}
-          | {{/each}}
-    | {{/if}}
+    - console.log('links: ', links)
+    - attributes = links[0]
+    - action = links[0].face
+    +if-bp-permit(action)(attributes)
+      each link in links
+        +add-addtional-multiple-link(link)
+
+mixin add-addtional-multiple-link(link)
+  - attributes = link 
+  //- - console.log("*************** link: ", link)
+  - var dataName = link.citedDoc.pluralize()
+  | {{#if #{link.guard}}}
+  span.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 
+    i.bp-relation-links.unordered.list.icon
+  .ui.dimmer 
+    .content
+      .center
+        | {{#each #{dataName}}}
+        +_link-button(action, null, true)(attributes)
+          if showAttr
+            | {{bs '#{showAttr}'}}
+        | {{/each}}
+  | {{/if}}
 
 
 

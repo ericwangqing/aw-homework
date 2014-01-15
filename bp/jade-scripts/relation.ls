@@ -76,22 +76,23 @@ class Relation
       cited-view-type: view
       context: doc-name
 
-    @_alter-link-by-face destination-end, link, face, doc-name, show-name 
+    link = @_alter-link-by-face destination-end, link, face, doc-name, show-name if module?
     # console.log "action: #action, current-end: #currentEnd, link: ", link
-    # link
+    link
 
 
   _alter-link-by-face: (destination-end, link, face, doc-name, show-name)->
+    bp = require './_bp' 
     switch face 
     case 'create' 
       link.label = '创建' + show-name
       link.guard = if destination-end.multiplicity is '1' then "!#{doc-name}._id" else true
       delete link.context
     case 'update' 
-      link.label = if destination-end.multiplicity is '1' then "更新#{show-name}" else "更新{{bs '#{destination-end.show-attr}'}}"
+      link.label = if destination-end.multiplicity is '1' then "更新#{show-name}" else "更新#{bp.value(destination-end.show-attr)}"
       link.guard = if destination-end.multiplicity is '1' then "#{doc-name}" else "#{doc-name.pluralize!}"
     case 'view' 
-      link.label = if destination-end.multiplicity is '1' then "更新#{show-name}" else "更新{{bs '#{destination-end.show-attr}'}}"
+      link.label = if destination-end.multiplicity is '1' then "更新#{show-name}" else "更新#{bp.value(destination-end.show-attr)}"
       if view is 'detail' 
         link.guard = if destination-end.multiplicity is '1' then "#{doc-name}" else "#{doc-name.pluralize!}"
       else 

@@ -35,6 +35,12 @@
       Handlebars.registerHelper('bp-is-page', function(namespace, name){
         return this$.currentPage && namespace === this$.currentPage.namespace && name === this$.currentPage.name;
       });
+      Handlebars.registerHelper('bp-is-shown-relation', function(){
+        if (!this$.currentPage) {
+          return true;
+        }
+        return this$.currentPage.isShownRelation;
+      });
     };
     Page.pathFor = function(namespace, pageName, docName, doc){
       var page;
@@ -57,7 +63,10 @@
       };
     };
     function Page(arg$){
-      this.namespace = arg$.namespace, this.name = arg$.name, this.mainNav = arg$.mainNav;
+      this.namespace = arg$.namespace, this.name = arg$.name, this.mainNav = arg$.mainNav, this.isShownRelation = arg$.isShownRelation;
+      if (this.isShownRelation !== false) {
+        this.isShownRelation = true;
+      }
       this.templateName = [this.namespace, this.name].join('-');
       this.displayName = this.mainNav || this.templateName;
       this.views = [];

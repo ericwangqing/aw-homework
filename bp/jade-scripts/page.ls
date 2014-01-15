@@ -22,6 +22,10 @@ class Page
     Handlebars.register-helper 'bp-is-page', (namespace, name)~>
       @current-page and namespace is @current-page.namespace and name is @current-page.name 
 
+    Handlebars.register-helper 'bp-is-shown-relation', ~> 
+      return true if not @current-page # 默认显示relation links
+      @current-page.is-shown-relation 
+
   @path-for = (namespace, page-name, doc-name, doc)~>
     page = @registry[namespace][page-name]
     page.get-path doc-name, doc
@@ -36,7 +40,8 @@ class Page
     tokens = joint-page-name.split ':'
     {namespace: tokens.0, name: tokens[1 to -1].join ':'}
 
-  ({@namespace, @name, @main-nav})->
+  ({@namespace, @name, @main-nav, @is-shown-relation})->
+    @is-shown-relation = true if @is-shown-relation isnt false # 默认显示relation links
     @template-name = [@namespace, @name].join '-'
     @display-name = @main-nav or @template-name
     @views = []
