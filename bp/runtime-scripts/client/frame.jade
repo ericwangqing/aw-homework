@@ -35,16 +35,15 @@ template(name='bp-main-nav')
     i.icon.list.layout
   | {{> bp-banner}}
   | {{#each main-nav-paths}}
-  a.item(href="{{pathFor this.path}}") {{this.name}}
+  a.item.main-nav(href="{{pathFor this.path}}") {{this.name}}
   | {{/each}}
   .right.menu
     .item
       | {{loginButtons}}
 
-
 template(name='bp-second-nav')
   | {{#each second-nav-paths}}
-  a.item(href="{{pathFor this.path}}") {{this.name}}
+  a.item.second-nav(href="{{pathFor this.path}}") {{this.name}}
   | {{/each}}
 
 template(name='splash')

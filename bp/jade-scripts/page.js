@@ -5,7 +5,7 @@
   Page = (function(){
     Page.displayName = 'Page';
     var prototype = Page.prototype, constructor = Page;
-    Page.currentPage = null;
+    Page.currentPage = Page.lastPage = null;
     Page.registry = {};
     Page.createPages = function(pages){
       var i$, len$, page;
@@ -36,11 +36,22 @@
         return this$.currentPage && namespace === this$.currentPage.namespace && name === this$.currentPage.name;
       });
       Handlebars.registerHelper('bp-is-shown-relation', function(){
-        if (!this$.currentPage) {
+        if (BP.MODE === 'OPERATION') {
+          if (this$.currentPage) {
+            return this$.currentPage.isShownRelation;
+          } else {
+            return this$.lastPage.isShownRelation;
+          }
+        } else {
           return true;
         }
-        return this$.currentPage.isShownRelation;
       });
+    };
+    Page.trackPage = function(newPage){
+      if (this.currentPage !== null) {
+        this.lastPage = this.currentPage;
+      }
+      this.currentPage = newPage;
     };
     Page.pathFor = function(namespace, pageName, docName, doc){
       var page;
@@ -118,7 +129,7 @@
               alert("没有权限访问");
               this.redirect('default');
             } else {
-              BP.Page.currentPage = self;
+              BP.Page.trackPage(self);
               self.configViews(this.params);
             }
           },

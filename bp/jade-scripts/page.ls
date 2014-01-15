@@ -3,7 +3,7 @@
 
 class Page
   ## 浏览器当前显示的Page，在router中设置。
-  @current-page = null 
+  @current-page = @last-page = null 
   @registry = {}
   @create-pages = (pages)->
     [@resume page for page in pages]
@@ -22,9 +22,15 @@ class Page
     Handlebars.register-helper 'bp-is-page', (namespace, name)~>
       @current-page and namespace is @current-page.namespace and name is @current-page.name 
 
-    Handlebars.register-helper 'bp-is-shown-relation', ~> 
-      return true if not @current-page # 默认显示relation links
-      @current-page.is-shown-relation 
+    Handlebars.register-helper 'bp-is-shown-relation', ~> ## DEVELPOMENT MODE的时候，显示所有关联关系，OPERATION MODE时，在Page页面由当前Page决定，在View页面，由Last Page决定
+      if BP.MODE is 'OPERATION' 
+        if @current-page then @current-page.is-shown-relation else @last-page.is-shown-relation
+      else
+        true
+
+  @track-page = (new-page)!->
+    @last-page = @current-page if @current-page isnt null ## null时表示当前直接加载了View，而不是Page
+    @current-page = new-page
 
   @path-for = (namespace, page-name, doc-name, doc)~>
     page = @registry[namespace][page-name]
@@ -72,7 +78,7 @@ class Page
             alert "没有权限访问"
             @redirect 'default' # TODO: 改为last page
           else
-            BP.Page.current-page = self # 追踪当前page
+            BP.Page.track-page self # 追踪当前page
             self.config-views @params
         wait-on: ->
           self.subscribe @params
