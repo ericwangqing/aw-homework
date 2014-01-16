@@ -35,12 +35,23 @@
       Handlebars.registerHelper('bp-is-page', function(namespace, name){
         return this$.currentPage && namespace === this$.currentPage.namespace && name === this$.currentPage.name;
       });
-      Handlebars.registerHelper('bp-is-shown-relation', function(){
+      Handlebars.registerHelper('bp-is-shown-list-relation', function(){
         if (BP.MODE === 'OPERATION') {
           if (this$.currentPage) {
-            return this$.currentPage.isShownRelation;
+            return this$.currentPage.showListRelations;
           } else {
-            return this$.lastPage.isShownRelation;
+            return this$.lastPage.showListRelations;
+          }
+        } else {
+          return true;
+        }
+      });
+      Handlebars.registerHelper('bp-is-shown-detail-relation', function(){
+        if (BP.MODE === 'OPERATION') {
+          if (this$.currentPage) {
+            return this$.currentPage.showDetailRelations;
+          } else {
+            return this$.lastPage.showDetailRelations;
           }
         } else {
           return true;
@@ -74,13 +85,17 @@
       };
     };
     function Page(arg$){
-      this.namespace = arg$.namespace, this.name = arg$.name, this.mainNav = arg$.mainNav, this.isShownRelation = arg$.isShownRelation;
-      if (this.isShownRelation !== false) {
-        this.isShownRelation = true;
+      this.namespace = arg$.namespace, this.name = arg$.name, this.mainNav = arg$.mainNav, this.showListRelations = arg$.showListRelations, this.showDetailRelations = arg$.showDetailRelations;
+      if (this.showListRelations !== false) {
+        this.showListRelations = true;
+      }
+      if (this.showDetailRelations !== false) {
+        this.showDetailRelations = true;
       }
       this.templateName = [this.namespace, this.name].join('-');
       this.displayName = this.mainNav || this.templateName;
       this.views = [];
+      this;
     }
     prototype.addView = function(namespace, docName, viewName, faceName, query){
       return this.views.push({

@@ -1,6 +1,8 @@
+include table
+
 mixin page(namespace, pageName)
   - if(typeof pageName == 'undefined'){pageName = namespace, namespace = 'default'} // namespace 缺省为default
-  - console.log('----------- page attributes: ', attributes)
+  //- - console.log('----------- page attributes: ', attributes)
   - page = bp.addPage(namespace, pageName, attributes.mainNav)
   template(name=page.templateName)
     block
@@ -22,5 +24,10 @@ mixin add-view-item-link(label, pageNamespace, pageName)
   - var guard = attributes.guard || true
   - var icon = attributes.icon || 'go'
   - link = {label: label, namespace: pageNamespace, pageName: pageName, currentDocName: docName, guard: guard, icon: icon, isPageLink: true, formPage: page}
+  //- - console.log("in add-view-item-link, viewNamespace is: ", viewNamespace)
   - bp.addItemLink(viewNamespace, docName, link)
-  //- - console.log("in add-view-item-link, namespace is: ", namespace)
+
+mixin hide-item-link(action, docName)
+  +remove-link(action, viewNamespace, docName, attributes.role)
+
+  

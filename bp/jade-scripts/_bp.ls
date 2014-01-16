@@ -14,7 +14,7 @@ module.exports =
   pages: []
   variables: {}
 
-  set-app: (@app-name, @is-shown-relation)!->  
+  set-app: (@app-name, @config)!->  
 
   add-component: (namespace, doc-name, main-nav, class-name)->
     @init-variables(namespace, doc-name)
@@ -22,7 +22,6 @@ module.exports =
 
   init-variables: (namespace, doc-name)!->
     config.init namespace, doc-name
-    # console.log "init variables for: #namespace, #doc-name. @variables are: ", JSON.stringify @variables[namespace][doc-name]
 
   ## 声明式relation
   add-relation: (namespace, start, relation-description, end, type)!-> 
@@ -30,7 +29,8 @@ module.exports =
     relation = Relation.add-relation relation # 实例化后，给jade在compile模板时使用
 
   add-page: (namespace, name, main-nav)->
-    @pages.push page = new Page {namespace, name, main-nav, @is-shown-relation}
+    @pages.push page =  new Page @config <<< {namespace, name, main-nav}
+
     page
 
   save-page: !->

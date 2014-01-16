@@ -56,6 +56,24 @@ mixin guarded-link(action)
     +_link-button(action, null, true)(attributes)
       block
 
+mixin configured-guarded-link(action)
+  - var linkName = action
+  - var removedLinks = viewRemovedLinks.concat(pageAddedRemovedLinks)
+  - var isRemoved = false
+  - if(attributes.citedDoc){linkName = linkName + ":" + attributes.citedDoc}
+  if removedLinks.length > 0
+    each removedLink in removedLinks
+      //- - console.log('linkName: ' + linkName + ', removed link: ', removedLink) 
+      if removedLink.linkName == linkName || 'go-' + removedLink.linkName == linkName
+        - isRemoved = true
+        +unless-bp-role(removedLink.role)
+          +guarded-link(action)(attributes)
+            block
+  unless isRemoved
+    +guarded-link(action)(attributes)
+      block
+
+
 mixin previous-link()
   | {{#if bp-pre-link}}
   +_link-button('previous', '{{bp-pre-link}}')
@@ -92,23 +110,39 @@ mixin _with-or-without-context(link)
   if link.context
     | {{#with #{link.context}}}
     //- 注意：这里必须用attributes来传递，直接用link，传递会成为{link: true}
-    +guarded-link(link.icon)(attributes)
+    +configured-guarded-link(link.icon)(attributes)
       block
     | {{/with}}
   else
-    +guarded-link(link.icon)(attributes)
+    +configured-guarded-link(link.icon)(attributes)
       block
 
 mixin add-addtional-multiple-links(links)
   - var source = attributes.source
   if links.length > 0
     - showAttr = attributes.showAttr
-    - console.log('links: ', links)
+    //- - console.log('links: ', links)
     - attributes = links[0]
     - action = links[0].face
-    +if-bp-permit(action)(attributes)
-      each link in links
-        +add-addtional-multiple-link(link)
+
+    - var linkName = action
+    - var removedLinks = viewRemovedLinks.concat(pageAddedRemovedLinks)
+    - var isRemoved = false
+    - if(attributes.citedDoc){linkName = linkName + ":" + attributes.citedDoc}
+    if removedLinks.length > 0
+      each removedLink in removedLinks
+        //- - console.log('linkName: ' + linkName + ', removed link: ', removedLink) 
+        if removedLink.linkName == linkName || 'go-' + removedLink.linkName == linkName
+          - isRemoved = true
+          +unless-bp-role(removedLink.role)
+            +if-bp-permit(action)(attributes)
+              each link in links
+                +add-addtional-multiple-link(link)
+    unless isRemoved
+      +if-bp-permit(action)(attributes)
+        each link in links
+          +add-addtional-multiple-link(link)
+
 
 mixin add-addtional-multiple-link(link)
   - attributes = link 
@@ -121,7 +155,7 @@ mixin add-addtional-multiple-link(link)
     .content
       .center
         | {{#each #{dataName}}}
-        +_link-button(action, null, true)(attributes)
+        +_link-button(action)(attributes)
           if showAttr
             | {{bs '#{showAttr}'}}
         | {{/each}}

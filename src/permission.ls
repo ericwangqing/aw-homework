@@ -1,5 +1,9 @@
 permission = BP.Permission.get-instance!
 
+permission.add-page-rule 'aw:assignment-homework':
+  users: 'R-学生'
+  denies: 'access' ## 这里出现任意值，都是deny
+
 permission.add-data-rule assignment:
   users: 'R-学生'
   denies: 'c-edit'

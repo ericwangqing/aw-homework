@@ -24,13 +24,15 @@ class Permission
   add-page-rules: (unparsed-rules)!->
     [@add-page-rule joint-page-name, {"#joint-page-name": rule} for joint-page-name, rule of unparsed-rules]
 
-  add-page-rule: (joint-page-name, unparsed-rule)!->
+  add-page-rule: (unparsed-rule)!->
+    joint-page-name = _.keys unparsed-rule .0
     Rule = if Meteor? then BP.Rule else require './_rule'
     new-rule = Rule.create-page-rule unparsed-rule
     @page-rules[joint-page-name] ||= []
     @page-rules[joint-page-name].push new-rule
 
   check-page-action-permission: (namespace, page-name, doc, action)->
+    return true if BP.MODE is 'DEVELOPMENT' 
     current-active-rules = @get-active-page-rules namespace, page-name, doc, action
     if current-active-rules.length > 0
       combined-rule = @combined-rules current-active-rules 
@@ -47,14 +49,15 @@ class Permission
   # Template和Router调用，检查当前用户是否有权限进行相应操作
   # view | go-create | go-update | delete 
   check-list-action-permission: (doc-name, doc, action)~>
-    @check-action-permission doc-name, doc, action, 'list'
+    BP.MODE is 'DEVELOPMENT' or @check-action-permission doc-name, doc, action, 'list'
 
   # Template和Router调用，检查当前用户是否有权限进行相应操作
   # view | create | update | delete 
   check-detail-action-permission: (doc-name, doc, action)~> # 注意：这里为了便于helpers里通过同check-list-action-permission一样
-    @check-action-permission doc-name, doc, action, 'detail'
+    BP.MODE is 'DEVELOPMENT' or @check-action-permission doc-name, doc, action, 'detail'
 
   check-action-permission: (doc-name, doc, action, view-type)->
+    return true if BP.MODE is 'DEVELOPMENT' 
     current-active-rules = @get-active-rules-on-action doc-name, doc, action, view-type
     if current-active-rules.length > 0
       combined-rule = @combined-rules current-active-rules 

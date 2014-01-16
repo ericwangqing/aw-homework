@@ -9,16 +9,15 @@ mixin table(items, columnNames, attributesNames)
   - var viewTableLinks = bp.getTableConfig(namespace, docName).viewTableLinks
   //- 用户自定义的links
   - var pageAddedTableLinks = bp.getTableConfig(namespace, docName).pageAddedTableLinks
-  +is-shown-relation()
+  - viewRemovedLinks = bp.getTableConfig(namespace, docName).viewRemovedLinks
+  - pageAddedRemovedLinks = bp.getTableConfig(namespace, docName).pageAddedRemovedLinks
+  +is-shown-list-relation()
     +add-additional-links(viewTableLinks)
   +add-additional-links(pageAddedTableLinks)
-  //- 可配置，可动态移除go-create按钮。Composition关系的end端go-create被移除，还可以在page里定义移除。
-  - var viewRemovedLinks = bp.getTableConfig(namespace, docName).viewRemovedLinks
-  - var pageAddedRemovedLinks = bp.getTableConfig(namespace, docName).pageAddedRemovedLinks
-  if (viewRemovedLinks.indexOf('go-create') < 0) && (pageAddedRemovedLinks.indexOf('go-create') < 0)
+    //- 可配置，可动态移除go-create按钮。Composition关系的end端go-create被移除，还可以在page里定义移除。
     //- 只有list时，才有go-create按钮，view时没有 
-    +if-face('list')
-      +guarded-link('go-create')
+  +if-face('list')
+    +configured-guarded-link('go-create')
   table.ui.table.segment
     thead
       +_head-row(columnNames)
@@ -64,13 +63,13 @@ mixin _guarded-operation-cell()
   td(cols=colIndex+1) 
     //- 将对应行的doc id记录下来，以便操作进行时，能够找回该doc
     +mark-current-doc-id()
-      +guarded-link('go-update')
-      +guarded-link('delete')
+      +configured-guarded-link('go-update')
+      +configured-guarded-link('delete')
       - var viewRowLinks = bp.getTableConfig(namespace, docName).viewRowLinks
       - var viewRowMultipleLinks = bp.getTableConfig(namespace, docName).viewRowMultipleLinks
       - var pageAddedRowLinks = bp.getTableConfig(namespace, docName).pageAddedRowLinks
       - var pageAddedRowMultipleLinks = bp.getTableConfig(namespace, docName).pageAddedRowMultipleLinks
-      +is-shown-relation()
+      +is-shown-list-relation()
         +add-additional-links(viewRowLinks)
         +add-addtional-multiple-links(viewRowMultipleLinks)
       +add-additional-links(pageAddedRowLinks)
@@ -90,5 +89,5 @@ mixin add-item-links(link)
 mixin add-list-link(link)
   - bp.addListLink(namespace, docName, link) 
 
-mixin remove-link(linkName)
-  -bp.removeLink(namespace, docName, linkName)
+mixin remove-link(action, namespace, targetDocName, role)
+  -bp.removeLink(namespace, docName, action, targetDocName, role)

@@ -36,6 +36,8 @@ class @BP.Template-adapter
       "bp-face-is"           :  @view.current-face-checker
       "bp-path-for-view"     :  ~> @view.get-path.apply @view, &
       "bp-path-for-page"     :  BP.Page.path-for
+      "bp-is-role"           :  (role)-> BP.MODE is 'DEVELOPMENT' or (Meteor.user!profile.roles.index-of role) >= 0
+      "bp-isnt-role"         :  (role)-> BP.MODE is 'DEVELOPMENT' or (Meteor.user!profile.roles.index-of role) < 0
 
     @helpers <<< @view.data-manager.data-helpers
       # "#{@data-retriever-name}"       :  ~> @view.data-manager.meteor-template-main-data-helper.apply  @view.data-manager, &

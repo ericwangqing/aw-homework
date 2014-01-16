@@ -31,10 +31,17 @@
     addListLink: function(namespace, docName, link){
       return this._addLink(namespace, docName, 'table-links', link);
     },
-    removeLink: function(namespace, docName, linkName){
-      return this._addLink(namespace, docName, 'removed-links', linkName);
+    removeLink: function(namespace, docName, action, targetDocName, role){
+      var linkName;
+      console.log("remove-link, namespace: " + namespace + ", target-doc-name", targetDocName);
+      linkName = action + (targetDocName ? ":" + targetDocName : "");
+      return this._addLink(namespace, docName, 'removed-links', {
+        linkName: linkName,
+        role: role
+      });
     },
     _addLink: function(namespace, docName, configItemName, link){
+      console.log("namespace: " + namespace + ", doc-name: " + docName);
       configItemName = this.isPageAdded(link)
         ? 'pageAdded' + configItemName.camelize()
         : 'view' + configItemName.camelize();

@@ -1,8 +1,9 @@
-+app('敏书')(showRelations=false)
++app('敏书')(showDetailRelations=false)
 
 +page('aw', 'assignments-list')(mainNav='作业列表')
   +view('assignment', 'list', 'list')
     +add-view-item-link('批改作业', 'aw', 'assignment-homework')
+    +hide-item-link('update', 'homework')(role='老师')
 
 mixin head-of-homework-list()
   .ui.medium.teal.header 

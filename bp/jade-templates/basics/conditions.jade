@@ -45,6 +45,18 @@ mixin else()
   block
   | {{/if}}
 
+mixin if-bp-role(role)
+  if role
+    | {{#if bp-is-role '#{role}'}}
+    block
+    | {{/if}}
+  else
+    block
 
-
-
+mixin unless-bp-role(role)
+  if role
+    | {{#if bp-isnt-role '#{role}'}}
+    block
+    | {{/if}}
+  else
+    block

@@ -7,13 +7,18 @@ mixin relation(from, relationDescription, to)
   - type = attributes.type || 'aggregation'
   - bp.addRelation(namespace, from, relationDescription, to, attributes.type)
 
-mixin is-shown-relation()
-  | {{#if bp-is-shown-relation}}
+mixin is-shown-list-relation()
+  | {{#if bp-is-shown-list-relation}}
+  block
+  |{{/if}}
+
+mixin is-shown-detail-relation()
+  | {{#if bp-is-shown-detail-relation}}
   block
   |{{/if}}
 
 mixin remove-create-link()
-  +remove-link('go-create')
+  +remove-link('go-create', namespace)
 
 mixin add-go-create-or-go-update(relation)
   - var currentEnd = relation.getCurrentEnd(docName)
@@ -38,7 +43,7 @@ mixin add-go-update-relation-data-links(relation)
   +add-item-links(goUpdateLink)
 
 mixin add-relations-fields(relations)
-  +is-shown-relation()
+  +is-shown-detail-relation()
     +unless-face('reference')
       .ui.fluid.accordion(data-row-span='12')
         .title

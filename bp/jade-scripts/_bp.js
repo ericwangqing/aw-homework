@@ -14,9 +14,9 @@
     relations: [],
     pages: [],
     variables: {},
-    setApp: function(appName, isShownRelation){
+    setApp: function(appName, config){
       this.appName = appName;
-      this.isShownRelation = isShownRelation;
+      this.config = config;
     },
     addComponent: function(namespace, docName, mainNav, className){
       this.initVariables(namespace, docName);
@@ -42,13 +42,8 @@
       relation = Relation.addRelation(relation);
     },
     addPage: function(namespace, name, mainNav){
-      var page;
-      this.pages.push(page = new Page({
-        namespace: namespace,
-        name: name,
-        mainNav: mainNav,
-        isShownRelation: this.isShownRelation
-      }));
+      var page, ref$;
+      this.pages.push(page = new Page((ref$ = this.config, ref$.namespace = namespace, ref$.name = name, ref$.mainNav = mainNav, ref$)));
       return page;
     },
     savePage: function(){

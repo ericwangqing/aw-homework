@@ -22,9 +22,15 @@ class Page
     Handlebars.register-helper 'bp-is-page', (namespace, name)~>
       @current-page and namespace is @current-page.namespace and name is @current-page.name 
 
-    Handlebars.register-helper 'bp-is-shown-relation', ~> ## DEVELPOMENT MODE的时候，显示所有关联关系，OPERATION MODE时，在Page页面由当前Page决定，在View页面，由Last Page决定
+    Handlebars.register-helper 'bp-is-shown-list-relation', ~> ## DEVELPOMENT MODE的时候，显示所有关联关系，OPERATION MODE时，在Page页面由当前Page决定，在View页面，由Last Page决定
       if BP.MODE is 'OPERATION' 
-        if @current-page then @current-page.is-shown-relation else @last-page.is-shown-relation
+        if @current-page then @current-page.show-list-relations else @last-page.show-list-relations
+      else
+        true
+
+    Handlebars.register-helper 'bp-is-shown-detail-relation', ~> ## DEVELPOMENT MODE的时候，显示所有关联关系，OPERATION MODE时，在Page页面由当前Page决定，在View页面，由Last Page决定
+      if BP.MODE is 'OPERATION' 
+        if @current-page then @current-page.show-detail-relations else @last-page.show-detail-relations
       else
         true
 
@@ -46,11 +52,13 @@ class Page
     tokens = joint-page-name.split ':'
     {namespace: tokens.0, name: tokens[1 to -1].join ':'}
 
-  ({@namespace, @name, @main-nav, @is-shown-relation})->
-    @is-shown-relation = true if @is-shown-relation isnt false # 默认显示relation links
+  ({@namespace, @name, @main-nav, @show-list-relations, @show-detail-relations})->
+    @show-list-relations = true if @show-list-relations isnt false # 默认显示relation links
+    @show-detail-relations = true if @show-detail-relations isnt false # 默认显示relation links
     @template-name = [@namespace, @name].join '-'
     @display-name = @main-nav or @template-name
     @views = []
+    @
 
   add-view: (namespace, doc-name, view-name, face-name, query)->
     @views.push {namespace, doc-name, view-name, face-name, query}

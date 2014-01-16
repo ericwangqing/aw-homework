@@ -25,10 +25,13 @@ module.exports =
   add-list-link: (namespace, doc-name, link)->
     @_add-link namespace, doc-name, 'table-links', link
 
-  remove-link: (namespace, doc-name, linkName)->
-    @_add-link namespace, doc-name, 'removed-links', linkName
+  remove-link: (namespace, doc-name, action, target-doc-name, role)->
+    console.log("remove-link, namespace: #namespace, target-doc-name", target-doc-name)
+    linkName = action + (if target-doc-name then ":#target-doc-name" else "")
+    @_add-link namespace, doc-name, 'removed-links', {linkName, role}
 
   _add-link: (namespace, doc-name, config-item-name, link)->
+    console.log "namespace: #namespace, doc-name: #doc-name"
     config-item-name = if @is-page-added link then 'pageAdded' + config-item-name.camelize! else 'view' + config-item-name.camelize!
     registry[namespace][doc-name].table[config-item-name].push link
 

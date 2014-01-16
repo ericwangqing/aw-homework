@@ -105,7 +105,7 @@ class @BP.Form extends Abstract-Form
   update-doc-value: !~>
     $ @rv 'form' .find all-input-field-selector .each (index, input)!~>
       attr-path-name = $ input .attr 'name'
-      @update-by-json-path attr-path-name, @get-value input 
+      @update-by-json-path attr-path-name, @get-value input if attr-path-name
     @insert-auto-fields!
 
   get-value: (input)~>
