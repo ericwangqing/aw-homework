@@ -1,3 +1,4 @@
+include ../../jade-templates/bp-mixins
 head
   meta(name='viewport', content='width=device-width, initial-scale=1')
   script(src='/lib/parsley.messages.zh_cn.js')
@@ -11,7 +12,7 @@ head
 
 template(name='layout')
   .container
-    header.ui.menu.main-nav
+    header
       | {{> bp-main-nav}}
     aside.ui.vertical.sidebar.menu
       | {{> bp-second-nav}}
@@ -31,15 +32,18 @@ template(name='bp-banner')
     {{/if}}
 
 template(name='bp-main-nav')
-  a.launch-second-nav.item
-    i.icon.list.layout
-  | {{> bp-banner}}
-  | {{#each main-nav-paths}}
-  a.item.main-nav(href="{{pathFor this.path}}") {{this.name}}
-  | {{/each}}
-  .right.menu
-    .item
-      | {{loginButtons}}
+  .ui.borderless.menu.main-nav
+    a.launch-second-nav.item
+      i.icon.list.layout
+    | {{> bp-banner}}
+    | {{#each main-nav-paths}}
+    | {{#if bp-page-permit '' 'view' this.page.namespace this.page.name}}
+    a.item.main-nav(href="{{pathFor this.path}}") {{this.name}}
+    | {{/if}}
+    | {{/each}}
+    .right.menu
+      .item
+        | {{loginButtons}}
 
 template(name='bp-second-nav')
   | {{#each second-nav-paths}}

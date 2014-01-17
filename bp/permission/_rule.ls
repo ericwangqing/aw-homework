@@ -39,7 +39,8 @@ class Rule
     @parser.parse-rule @
 
   is-apply-on-current-user: (current-user-id)->
-    return false if Meteor.is-server and not current-user-id  # 未登录
+    return false if Meteor.is-server and not current-user-id  # 给服务端publish data时用的
+    return true if Meteor.is-client and not Meteor.user!  # 未登录用户接受所有规则的限制，TODO：有改进的空间！规则有allows和denies！
     return true if @applied-on-users is @@ALL_USERS
     current-user = if current-user-id then Meteor.users.find-one current-user-id else Meteor.user! # Meteor的publish中不能用Meteor.user!，只能用查询。
     if typeof @applied-on-users is 'string'

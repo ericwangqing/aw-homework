@@ -12,11 +12,14 @@ class Page-rule extends Rule
     @parser = new Page-rule-parser!
 
   is-apply-on-current-action: (doc, action)->
-    action is 'go' and typeof @accessible isnt 'undefined'
+    action in ['go', 'view', 'update', 'edit'] and typeof @accessible isnt 'undefined'
 
   check: (doc, action)->
     switch action
     case 'go' then @accessible
+    case 'view' then @accessible
+    case 'update' then @accessible
+    case 'edit' then @accessible
     default true
 
 if module? then module.exports = Page-rule else @BP.Page-rule = Page-rule # 让Jade和Meteor都可以使用

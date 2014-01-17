@@ -122,15 +122,20 @@
       if (this.mainNav) {
         BP.Nav.addMainNav({
           name: this.displayName,
-          path: this.pathName
+          path: this.pathName,
+          page: this
         });
       }
       if (this.secondNav) {
         BP.Nav.addSecondNav({
           name: this.displayName,
-          path: this.pathName
+          path: this.pathName,
+          page: this
         });
       }
+    };
+    prototype.getJointPageName = function(){
+      return constructor.getJointPageName(this.namespace, this.name);
     };
     prototype.route = function(){
       var self;
@@ -181,6 +186,9 @@
     };
     prototype.isPermit = function(){
       var i$, ref$, len$, face;
+      if (!constructor.isPagePermit('', 'go', this.namespace, this.name)) {
+        return false;
+      }
       for (i$ = 0, len$ = (ref$ = this.faces).length; i$ < len$; ++i$) {
         face = ref$[i$];
         if (!face.view.isPermit(face.view.dataManager.doc, face.faceName)) {

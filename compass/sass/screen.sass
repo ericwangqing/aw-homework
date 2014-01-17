@@ -5,6 +5,15 @@ body
   a
     text-decoration: none
 
+  // fix bugs in Semantic UI
+  .borderless.menu
+    box-shadow: none
+    background: transparent
+
+  // fix meteor account-ui loginButton dropdown 超出边界
+  #login-dropdown-list 
+    left: -90px
+
   .container
     // +susy-grid-background
     +container($total-columns, $tablet, $computer)
@@ -13,27 +22,6 @@ body
       background-color: lightgray
 
     @import splash
-
-    header, footer, .left-sidebar
-      // height: 15%
-      background-color: lighten(pink, 10%)
-      color: lighten(black, 85%)
-      font-weight: 700
-      font-size: 24px
-      line-height: 72px
-      span
-        font-weight: 300
-        font-size: 18px
-        display: block
-      a
-        margin: 0 0 0 10px
-
-      .main-nav
-        ul, ul li
-          display: inline
-        #login-dropdown-list
-          left: -110px
-
 
     .main-content
       +span-columns(12 omega)

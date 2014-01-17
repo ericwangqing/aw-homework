@@ -72,8 +72,11 @@ class Page
 
   init: !->
     @route!
-    BP.Nav.add-main-nav {name: @display-name, path: @path-name} if @main-nav
-    BP.Nav.add-second-nav {name: @display-name, path: @path-name} if @second-nav
+    BP.Nav.add-main-nav {name: @display-name, path: @path-name, page: @} if @main-nav
+    BP.Nav.add-second-nav {name: @display-name, path: @path-name, page: @} if @second-nav
+
+  get-joint-page-name: ->
+    @@get-joint-page-name @namespace, @name
 
   route: !->
     self = @
@@ -108,6 +111,7 @@ class Page
     id = if face.view.doc-name is doc-name then doc._id else doc[doc-name + 'Id']
 
   is-permit: ->
+    return false if !@@is-page-permit '', 'go', @namespace, @name
     for face in @faces
       return flase if !face.view.is-permit face.view.data-manager.doc, face.face-name
     true

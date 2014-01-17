@@ -1,10 +1,14 @@
 do add-navs = !->
   Template['bp-main-nav'].helpers 'main-nav-paths': -> BP.Nav.main-nav-paths
   Template['bp-second-nav'].helpers 'second-nav-paths': -> BP.Nav.second-nav-paths
+  Template['bp-main-nav'].helpers 'bp-page-permit': -> BP.Page.is-page-permit.apply BP.Page, &
 
 do switch-bp-between-development-and-operation-mode = !->
   do switch-to-operation-mode-when-click-main-nav = !->
-    Template['bp-main-nav'].rendered = !-> $ 'a.main-nav' .click -> BP.MODE = 'OPERATION'
+    Template['bp-main-nav'].rendered = !-> 
+      $ 'a.main-nav' .click -> BP.MODE = 'OPERATION'
+      initial-layout-semantic-ui!
+      # console.log "main nav rendered"
     
   do switch-to-development-mode-when-click-second-nav = !->
     Template['bp-second-nav'].rendered = !-> $ 'a.second-nav' .click -> BP.MODE = 'DEVELOPMENT'
@@ -24,5 +28,6 @@ do make-loading-spinner = !->
 
 do initial-layout-semantic-ui = !->
   Template.layout.rendered = _.once ->
+    # console.log 'layout template rendered'
     $ '.launch-second-nav.item' .click ->
       $ '.sidebar.menu' .sidebar 'toggle'
