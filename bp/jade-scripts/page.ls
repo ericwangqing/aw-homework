@@ -23,13 +23,13 @@ class Page
       @current-page and namespace is @current-page.namespace and name is @current-page.name 
 
     Handlebars.register-helper 'bp-is-shown-list-relation', ~> ## DEVELPOMENT MODE的时候，显示所有关联关系，OPERATION MODE时，在Page页面由当前Page决定，在View页面，由Last Page决定
-      if BP.MODE is 'OPERATION' 
+      if BP.MODE isnt 'DEVELOPMENT' 
         if @current-page then @current-page.show-list-relations else @last-page.show-list-relations
       else
         true
 
     Handlebars.register-helper 'bp-is-shown-detail-relation', ~> ## DEVELPOMENT MODE的时候，显示所有关联关系，OPERATION MODE时，在Page页面由当前Page决定，在View页面，由Last Page决定
-      if BP.MODE is 'OPERATION' 
+      if BP.MODE isnt 'DEVELOPMENT' 
         if @current-page then @current-page.show-detail-relations else @last-page.show-detail-relations
       else
         true

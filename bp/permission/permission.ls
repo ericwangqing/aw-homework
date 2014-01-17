@@ -22,7 +22,7 @@ class Permission
     @data-rules[new-rule.doc-name].push new-rule
 
   add-page-rules: (unparsed-rules)!->
-    [@add-page-rule joint-page-name, {"#joint-page-name": rule} for joint-page-name, rule of unparsed-rules]
+    [@add-page-rule {"#joint-page-name": rule} for joint-page-name, rule of unparsed-rules]
 
   add-page-rule: (unparsed-rule)!->
     joint-page-name = _.keys unparsed-rule .0

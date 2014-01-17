@@ -1,8 +1,16 @@
 permission = BP.Permission.get-instance!
 
-permission.add-page-rule 'aw:assignments-list':
-  users: 'R-学生'
-  denies: 'access' ## 这里出现任意值，都是deny
+permission.add-page-rules do
+  'teacher:assignments-list':
+    users: 'R-学生'
+    denies: 'access' ## 这里出现任意值，都是deny
+  'teacher:assignment-homework':
+    users: 'R-学生'
+    denies: 'access'
+
+  'student:assignments-list':
+    users: 'R-老师'
+    denies: 'access'
 
 permission.add-data-rule assignment:
   users: 'R-学生'
@@ -15,6 +23,10 @@ permission.add-data-rule homework:
 permission.add-data-rule homework:
   users: 'R-学生'
   denies: 'a-分数-edit'
+
+# permission.add-data-rule homework:
+#   users: 'R-学生'
+#   denies: 'i-create(items-own-by-current-user().length >= 1) i-edit(!item-own-by-current-user()) a-分数-edit'
 
 ## 学生只能够创建一个作业的限制，如何实现？
 

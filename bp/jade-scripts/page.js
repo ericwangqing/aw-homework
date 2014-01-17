@@ -36,7 +36,7 @@
         return this$.currentPage && namespace === this$.currentPage.namespace && name === this$.currentPage.name;
       });
       Handlebars.registerHelper('bp-is-shown-list-relation', function(){
-        if (BP.MODE === 'OPERATION') {
+        if (BP.MODE !== 'DEVELOPMENT') {
           if (this$.currentPage) {
             return this$.currentPage.showListRelations;
           } else {
@@ -47,7 +47,7 @@
         }
       });
       Handlebars.registerHelper('bp-is-shown-detail-relation', function(){
-        if (BP.MODE === 'OPERATION') {
+        if (BP.MODE !== 'DEVELOPMENT') {
           if (this$.currentPage) {
             return this$.currentPage.showDetailRelations;
           } else {

@@ -28,8 +28,8 @@ module.exports =
     @relations.push relation = {namespace, start, relation-description, end, type}
     relation = Relation.add-relation relation # 实例化后，给jade在compile模板时使用
 
-  add-page: (namespace, name, main-nav)->
-    @pages.push page =  new Page @config <<< {namespace, name, main-nav}
+  add-page: -> #: {@namespace, @name, @main-nav, @show-list-relations, @show-detail-relations}
+    @pages.push page =  new Page @config <<< &.0
 
     page
 

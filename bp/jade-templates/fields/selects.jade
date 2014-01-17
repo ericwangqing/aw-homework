@@ -12,27 +12,31 @@ mixin multi-ahead(label, attr)
   - var configStr = ''
   //- - var multiple = attributes.multiple ? "multiple='multiple'" : ''
   +guarded-input-wrapper(label, attr)(attributes)
-    if attributes.sourceAttr || attributes.users || attributes.whenNull
-      - var sourceDocName = attributes.sourceDocName || '@' // this, 当前doc
-      - var query = attributes.query || '{}'
-      - var valueAttrStr = attributes.valueAttr ? "'" + attributes.valueAttr + "'" : null // valueAttr 为 sourcAttr的属性，null表示以整个sourceAttr为值
-      - var optionAttrStr = attributes.optionAttr ? "'" + attributes.optionAttr + "'" : null  // optionAttr 为显示在选项上的值的来源，应当是sourceAttr的属性，缺省同valueAttr
-      if attributes.users
-        //- - configStr = JSON.stringify(Object.merge({isMeteorUsers: true}, attributes.users));
-        - configStr ="{isMeteorUsers: true, role: '" + attributes.users.role + "', multiple: " + attributes.multiple + "}"
+    +_multi-ahead(label, attr)(attributes)
+
+mixin _multi-ahead(label, attr)
+  if attributes.sourceAttr || attributes.users || attributes.whenNull
+    - var sourceDocName = attributes.sourceDocName || '@' // this, 当前doc
+    - var query = attributes.query || '{}'
+    - var valueAttrStr = attributes.valueAttr ? "'" + attributes.valueAttr + "'" : null // valueAttr 为 sourcAttr的属性，null表示以整个sourceAttr为值
+    - var optionAttrStr = attributes.optionAttr ? "'" + attributes.optionAttr + "'" : null  // optionAttr 为显示在选项上的值的来源，应当是sourceAttr的属性，缺省同valueAttr
+    if attributes.users
+      //- - configStr = JSON.stringify(Object.merge({isMeteorUsers: true}, attributes.users));
+      - configStr ="{isMeteorUsers: true, role: '" + attributes.users.role + "', multiple: " + attributes.multiple + ", disabled: " + multiAheadDisabled + "}"
+      - console.log("configStr: ", configStr)
+    else
+      //- !! 目前只实现了Meteor.user()
+      if attributes.whenNull
+        - configStr = "{isMeteorUser: true}"
       else
-        //- !! 目前只实现了Meteor.user()
-        if attributes.whenNull
-          - configStr = "{isMeteorUser: true}"
-        else
-          - configStr = "{source: '"+ sourceDocName + "', attr: '" + attributes.sourceAttr + "', option: " + optionAttrStr + ", value: " + valueAttrStr + ", query: " + query + ", multiple: " + attributes.multiple + "}"
-      //- - configStr = '"{source: "'+ sourceDocName + '", attr: "' + attributes.sourceAttrStr + '", option: ' + optionAttr + ', value: ' + valueAttrStr + ', query: "' + query + '"}"'
-      input.select2-hidden(name=attr, type='hidden', style='width: 100%; border: 0px', dropdownCssClass='', tabindex=index)
-    else 
-      select(name=attr, multiple=attributes.multiple, style='width: 100%; border: 0px', dropdownCssClass='', tabindex=index)
-        each candidate in attributes.candidates
-          option(value=candidate) #{candidate}
-    | {{bp-add-multi-ahead "#{attr}" this "#{configStr}"}}
+        - configStr = "{source: '"+ sourceDocName + "', attr: '" + attributes.sourceAttr + "', option: " + optionAttrStr + ", value: " + valueAttrStr + ", query: " + query + ", multiple: " + attributes.multiple + "}"
+    //- - configStr = '"{source: "'+ sourceDocName + '", attr: "' + attributes.sourceAttrStr + '", option: ' + optionAttr + ', value: ' + valueAttrStr + ', query: "' + query + '"}"'
+    input.select2-hidden(name=attr, type='hidden', style='width: 100%; border: 0px', dropdownCssClass='', tabindex=index)
+  else 
+    select(name=attr, multiple=attributes.multiple, style='width: 100%; border: 0px', dropdownCssClass='', tabindex=index)
+      each candidate in attributes.candidates
+        option(value=candidate) #{candidate}
+  | {{bp-add-multi-ahead "#{attr}" this "#{configStr}"}}
 
 //- mixin multi-ahead-dynamic(label, attr)
 

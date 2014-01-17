@@ -19,11 +19,12 @@ mixin form(item)
         +guarded-button('delete', '删除')(classNames='negative')
 
       +add-additional-links(mainLinks)
-    
-    .pre-next
-      +previous-link()
-      +next-link()
-      +add-additional-links(navLinks)
+   
+    +unless-face('reference')
+      .pre-next
+        +previous-link()
+        +next-link()
+        +add-additional-links(navLinks)
   | {{/with}}  
 
 

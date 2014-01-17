@@ -146,7 +146,7 @@ mixin add-addtional-multiple-links(links)
 
 mixin add-addtional-multiple-link(link)
   - attributes = link 
-  - console.log("*************** link: ", link)
+  //- - console.log("*************** link: ", link)
   - var dataName = link.citedDoc.pluralize()
   | {{#if #{link.guard}}}
   span.tooltip(onclick="$(event.currentTarget).parent().find('.ui.dimmer').dimmer('toggle');", title='更新#{link.showName}') 

@@ -1,18 +1,21 @@
 +app('敏书')(showDetailRelations=false)
 
-+page('aw', 'assignments-list')(mainNav='作业列表')
++page('teacher', 'assignments-list')(mainNav='作业列表')
   +view('assignment', 'list', 'list')
-    +add-view-item-link('批改作业', 'aw', 'assignment-homework')
+    +add-view-item-link('批改作业', 'teacher', 'assignment-homework')
     +hide-item-link('update', 'homework')(role='老师')
 
 mixin head-of-homework-list()
   .ui.medium.teal.header 
     i.hand.down.icon.tooltip.fadein(title='仅列出本次作业') 作业列表
 
-+page('aw', 'assignment-homework')
++page('teacher', 'assignment-homework')(showListRelations=false)
   +view('assignment', 'detail', 'reference')
   +head-of-homework-list()
   +view('homework', 'list', 'list')(query='{assignmentId: params.assignmentId}')
+
++page('student', 'assignments-list')(mainNav='作业列表')
+  +view('assignment', 'list', 'list')
 
 +relation({docName: 'assignment', showName: '作业要求', showAttr: '题目'}, '1 -> *', {docName: 'homework', showName: '作业', showAttr: '学生:User'})(type='composition')
 

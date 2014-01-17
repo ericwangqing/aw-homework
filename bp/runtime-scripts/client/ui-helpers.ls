@@ -59,12 +59,13 @@ class @BP.Form extends Abstract-Form
         value = doc[attr-name]
         eval 'config = ' + _config
         if config.is-meteor-users # for users-selector
+          disabled = true if config.disabled
           user-candidates = self.view.data-manager.get-meteor-users-data config
           data-config = 
             multiple: config.multiple
             data: user-candidates
         else
-          if config.is-meteor-user # for default-current-user
+          if config.is-meteor-user# for default-current-user
             disabled = true # default-current-user 并非用户可选择的
             user = Meteor.user!
             data-config = 

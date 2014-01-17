@@ -7,14 +7,16 @@ mixin guarded-input-wrapper(label, attr)
   - var span = attributes.span || Field_SPAN
   - index = index || 0; index++ // 给每个输入控件加上tabindex，便于tab导航。为了在mixin和block之间传递，使用了全局变量。注意：此处不用在结束form的渲染时，将index清零，因为：1）tabindex在一个页面上应该可以在多个表单连续工作；2）jade在渲染两份jade文件时，使用全新的环境，因此不会造成下一个HTML的tabindex被连续排号的问题。
   if attr.indexOf('.') > 0
-    +_uneditable-content(label, attr, span)(clazz='cited')
+    - attributes.clazz = 'cited'
+    +_uneditable-content(label, attr, span)(attributes)
   else      
     +if-face('update')
       +if-else-attribute-permit(attr, 'update')
         +wrap-filed-with-label(label, span)(attributes)
           block 
       +else()
-        +_uneditable-content(label, attr, span)
+        +_uneditable-content(label, attr, span)(attributes)
+          block
 
     +if-face('create')
       //- 空内容
@@ -22,10 +24,24 @@ mixin guarded-input-wrapper(label, attr)
         block 
 
     +if-face('view')   
-      +_uneditable-content(label, attr, span)
+      +_uneditable-content(label, attr, span)(attributes)
+        block
 
     +if-face('reference')   
-      +_uneditable-content(label, attr, span)
+      +_uneditable-content(label, attr, span)(attributes)
+        block
+
+mixin _uneditable-content(label, attr, span)
+  //- 不可编辑的域只显示值，并且不可tab导航
+  +wrap-filed-with-label(label, span)
+    if attributes.users
+      - multiAheadDisabled = true
+      block
+      - multiAheadDisabled = false
+    else
+      - var citedClassStr = attributes.clazz ? 'content cited' : 'content'
+      span.content 
+        != bp.value(attr)
 
 
 mixin wrap-filed-with-label(label, span)
@@ -36,13 +52,3 @@ mixin wrap-filed-with-label(label, span)
     else
       label #{label}:
     block
-
-
-
-mixin _uneditable-content(label, attr, span)
-  //- 不可编辑的域只显示值，并且不可tab导航
-  +wrap-filed-with-label(label, span)
-    - var citedClassStr = attributes.clazz ? 'content cited' : 'content'
-    span.content 
-      != bp.value(attr)
-

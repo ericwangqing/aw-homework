@@ -41,9 +41,9 @@
       });
       relation = Relation.addRelation(relation);
     },
-    addPage: function(namespace, name, mainNav){
-      var page, ref$;
-      this.pages.push(page = new Page((ref$ = this.config, ref$.namespace = namespace, ref$.name = name, ref$.mainNav = mainNav, ref$)));
+    addPage: function(){
+      var page;
+      this.pages.push(page = new Page(import$(this.config, arguments[0])));
       return page;
     },
     savePage: function(){

@@ -3,7 +3,9 @@ include table
 mixin page(namespace, pageName)
   - if(typeof pageName == 'undefined'){pageName = namespace, namespace = 'default'} // namespace 缺省为default
   //- - console.log('----------- page attributes: ', attributes)
-  - page = bp.addPage(namespace, pageName, attributes.mainNav)
+  - var pageConfig = {namespace: namespace, name: pageName, mainNav: attributes.mainNav, showListRelations: attributes.showListRelations, showDetailRelations: attributes.showDetailRelations}
+  //- - attributes.namespace = namespace, attributes.name = pageName
+  - page = bp.addPage(pageConfig)
   template(name=page.templateName)
     block
   //- - bp.savePage()
