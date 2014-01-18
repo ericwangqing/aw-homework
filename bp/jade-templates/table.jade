@@ -26,7 +26,8 @@ mixin table(items, columnNames, attributesNames)
 
 mixin _rows(items, attributesNames)
   | {{#each #{items}}}
-  +_row(attributesNames)
+  +if-bp-permit('view')
+    +_row(attributesNames)
   | {{/each}}  
 
 mixin _head-row(columnNames)

@@ -15,7 +15,7 @@ class Data-rule extends Rule
   # view | go-create | go-update | delete 
   is-apply-on-current-list-action: (doc, action)->
     switch action
-    case 'view' then @collection.view?
+    case 'view' then @collection.view? or @item.view?
     case 'go-create' then @collection.edit? or @item.create?
     case 'go-update' then @collection.edit? or (@item.update? and @satisfy-query doc)
     case 'delete' then @collection.edit? or (@item.delete? and @satisfy-query doc)
@@ -42,12 +42,14 @@ class Data-rule extends Rule
     collection = BP.Collection.get-by-doc-name @doc-name
     collection.find {$and: [@query, {_id: doc._id}]} .count! is 1
 
-  check: (action, view-type)->
-    @[('check-on-' + view-type + '-view').camelize(false)] action
+  check: (action, view-type, doc, data-manager)->
+    condition = @[('check-on-' + view-type + '-view').camelize(false)] action, data-manager
+    @evaluate condition, doc, data-manager
 
   check-on-list-view: (action)->
     switch action
-    case 'view' then @collection.view
+    case 'view' 
+      if @item.view? then @item.view else @collection.view
     case 'go-create' 
       if @item.create? then  @item.create else @collection.edit
     case 'go-update' 
@@ -68,19 +70,33 @@ class Data-rule extends Rule
       if @item.delete? then  @item.delete else @collection.edit
     default true
 
-  check-attribute-editable: (attr-name)->
+  check-attribute-editable: (attr-name, doc, data-manager)->
     rule = @attributes[attr-name]
     if rule? and  (rule.edit? or rule.view?) 
-      if rule.edit is false or rule.view is false
+      if rule.edit is 'false' or rule.view is 'false'
         false
       else
         true  
     else 
-      @item.update
+      @evaluate @item.update, doc, data-manager
 
-  check-attribute-viewable: (attr-name)->
+  check-attribute-viewable: (attr-name, doc, data-manager)->
     rule = @attributes[attr-name]
-    if rule? and rule.view? then rule.view else @item.view
+    condition = if rule? and rule.view? then rule.view else @item.view
+    @evaluate condition, doc, data-manager
+
+  evaluate: (item, doc, data-manager)->
+    # if condition not in ['true', 'false', '!true', '!false'] then true else
+    # doc = data-manager.doc
+    eval "var result = #item"
+    eval "satisfied = #{@condition}"
+    if satisfied then result else !result
+    # try
+    #   eval "satisfied = #{@condition}"
+    # catch
+    #   satisfied = if result is true then false else true # true时是allow，flase时时deny。对于allow只有完全通过condition的才allow，异常不allow。对于deny只要不违反condition就deny，异常也deny。
+    # finally
+    #   if satisfied then result else !result
 
 if module? then module.exports = Data-rule else @BP.Data-rule = Data-rule # 让Jade和Meteor都可以使用
 

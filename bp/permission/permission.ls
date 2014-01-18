@@ -48,26 +48,24 @@ class Permission
 
   # Template和Router调用，检查当前用户是否有权限进行相应操作
   # view | go-create | go-update | delete 
-  check-list-action-permission: (doc-name, doc, action)~>
-    BP.MODE is 'DEVELOPMENT' or @check-action-permission doc-name, doc, action, 'list'
+  check-list-action-permission: (doc-name, doc, action, data-manager)~>
+    BP.MODE is 'DEVELOPMENT' or @check-action-permission doc-name, doc, action, 'list', data-manager
 
   # Template和Router调用，检查当前用户是否有权限进行相应操作
   # view | create | update | delete 
-  check-detail-action-permission: (doc-name, doc, action)~> # 注意：这里为了便于helpers里通过同check-list-action-permission一样
-    BP.MODE is 'DEVELOPMENT' or @check-action-permission doc-name, doc, action, 'detail'
+  check-detail-action-permission: (doc-name, doc, action, data-manager)~> # 注意：这里为了便于helpers里通过同check-list-action-permission一样
+    BP.MODE is 'DEVELOPMENT' or @check-action-permission doc-name, doc, action, 'detail', data-manager
 
-  check-action-permission: (doc-name, doc, action, view-type)->
+  check-action-permission: (doc-name, doc, action, view-type, data-manager)->
     return true if BP.MODE is 'DEVELOPMENT' 
-    current-active-rules = @get-active-rules-on-action doc-name, doc, action, view-type
-    if current-active-rules.length > 0
-      combined-rule = @combined-rules current-active-rules 
-      combined-rule.check action, view-type
-    else
-      true
-
-  get-active-rules-on-action: (doc-name, doc, action, view-type)->
+    current-active-rules = @get-active-rules-on-action doc-name, doc, action, view-type, data-manager
+    result = true
+    [result = (result and rule.check action, view-type, doc, data-manager) for rule in current-active-rules] if current-active-rules.length > 0
+    result
+    
+  get-active-rules-on-action: (doc-name, doc, action, view-type, data-manager)->
     return [] if not @data-rules[doc-name]
-    [rule for rule in @data-rules[doc-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-action view-type, doc, action]
+    [rule for rule in @data-rules[doc-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-action view-type, doc, action] # TODO: 还有rule.is-apply-on-current-doc
 
   combined-rules: (rules)->
     # TODO: 设计实现类似CSS selector的机制。
@@ -76,16 +74,14 @@ class Permission
 
   # Template调用，检查当前用户是否有权限进行相应操作
   # update 
-  check-attribute-action-permission: (doc-name, doc, attr-name, action)~> 
-    current-active-rules = @get-active-rules-on-attribute-action doc-name, doc, attr-name, action
-    if current-active-rules.length > 0
-      combined-rule = @combined-rules current-active-rules 
-      combined-rule.check-attribute-editable attr-name if action is 'update'
-      combined-rule.check-attribute-viewable attr-name if action is 'view'
-    else
-      true
+  check-attribute-action-permission: (doc-name, doc, attr-name, action, data-manager)~> 
+    current-active-rules = @get-active-rules-on-attribute-action doc-name, doc, attr-name, action, data-manager
+    result = true
+    [result = (result and rule.check-attribute-editable attr-name, doc, data-manager) for rule in current-active-rules] if current-active-rules.length > 0 and action is 'update'
+    [result = (result and rule.check-attribute-viewable attr-name, doc, data-manager) for rule in current-active-rules] if current-active-rules.length > 0 and action is 'view'
+    result
 
-  get-active-rules-on-attribute-action: (doc-name, doc, attr-name, action)->
+  get-active-rules-on-attribute-action: (doc-name, doc, attr-name, action, data-manager)->
     return [] if not @data-rules[doc-name]
     [rule for rule in @data-rules[doc-name] when rule.is-apply-on-current-user! and rule.is-apply-on-current-attribute-and-action doc, attr-name, action]
 
@@ -104,9 +100,9 @@ class Permission
     # console.log "********************** constrained-query is: ", result
     result
 
-  get-active-rules-for-publish-data: (current-user-id, doc-name)->
+  get-active-rules-for-publish-data: (current-user-id, doc-name, data-manager)->
     return [] if not @data-rules[doc-name]
-    [rule for rule in @data-rules[doc-name] when rule.is-apply-on-current-user current-user-id]
+    [rule for rule in @data-rules[doc-name] when rule.is-apply-on-current-user current-user-id] # TODO：这里处理view
 
   get-query-from-rule: (origin-query, rule)->
     $and: [origin-query, (rule.query or {})]

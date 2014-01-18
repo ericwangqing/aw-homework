@@ -40,7 +40,7 @@
           if (this$.currentPage) {
             return this$.currentPage.showListRelations;
           } else {
-            return this$.lastPage.showListRelations;
+            return !this$.lastPage || this$.lastPage.showListRelations;
           }
         } else {
           return true;
@@ -51,7 +51,7 @@
           if (this$.currentPage) {
             return this$.currentPage.showDetailRelations;
           } else {
-            return this$.lastPage.showDetailRelations;
+            return !this$.lastPage || this$.lastPage.showDetailRelations;
           }
         } else {
           return true;
@@ -191,7 +191,7 @@
       }
       for (i$ = 0, len$ = (ref$ = this.faces).length; i$ < len$; ++i$) {
         face = ref$[i$];
-        if (!face.view.isPermit(face.view.dataManager.doc, face.faceName)) {
+        if (!face.view.isPermit(face.view.dataManager.doc, face.faceName, face.view.dataManager)) {
           return flase;
         }
       }

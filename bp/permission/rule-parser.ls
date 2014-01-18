@@ -9,7 +9,7 @@ class Rule-parser
     return @rule.applied-on-users = Rule.ALL_USERS if not @rule.rule-content.users # 未指定user时，应用到全体users
     tokens = @rule.rule-content.users.split /\s+/
     @rule.applied-on-users = @compact-set-considering-not-modifier tokens.filter ~> not (@is-role-token it)
-    @rule.applied-on-roles = @compact-set-considering-not-modifier tokens.filter @is-role-token .map @cut-off-role-prefix
+    @rule.applied-on-roles = @compact-set-considering-not-modifier (tokens.filter @is-role-token .map @cut-off-role-prefix)
 
 
   is-role-token: (token)->
@@ -34,6 +34,7 @@ class Rule-parser
 
 class Data-rule-parser extends Rule-parser
   parse-rule: (@rule)->
+    @rule.condition = @rule.rule-content.condition || 'true'
     allows = {collection, item, attributes} = @gather-rule @rule.rule-content.allows
     denies = {collection, item, attributes} = @gather-rule @rule.rule-content.denies
     @parse-collection-rule allows.collection, denies.collection
@@ -77,9 +78,16 @@ class Data-rule-parser extends Rule-parser
       @add-allow-deny @rule.attributes[attr], (allow[attr] or []), (deny[attr] or [])
 
   add-allow-deny: (sub-rule, allow, deny)!->
-    [sub-rule[action] = true for action in allow]
-    [sub-rule[action] = false for action in deny]
+    [sub-rule <<< @parse-action-description action, true for action in allow]
+    [sub-rule <<< @parse-action-description action, false for action in deny]
     # doc: 这里显然deny高于allow
+
+  parse-action-description: (action-description, is-allow)->
+    [_0, action, condition] = action-description.split /^([^(]+)(\(.*\))?$/ # 形如: edit 或者 edit(condition-str)
+    condition = 'true' if not condition
+    "#action": if is-allow then condition else '!' + condition
+
+    # {"#action-description": is-allow}
 
 class Page-rule-parser extends Rule-parser
   parse-rule: (@rule)->
