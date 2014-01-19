@@ -20,8 +20,12 @@ mixin guarded-input-wrapper(label, attr)
 
     +if-face('create')
       //- 空内容
-      +wrap-filed-with-label(label, span)(attributes)
-        block 
+      +if-else-attribute-permit(attr, 'update')
+        +wrap-filed-with-label(label, span)(attributes)
+          block 
+      +else()
+        //- 没有权限时什么也不显示
+        span
 
     +if-face('view')   
       +_uneditable-content(label, attr, span)(attributes)

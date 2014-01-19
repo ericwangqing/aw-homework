@@ -7,7 +7,7 @@ permission.add-page-rules do
   'teacher:assignments-list':
     users: 'R-学生'
     denies: 'access' ## 这里出现任意值，都是deny
-    
+
   'teacher:assignment-homework':
     users: 'NOT-R-老师'
     denies: 'access'
@@ -32,7 +32,7 @@ permission.add-data-rule assignment:
   condition: "!#for-student"
   denies: "i-view"
 
-already-has-homework = "doc.homeworks.length >= 1"
+already-has-homework = "!_.isEmpty(doc) && doc.homeworks.length >= 1"
 permission.add-data-rule homework:
   users: 'R-学生'
   condition: "#already-has-homework"

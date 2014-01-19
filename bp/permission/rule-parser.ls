@@ -84,8 +84,8 @@ class Data-rule-parser extends Rule-parser
 
   parse-action-description: (action-description, is-allow)->
     [_0, action, condition] = action-description.split /^([^(]+)(\(.*\))?$/ # 形如: edit 或者 edit(condition-str)
-    condition = 'true' if not condition
-    "#action": if is-allow then condition else '!' + condition
+    condition = true if (typeof condition is 'undefined') or condition is ''
+    "#action": if is-allow then condition else !condition
 
     # {"#action-description": is-allow}
 

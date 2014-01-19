@@ -73,7 +73,7 @@ class Data-rule extends Rule
   check-attribute-editable: (attr-name, doc, data-manager)->
     rule = @attributes[attr-name]
     if rule? and  (rule.edit? or rule.view?) 
-      if rule.edit is 'false' or rule.view is 'false'
+      if rule.edit is false or rule.view is false
         false
       else
         true  
