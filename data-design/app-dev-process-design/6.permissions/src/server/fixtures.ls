@@ -2,25 +2,25 @@ Meteor.startup ->
   if Meteor.users.find!count! is 0
     users =
       * _id: 'wangqing'
-        username: 'wangqing'
+        username: '王青'
         password: 'password'
         profile: fullname: '王青', roles: '老师'
       * _id: 'linliang'
-        username: 'linliang'
+        username: '林倞'
         password: 'password'
         profile: fullname: '林倞', roles: '老师'
       * _id: 'shenshaowei'
-        username: 'shenshaowei'
+        username: '沈少伟'
         password: 'password'
         profile: fullname: '沈少伟', roles: '学生'
       * _id: 'chenweijin'
-        username: 'chenweijin'
+        username: '陈伟津'
         password: 'password'
         profile: fullname: '陈伟津', roles: '学生'
 
     [Accounts.create-user user for user in users]
-    wangqing = Meteor.users.find-one {username: 'wangqing'}
-    linliang = Meteor.users.find-one {username: 'linliang'}
+    wangqing = Meteor.users.find-one {username: '王青'}
+    linliang = Meteor.users.find-one {username: '林倞'}
 
   if Assignments?.find!count! is 0
     console.log "insert data ...."

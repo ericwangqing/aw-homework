@@ -8,7 +8,7 @@ do config-and-static-route = !~>
 
   filters = 
     is-logged-in: ->
-      if not (Meteor.logging-in! or Meteor.user!)
+      if not (BP.MODE is 'DEVELOPMENT' or Meteor.logging-in! or Meteor.user!)
         # throw new Meteor.Error "请先登录"
         alert "请先登录"
         # @render 'siginin'

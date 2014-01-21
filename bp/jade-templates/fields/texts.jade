@@ -8,7 +8,8 @@ mixin _text(label, attr, htmlTag)
     - var validationStr = attributes.optional ?  attributes.condition : (attributes.condition + " required='required'")
     - var placeholderStr = attributes.placeholder ? " placeholder='" + attributes.placeholder + "' " : ''
     if htmlTag == 'input'
-      - var valueStr = attr? ("name='" + attr + "' value='{{bs \"" + attr + "\"}}' ") : '' 
+      - var bsValueStr = isCreateAction ? '' : "' value='{{bs \"" + attr + "\"}}' " 
+      - var valueStr = attr? ("name='" + attr + bsValueStr) : '' 
       .ui.fluid.labeled.input
         != "<input type='text' " + valueStr + validationStr + placeholderStr + " tabindex='" + index +"'/>"
         if !attributes.optional

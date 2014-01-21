@@ -30,7 +30,7 @@ permission.add-data-rule assignment:
   denies: "i-view"
 
 already-has-homework = "doc.homeworks.length >= 1"
-permission.add-data-rule homework:
+permission.add-data-rule assignment:
   users: 'R-学生'
   condition: "#already-has-homework"
   denies: "i-create"

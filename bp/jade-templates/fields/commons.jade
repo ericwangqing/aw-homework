@@ -20,9 +20,11 @@ mixin guarded-input-wrapper(label, attr)
 
     +if-face('create')
       //- 空内容
-      +if-else-attribute-permit(attr, 'update')
+      +if-else-attribute-permit(attr, 'create')
         +wrap-filed-with-label(label, span)(attributes)
+          - isCreateAction = true
           block 
+          - isCreateAction = false
       +else()
         //- 没有权限时什么也不显示
         span

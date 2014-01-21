@@ -88,7 +88,8 @@ class Data-rule extends Rule
   evaluate: (item, doc, data-manager)->
     # if condition not in ['true', 'false', '!true', '!false'] then true else
     # doc = data-manager.doc
-    eval "var result = #item"
+    # eval "var result = #item"
+    result = item
     eval "satisfied = #{@condition}"
     if satisfied then result else !result
     # try

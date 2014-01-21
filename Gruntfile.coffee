@@ -108,6 +108,7 @@ module.exports = (grunt)->
       app:
         files: [
           expand: true
+          flatten: true # flatten是为了避免在引用时，path长而易错。meteor自动搜集源文件，因此可以自由组织文件，不用担心path。故而这里也就不用flatten。
           cwd: ''
           src: ['bp/runtime-scripts/client/**/*.jade', 'src-temp/**/*.jade']
           dest: 'bin'

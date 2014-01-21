@@ -8,11 +8,12 @@
         +no-blank-text('编号')
         +no-blank-text('题目')(title='世上无难事，只要肯攀登')
         +datetime('截止时间')
-        +multi-ahead('学生')(users={role:'学生'}, multiple=true)
+        +users-selector('学生')(role='学生', multiple=true)
       +row()
         +html('要求')(span=FULL_ROW)
     +auto-insert-current-user-as('老师')
 
 +component('homework')
-  +list(['编号', '题目', '学生', '内容', '分数'])
+  +list(['编号', '题目', '截止时间', '学生', '内容', '分数'])
+
   +detail()
