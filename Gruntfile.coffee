@@ -105,50 +105,21 @@ module.exports = (grunt)->
           ext: '.js'
         ]
     jade:
-      bp:
-        files: [
-          expand: true
-          cwd: 'bp/runtime-scripts/client'
-          src: ['**/*.jade']
-          dest: 'bin/lib/client'
-          ext: '.html'
-        ]
-        options:
-          compileDebug: true
-          pretty: true
-          filters: require './bp/jade-scripts/_bp-filters'
-          data:
-            bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
-
-      # pre_compile_app: 
-      #   files: [
-      #     expand: true
-      #     cwd: 'src'
-      #     src: ['**/*.jade']
-      #     dest: 'src-temp'
-      #     ext: '.jade'
-      #   ]
-      #   options:
-      #     compileDebug: true
-      #     pretty: true
-      #     filters: require './bp/jade-scripts/_bp-filters'
-      #     data:
-      #       bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
       app:
         files: [
           expand: true
-          cwd: 'src-temp'
-          src: ['**/*.jade']
+          cwd: ''
+          src: ['bp/runtime-scripts/client/**/*.jade', 'src-temp/**/*.jade']
           dest: 'bin'
           ext: '.html'
         ]
         options:
-          compileDebug: true
           pretty: true
           filters: require './bp/jade-scripts/_bp-filters'
           data:
             bp: bp # ！！！十分重要，将bp引入jade，编译出Router和View需要的代码
           #   grunt: ()-> grunt
+          
     compass:
       all:
         options:

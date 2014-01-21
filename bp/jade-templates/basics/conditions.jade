@@ -18,12 +18,14 @@ mixin if-else-face(face)
 
 //-# 是否允许当前用户对数据（默认为当前，除非给出citedDoc），进行某种操作（go-create, go-update, create, update, view; 以及其它用户通过add-links增加的action）
 mixin if-bp-permit(action)
+  - var doc = action == 'go-create' ? 'null' : 'this'
+
   if attributes.pageName
     //- - console.log("in if-bp-permit, action is: ", action)
-    | {{#if bp-page-permit this '#{action}' '#{attributes.namespace}' '#{attributes.pageName}'}}
+    | {{#if bp-page-permit #{doc} '#{action}' '#{attributes.namespace}' '#{attributes.pageName}'}}
   else
     - var target = attributes.citedDoc ? "'" + attributes.citedDoc + "'" : '' // Component
-    | {{#if bp-view-permit this '#{action}' #{target}}}
+    | {{#if bp-view-permit #{doc} '#{action}' #{target}}}
   block
   | {{/if}}
 
