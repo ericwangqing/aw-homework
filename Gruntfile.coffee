@@ -150,12 +150,12 @@ module.exports = (grunt)->
         tasks: ["clean", "copy", "concat", "jade", "livescript", "compass", "simplemocha"]
         options:
           spawn: true
-      bp_jade_doc:
-        files: ["bp/jade-templates/**/*.jade"]
-        tasks: ["docco:jade"]
-      bp_ls_doc:
-        files: ["bp/**/*.ls"]
-        tasks: ["docco:livescript"]
+      # bp_jade_doc:
+      #   files: ["bp/jade-templates/**/*.jade"]
+      #   tasks: ["docco:jade"]
+      # bp_ls_doc:
+      #   files: ["bp/**/*.ls"]
+      #   tasks: ["docco:livescript"]
 
 
   grunt.loadNpmTasks "grunt-livescript"
