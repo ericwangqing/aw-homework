@@ -3,6 +3,8 @@
     "iron-router": {},
     "nprogress": {},
     "spin": {},
-    "semantic-ui": {}
+    "semantic-ui": {},
+    "jquery-ui": {},
+    "sugar": {}
   }
 }
